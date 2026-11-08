@@ -19,7 +19,7 @@ concurrency:
 jobs:
   test-och-publicera:
     name: Testa och publicera
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04  # Playwright 1.56 stöder inte ubuntu 26.04
     timeout-minutes: 20
     environment:
       name: github-pages
@@ -62,7 +62,7 @@ jobs:
             --exclude tests --exclude test-results --exclude rapport \
             --exclude package.json --exclude package-lock.json --exclude playwright.config.js \
             --exclude README.md --exclude SPEC.md --exclude testplan --exclude CLAUDE.md --exclude AGENTS.md --exclude .gitignore
-          cp -r rapport _site/rapport
+          mkdir -p rapport && cp -r rapport _site/rapport
           touch _site/.nojekyll
 
       - name: Spara rapporten som artefakt
