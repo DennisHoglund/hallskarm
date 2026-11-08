@@ -18,6 +18,25 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&amp;family=JetBrains+Mono:wght@400;700&amp;display=swap">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <link rel="stylesheet" href="styles.css">
+<script>
+  // Visar fel direkt på skärmen – för äldre Safari utan Web Inspector
+  (function () {
+    var fel = [];
+    function visa(text) {
+      fel.push(text);
+      var el = document.getElementById('felruta');
+      if (!el) { el = document.createElement('pre'); el.id = 'felruta'; document.documentElement.appendChild(el); }
+      el.style.cssText = 'position:fixed;left:8px;bottom:8px;right:8px;z-index:99999;margin:0;padding:10px;background:#B00020;color:#fff;font:13px/1.4 Menlo,monospace;white-space:pre-wrap;max-height:40vh;overflow:auto';
+      el.textContent = 'Fel i Hallskärmen (fota och skicka):\n' + fel.join('\n') + '\n' + navigator.userAgent;
+    }
+    window.addEventListener('error', function (e) {
+      if (e.target && e.target.tagName === 'IMG') return; // kartrutor som inte laddar är inget fel
+      var fil = e.filename ? e.filename.split('/').pop() : (e.target && (e.target.src || e.target.href) ? 'laddade inte: ' + (e.target.src || e.target.href) : '');
+      visa((e.message || 'Resurs kunde inte laddas') + ' (' + fil + ':' + (e.lineno || '') + ':' + (e.colno || '') + ')');
+    }, true);
+    window.addEventListener('unhandledrejection', function (e) { visa('Promise: ' + (e.reason && e.reason.message ? e.reason.message : e.reason)); });
+  })();
+</script>
 </head>
 <body>
 
