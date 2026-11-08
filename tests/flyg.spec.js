@@ -62,6 +62,12 @@ test.describe('Flyg', () => {
 
   test('utan proxy förklaras vad som behövs', { annotation: { type: 'testfall', description: 'TC-FLY-07' } }, async ({ page, api }) => {
     await installningar(page, { ...STANDARD_INST, flygProxy: '' });
+    // Ta bort proxyn som står i config.js så att appen saknar proxy helt
+    await page.route(/\/config\.js$/, async (route) => {
+      const svar = await route.fetch();
+      const kod = (await svar.text()).replace(/flygProxy: '[^']*'/, "flygProxy: ''");
+      await route.fulfill({ response: svar, body: kod });
+    });
     await page.goto('./');
     await expect(page.locator('.flyg-etikett')).toHaveText('Flygdata behöver en proxy');
     // Samma källor som via proxyn ska inte provas i onödan

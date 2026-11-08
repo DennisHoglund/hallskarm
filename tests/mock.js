@@ -185,7 +185,7 @@ async function mocka(page, { tid = NU, flyg = null } = {}) {
   });
 
   // Proxyn (proxy/worker.js) vidarebefordrar till rätt källa
-  await page.route(/hallskarm-proxy\.test/, (route) => {
+  await page.route(/hallskarm-proxy\.test|workers\.dev/, (route) => {
     const mal = new URL(route.request().url()).searchParams.get('url') || '';
     if (/api\.adsb\.lol/.test(mal)) return flygRoute('adsb.lol')(route, mal);
     if (/opendata\.adsb\.fi/.test(mal)) return flygRoute('adsb.fi')(route, mal);

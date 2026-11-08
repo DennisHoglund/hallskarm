@@ -25,7 +25,7 @@ window.HALL_CONFIG = {
     rutt: 'https://api.adsbdb.com/v0/callsign/',
     // Flygnätverken saknar CORS, så de hämtas via en egen proxy (se proxy/worker.js och README).
     // Kan också anges i appens inställningar. Tom = försök direkt (fungerar oftast inte i Safari).
-    flygProxy: '',
+    flygProxy: 'https://hallskarm-proxy.dennis-hoglund72.workers.dev',
     // Flygdata provas i tur och ordning tills någon svarar
     flyg: [
       { namn: 'adsb.lol', url: 'https://api.adsb.lol/v2/lat/{lat}/lon/{lon}/dist/{nm}' },
