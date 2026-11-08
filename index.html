@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="sv" data-theme="dag">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hallskärm</title>
+<meta name="description" content="Klocka, väder, SL-avgångar och flyg ovanför – för iPaden i hallen">
+<meta name="theme-color" content="#F2EFE8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Hallskärm">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&amp;family=JetBrains+Mono:wght@400;700&amp;display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="skarm" class="skarm">
+
+  <!-- ÖVRE RADEN: klocka, datum, namnsdag, sol -->
+  <header class="topp">
+    <div class="klockgrupp">
+      <div id="klocka" class="klocka" aria-live="off">--:--</div>
+      <div class="datum">
+        <div id="veckodag" class="veckodag"></div>
+        <div id="datum" class="datumtext"></div>
+      </div>
+    </div>
+    <div class="topp-hoger">
+      <div class="fakta">
+        <small>Namnsdag</small>
+        <b id="namnsdag">–</b>
+        <span id="helgdag" class="liten"></span>
+      </div>
+      <div class="fakta">
+        <small>Sol upp · ned</small>
+        <b id="sol">–</b>
+        <span id="vecka" class="liten"></span>
+      </div>
+      <button id="knapp-inst" class="ikonknapp" type="button" aria-label="Inställningar">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- MITTEN: väder och SL -->
+  <main class="mitt">
+    <section id="vader" class="panel vader" aria-label="Väder">
+      <div class="nu">
+        <div id="vader-temp" class="stortal">–</div>
+        <div class="nu-text">
+          <div id="vader-text" class="rubrik">Hämtar väder…</div>
+          <div id="vader-detalj" class="detalj"></div>
+          <div id="vader-detalj2" class="detalj"></div>
+        </div>
+      </div>
+      <ol id="prognos" class="prognos" aria-label="Prognos fem dagar"></ol>
+      <p id="vader-status" class="status" role="status"></p>
+    </section>
+
+    <section id="sl" class="panel sl" aria-label="Avgångar">
+      <div id="sl-lista" class="sl-lista"></div>
+      <p id="sl-status" class="status" role="status"></p>
+    </section>
+  </main>
+
+  <!-- NEDRE RADEN: flyg och dagsljus -->
+  <footer class="botten">
+    <section id="flyg" class="flyg" aria-label="Luftrummet ovanför">
+      <div class="flyg-huvud">
+        <small>Luftrummet ovanför</small>
+        <span id="flyg-antal" class="liten"></span>
+      </div>
+      <div class="flyg-kropp">
+        <div id="minikarta" class="minikarta" aria-hidden="true"></div>
+        <div id="flyg-info" class="flyg-info">
+          <div class="flyg-etikett">Söker plan…</div>
+        </div>
+      </div>
+      <button id="flyg-oppna" class="tackare" type="button" aria-label="Öppna flygvyn i helskärm"></button>
+    </section>
+
+    <section id="dagsljus" class="dagsljus" aria-label="Dagsljus">
+      <small>Dagsljus</small>
+      <div class="dagsljus-rad"><b id="dagsljus-langd" class="mellantal">–</b><span id="dagsljus-andring" class="fet"></span></div>
+      <svg id="dagsljus-kurva" class="kurva" viewBox="0 0 200 58" preserveAspectRatio="none" aria-hidden="true">
+        <line x1="0" y1="57" x2="200" y2="57" class="kurva-bas"/>
+        <polyline id="dagsljus-linje" class="kurva-linje" points=""/>
+        <circle id="dagsljus-prick" class="kurva-prick" cx="0" cy="0" r="4"/>
+      </svg>
+      <span id="dagsljus-vander" class="liten"></span>
+    </section>
+  </footer>
+</div>
+
+<!-- FLYGVY I HELSKÄRM -->
+<div id="flygvy" class="flygvy" hidden>
+  <div class="flygvy-yta">
+    <div id="flygkarta" class="flygkarta"></div>
+    <svg id="radar" class="radar" hidden role="img" aria-label="Radar med flygplan runt hemmet"></svg>
+    <div id="radar-svep" class="radar-svep" hidden></div>
+  </div>
+  <div class="flygvy-topp">
+    <div class="flikar" role="tablist" aria-label="Flygvy">
+      <button type="button" role="tab" id="flik-karta" aria-selected="true">Karta</button>
+      <button type="button" role="tab" id="flik-radar" aria-selected="false">Radar</button>
+    </div>
+    <div id="flygvy-rubrik" class="flygvy-rubrik"></div>
+    <button id="flygvy-stang" class="ikonknapp" type="button" aria-label="Stäng flygvyn">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+  <aside id="flygvy-panel" class="flygvy-panel"></aside>
+  <div class="radie" role="group" aria-label="Räckvidd">
+    <button type="button" data-radie="5">5 km</button>
+    <button type="button" data-radie="10">10 km</button>
+    <button type="button" data-radie="25">25 km</button>
+    <button type="button" data-radie="50">50 km</button>
+  </div>
+</div>
+
+<!-- INSTÄLLNINGAR -->
+<dialog id="inst" class="inst" aria-labelledby="inst-rubrik">
+  <form id="form-inst" method="dialog">
+    <div class="inst-huvud">
+      <h2 id="inst-rubrik">Inställningar</h2>
+      <button id="inst-klar" class="knapp" type="submit" value="klar">Klar</button>
+    </div>
+
+    <fieldset>
+      <legend>Hemmets läge</legend>
+      <p class="hjalp">Används för väder, sol och mitten på flygkartan. Sparas bara på den här enheten.</p>
+      <p class="vald">Vald plats: <b id="plats-namn">–</b></p>
+      <label for="plats-sok">Sök ort eller område</label>
+      <input id="plats-sok" type="search" autocomplete="off" placeholder="t.ex. Gärdet" enterkeyhint="search">
+      <ul id="plats-traffar" class="traffar"></ul>
+      <button id="plats-gps" class="knapp sekundar" type="button">Använd min position</button>
+    </fieldset>
+
+    <fieldset>
+      <legend>Hållplatser</legend>
+      <p class="hjalp">Välj upp till tre hållplatser och vilka trafikslag som ska visas.</p>
+      <ul id="hallplatser" class="hallplatser"></ul>
+      <label for="hp-sok">Lägg till hållplats</label>
+      <input id="hp-sok" type="search" autocomplete="off" placeholder="t.ex. Karlaplan" enterkeyhint="search">
+      <ul id="hp-traffar" class="traffar"></ul>
+      <p id="hp-status" class="status" role="status"></p>
+    </fieldset>
+
+    <fieldset>
+      <legend>Utseende</legend>
+      <div class="segment" role="radiogroup" aria-label="Tema">
+        <label><input type="radio" name="tema" value="auto"> Auto (efter solen)</label>
+        <label><input type="radio" name="tema" value="dag"> Dag</label>
+        <label><input type="radio" name="tema" value="natt"> Natt</label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Flyg</legend>
+      <label for="flyg-radie">Visa plan inom</label>
+      <select id="flyg-radie">
+        <option value="10">10 km</option>
+        <option value="25">25 km</option>
+        <option value="50">50 km</option>
+      </select>
+    </fieldset>
+
+    <p class="hjalp">Tips: Lägg till sidan på hemskärmen (Dela → Lägg till på hemskärmen) och slå på Guidad åtkomst under Inställningar → Hjälpmedel.</p>
+    <p class="hjalp"><a href="rapport/">Testrapport</a> · <span id="version"></span></p>
+  </form>
+</dialog>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="config.js"></script>
+<script src="installningar.js"></script>
+<script src="tid.js"></script>
+<script src="vader.js"></script>
+<script src="sl.js"></script>
+<script src="flyg.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

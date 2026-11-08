@@ -1,0 +1,16 @@
+{
+  "name": "hallskarm",
+  "private": true,
+  "description": "Hallskärm – klocka, väder, SL och flyg för iPaden i hallen",
+  "scripts": {
+    "test": "node tests/kontrollera-testplan.js && playwright test",
+    "testplan": "node tests/kontrollera-testplan.js",
+    "test:ui": "playwright test --ui",
+    "rapport": "npx http-server rapport -p 9324 -o"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.56.1",
+    "http-server": "^14.1.1",
+    "leaflet": "1.9.4"
+  }
+}
