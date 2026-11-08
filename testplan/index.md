@@ -5,8 +5,8 @@ Automatiserade testfall körs av Playwright vid varje commit och är kopplade vi
 
 | | |
 |---|---|
-| **Testfall** | 28 |
-| **Automatiserade** | 24 (körs på iPad/WebKit och Chromium i iPad Airs skärmstorlek) |
+| **Testfall** | 29 |
+| **Automatiserade** | 25 (körs på iPad/WebKit och Chromium i iPad Airs skärmstorlek) |
 | **Manuella** | 4 (kräver riktig iPad och riktig data) |
 | **Senaste testrapport** | [dennishoglund.github.io/hallskarm/rapport/](https://dennishoglund.github.io/hallskarm/rapport/) |
 | **Krav** | [SPEC.md](../SPEC.md) |
@@ -49,6 +49,7 @@ Automatiserade testfall körs av Playwright vid varje commit och är kopplade vi
 | [TC-FLY-04](testfall/TC-FLY-04.md) | [Om första flygkällan är nere används nästa](testfall/TC-FLY-04.md) | Medel | 🤖 |
 | [TC-FLY-05](testfall/TC-FLY-05.md) | [När inga plan finns i närheten står det lugnt i luften](testfall/TC-FLY-05.md) | Låg | 🤖 |
 | [TC-FLY-06](testfall/TC-FLY-06.md) | [Alla flygkällor nere ger ett tydligt besked](testfall/TC-FLY-06.md) | Låg | 🤖 |
+| [TC-FLY-07](testfall/TC-FLY-07.md) | [Utan proxy förklaras vad som behövs](testfall/TC-FLY-07.md) | Hög | 🤖 |
 
 ## Tema
 

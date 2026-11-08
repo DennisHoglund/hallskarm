@@ -76,11 +76,31 @@ window.HallFlyg = (function () {
     }).filter((a) => typeof a.lat === 'number' && typeof a.lon === 'number' && !a.mark);
   }
 
+  // Flygnätverken skickar inga CORS-huvuden – därför går anropen via en proxy om en finns
+  function proxy() {
+    const p = (window.HallInst.hamta().flygProxy || C().api.flygProxy || '').trim();
+    return p.replace(/\/+$/, '');
+  }
+  function viaProxy(url) {
+    const p = proxy();
+    return p ? p + '/?url=' + encodeURIComponent(url) : url;
+  }
+  async function hamtaUrl(url) {
+    try {
+      return await fetch(viaProxy(url));
+    } catch (e) {
+      // TypeError = nätverk eller CORS. Utan proxy är det nästan alltid CORS.
+      const fel = new Error(proxy() ? 'Proxyn svarar inte' : 'Saknar proxy');
+      fel.utanProxy = !proxy();
+      throw fel;
+    }
+  }
+
   async function hamtaFranKalla(i) {
     const k = C().api.flyg[i];
     const nm = Math.ceil(radieKm / 1.852 * 1.15);
     const url = k.url.replace('{lat}', plats.lat.toFixed(4)).replace('{lon}', plats.lon.toFixed(4)).replace('{nm}', nm);
-    const res = await fetch(url);
+    const res = await hamtaUrl(url);
     if (!res.ok) throw new Error(k.namn + ' svarade ' + res.status);
     const j = await res.json();
     return tolka(j.ac || j.aircraft || []);
@@ -97,7 +117,10 @@ window.HallFlyg = (function () {
         uppdatera(lista);
         senastOk = Date.now();
         return true;
-      } catch (e) { senasteFel = e; }
+      } catch (e) {
+        senasteFel = e;
+        if (e.utanProxy) break; // ingen idé att prova fler källor – alla saknar CORS
+      }
     }
     throw senasteFel || new Error('Ingen flygkälla svarade');
   }
@@ -131,7 +154,7 @@ window.HallFlyg = (function () {
     if (rutter.has(anrop)) return;
     rutter.set(anrop, null);
     try {
-      const res = await fetch(C().api.rutt + encodeURIComponent(anrop));
+      const res = await hamtaUrl(C().api.rutt + encodeURIComponent(anrop));
       if (!res.ok) return;
       const j = await res.json();
       const r = j && j.response && j.response.flightroute;
@@ -164,7 +187,7 @@ window.HallFlyg = (function () {
   function kakel(karta, vilken) {
     if (lager[vilken]) karta.removeLayer(lager[vilken]);
     lager[vilken] = L.tileLayer(tema === 'natt' ? C().kartrutor.natt : C().kartrutor.dag, {
-      subdomains: 'abcd', maxZoom: 18, attribution: C().kartrutor.attribution, detectRetina: true
+      maxZoom: C().kartrutor.maxZoom || 18, maxNativeZoom: C().kartrutor.maxZoom || 18, attribution: C().kartrutor.attribution
     }).addTo(karta);
   }
 

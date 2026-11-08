@@ -15,7 +15,7 @@ window.HallInst = (function () {
     { kod: 'SHIP', namn: 'Båt' }
   ];
 
-  const STANDARD = { version: 1, plats: null, hallplatser: [], tema: 'auto', flygRadie: 25 };
+  const STANDARD = { version: 1, plats: null, hallplatser: [], tema: 'auto', flygRadie: 25, flygProxy: '' };
   const lyssnare = [];
   let inst = las();
 
@@ -117,6 +117,7 @@ window.HallInst = (function () {
     $('hp-sok').placeholder = inst.hallplatser.length >= MAX_HALLPLATSER ? 'Max tre hållplatser' : 't.ex. Karlaplan';
     document.querySelectorAll('#form-inst input[name="tema"]').forEach((r) => { r.checked = r.value === inst.tema; });
     $('flyg-radie').value = String(inst.flygRadie);
+    $('flyg-proxy').value = inst.flygProxy || '';
   }
 
   function debounce(fn, ms) {
@@ -218,6 +219,7 @@ window.HallInst = (function () {
     $('form-inst').addEventListener('change', (e) => {
       if (e.target.name === 'tema') andra((s) => { s.tema = e.target.value; });
       if (e.target.id === 'flyg-radie') andra((s) => { s.flygRadie = Number(e.target.value); });
+      if (e.target.id === 'flyg-proxy') andra((s) => { s.flygProxy = e.target.value.trim(); });
     });
     $('form-inst').addEventListener('submit', (e) => { e.preventDefault(); stang(); });
   }

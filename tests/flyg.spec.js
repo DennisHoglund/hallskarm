@@ -1,5 +1,5 @@
 const { test, expect, bild } = require('./hjalp');
-const { installningar, STANDARD_INST } = require('./mock');
+const { installningar, STANDARD_INST, PROXY } = require('./mock');
 
 test.describe('Flyg', () => {
   test('nedre raden visar planet som passerar ovanför med rutt', { annotation: { type: 'testfall', description: 'TC-FLY-01' } }, async ({ skarm: page }) => {
@@ -58,6 +58,19 @@ test.describe('Flyg', () => {
     await page.goto('./');
     await expect(page.locator('.flyg-etikett')).toHaveText('Lugnt i luften');
     await expect(page.locator('.ingen-flyg')).toHaveText('Inga plan inom 25 km just nu.');
+  });
+
+  test('utan proxy förklaras vad som behövs', { annotation: { type: 'testfall', description: 'TC-FLY-07' } }, async ({ page, api }) => {
+    await installningar(page, { ...STANDARD_INST, flygProxy: '' });
+    await page.goto('./');
+    await expect(page.locator('.flyg-etikett')).toHaveText('Flygdata behöver en proxy');
+    // Samma källor som via proxyn ska inte provas i onödan
+    expect(api.anrop.filter((a) => a.typ === 'direkt').length).toBeLessThanOrEqual(2);
+    // Lägg in proxyn i inställningarna så visas planen
+    await page.locator('#knapp-inst').click();
+    await page.locator('#flyg-proxy').fill(PROXY);
+    await page.locator('#inst-klar').click();
+    await expect(page.locator('.flyg-anrop')).toHaveText('SAS1423');
   });
 
   test('alla flygkällor nere ger ett tydligt besked', { annotation: { type: 'testfall', description: 'TC-FLY-06' } }, async ({ page, api }) => {

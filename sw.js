@@ -1,5 +1,5 @@
 // Höj versionen vid varje ändring av appfilerna så att iPaden hämtar nya filer.
-const CACHE = 'hallskarm-v1';
+const CACHE = 'hallskarm-v2';
 
 const SHELL = [
   './',
@@ -25,7 +25,7 @@ const CDN_HOSTS = ['cdnjs.cloudflare.com', 'fonts.googleapis.com', 'fonts.gstati
 // Kartrutor i egen cache så att kartan syns även vid kort avbrott
 const TILE_CACHE = 'hallskarm-tiles';
 const TILE_MAX = 800;
-const isTile = (host) => host.endsWith('basemaps.cartocdn.com');
+const isTile = (host) => host === 'server.arcgisonline.com';
 
 async function trimTiles() {
   const c = await caches.open(TILE_CACHE);

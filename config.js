@@ -23,6 +23,9 @@ window.HALL_CONFIG = {
     slAvgangar: 'https://transport.integration.sl.se/v1/sites/{id}/departures?forecast=60',
     dagar: 'https://sholiday.faboul.se/dagar/v2.1/',
     rutt: 'https://api.adsbdb.com/v0/callsign/',
+    // Flygnätverken saknar CORS, så de hämtas via en egen proxy (se proxy/worker.js och README).
+    // Kan också anges i appens inställningar. Tom = försök direkt (fungerar oftast inte i Safari).
+    flygProxy: '',
     // Flygdata provas i tur och ordning tills någon svarar
     flyg: [
       { namn: 'adsb.lol', url: 'https://api.adsb.lol/v2/lat/{lat}/lon/{lon}/dist/{nm}' },
@@ -31,9 +34,11 @@ window.HALL_CONFIG = {
     ]
   },
 
+  // Esris gråa baskartor utan etiketter (kräver ingen nyckel)
   kartrutor: {
-    dag: 'https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png',
-    natt: 'https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png',
-    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/attributions">CARTO</a>'
+    dag: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+    natt: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+    maxZoom: 16,
+    attribution: 'Karta © Esri, HERE, Garmin, © OpenStreetMap'
   }
 };

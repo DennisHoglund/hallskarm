@@ -13,6 +13,16 @@ Klocka, väder, SL-avgångar, flyg ovanför och dagsljus – för en gammal iPad
 
 Valen sparas bara på den iPaden, så flera personer kan ha var sin skärm med egna hållplatser.
 
+## Proxy för flygdata (en gång)
+Flygnätverken tillåter inte anrop direkt från en webbsida, så flygdata hämtas via en liten gratis Cloudflare Worker.
+1. Skapa ett gratis konto på https://dash.cloudflare.com.
+2. **Workers & Pages** → **Create** → **Create Worker** (Hello World). Döp den till `hallskarm-proxy` och tryck **Deploy**.
+3. **Edit code**, ersätt allt med innehållet i [`proxy/worker.js`](proxy/worker.js) och tryck **Deploy**.
+4. Kopiera adressen (`https://hallskarm-proxy.<ditt-namn>.workers.dev`) och klistra in den i Hallskärmen under
+   **Inställningar → Flyg → Proxy för flygdata** – eller i `flygProxy` i `config.js` så gäller den för alla enheter.
+
+Workern släpper bara igenom adsb.lol, adsb.fi, airplanes.live och adsbdb och cachar svaren i 5 sekunder.
+
 ## Filer
 | Fil | Innehåll |
 |---|---|
@@ -25,6 +35,7 @@ Valen sparas bara på den iPaden, så flera personer kan ha var sin skärm med e
 | `flyg.js` | Flygdata, minikarta, helskärmskarta och radar |
 | `app.js` | Start, timers, tema, status |
 | `sw.js`, `manifest.webmanifest`, `icons/` | PWA |
+| `proxy/worker.js` | Cloudflare Worker som proxy för flygdata |
 
 ## Tester
 ```bash
@@ -37,4 +48,4 @@ Testplanen finns i [`testplan/index.md`](testplan/index.md).
 
 ## Datakällor
 Open-Meteo (CC BY 4.0), Trafiklab SL Transport, Svenska Dagar, adsb.lol, adsb.fi, airplanes.live, adsbdb,
-kartor © OpenStreetMap © CARTO.
+kartor © Esri, HERE, Garmin, © OpenStreetMap.

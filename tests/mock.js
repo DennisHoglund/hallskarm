@@ -129,7 +129,7 @@ async function mocka(page, { tid = NU, flyg = null } = {}) {
     return route.fulfill({ path: path.join(ROOT, hit[1]), contentType: hit[2] });
   });
   await page.route(/fonts\.(googleapis|gstatic)\.com/, (route) => route.fulfill({ body: '', contentType: 'text/css' }));
-  await page.route(/basemaps\.cartocdn\.com/, (route) => route.fulfill({ body: TILE, contentType: 'image/png' }));
+  await page.route(/server\.arcgisonline\.com/, (route) => route.fulfill({ body: TILE, contentType: 'image/png' }));
 
   await page.route(/api\.open-meteo\.com/, (route) => {
     logga('vader', route.request().url());
@@ -157,22 +157,18 @@ async function mocka(page, { tid = NU, flyg = null } = {}) {
     return json(route, { departures: api.avgangar[id] || [], stop_deviations: [] });
   });
 
-  const flygRoute = (namn) => (route) => {
-    logga('flyg:' + namn, route.request().url());
+  const flygRoute = (namn) => (route, url) => {
+    logga('flyg:' + namn, url);
     if (api.nere.flyg.includes(namn)) return route.fulfill({ status: 503, headers: cors(), body: 'nere' });
-    const m = route.request().url().match(/(?:lat\/|point\/)([\d.]+)(?:\/lon)?\/([\d.]+)/);
+    const m = url.match(/(?:lat\/|point\/)([\d.]+)(?:\/lon)?\/([\d.]+)/);
     const plats = m ? { lat: Number(m[1]), lon: Number(m[2]) } : GARDET;
     const lista = api.flygplan || flygplan(plats);
     return json(route, namn === 'adsb.fi' ? { aircraft: lista } : { ac: lista, now: Date.now() });
   };
-  await page.route(/api\.adsb\.lol/, flygRoute('adsb.lol'));
-  await page.route(/opendata\.adsb\.fi/, flygRoute('adsb.fi'));
-  await page.route(/api\.airplanes\.live/, flygRoute('airplanes.live'));
-
-  await page.route(/api\.adsbdb\.com/, (route) => {
-    logga('rutt', route.request().url());
+  const ruttRoute = (route, url) => {
+    logga('rutt', url);
     if (api.nere.rutt) return route.fulfill({ status: 503, headers: cors(), body: 'nere' });
-    if (route.request().url().includes('SAS1423')) {
+    if (url.includes('SAS1423')) {
       return json(route, { response: { flightroute: {
         callsign: 'SAS1423', airline: { name: 'Scandinavian Airlines' },
         origin: { iata_code: 'ARN', icao_code: 'ESSA', municipality: 'Stockholm', name: 'Stockholm-Arlanda Airport' },
@@ -180,6 +176,22 @@ async function mocka(page, { tid = NU, flyg = null } = {}) {
       } } });
     }
     return json(route, { response: 'unknown callsign' }, 404);
+  };
+
+  // Direkt utan proxy: precis som i verkligheten saknas CORS, så webbläsaren stoppar anropet
+  await page.route(/api\.adsb\.lol|opendata\.adsb\.fi|api\.airplanes\.live|api\.adsbdb\.com/, (route) => {
+    logga('direkt', route.request().url());
+    return route.abort('failed');
+  });
+
+  // Proxyn (proxy/worker.js) vidarebefordrar till rätt källa
+  await page.route(/hallskarm-proxy\.test/, (route) => {
+    const mal = new URL(route.request().url()).searchParams.get('url') || '';
+    if (/api\.adsb\.lol/.test(mal)) return flygRoute('adsb.lol')(route, mal);
+    if (/opendata\.adsb\.fi/.test(mal)) return flygRoute('adsb.fi')(route, mal);
+    if (/api\.airplanes\.live/.test(mal)) return flygRoute('airplanes.live')(route, mal);
+    if (/api\.adsbdb\.com/.test(mal)) return ruttRoute(route, mal);
+    return route.fulfill({ status: 403, headers: cors(), body: 'Adressen är inte tillåten' });
   });
 
   await page.route(/sholiday\.faboul\.se/, (route) => {
@@ -202,9 +214,12 @@ async function installningar(page, inst) {
     JSON.stringify({ version: 1, tema: 'auto', flygRadie: 25, plats: null, hallplatser: [], ...inst }));
 }
 
+const PROXY = 'https://hallskarm-proxy.test';
+
 const STANDARD_INST = {
+  flygProxy: PROXY,
   plats: { namn: 'Gärdet', lat: GARDET.lat, lon: GARDET.lon },
   hallplatser: [{ id: GARDET.id, namn: 'Gärdet', lagen: ['METRO', 'BUS', 'TRAIN', 'TRAM', 'SHIP'] }]
 };
 
-module.exports = { mocka, installningar, STANDARD_INST, GARDET, KARLAPLAN, NU };
+module.exports = { mocka, installningar, STANDARD_INST, GARDET, KARLAPLAN, NU, PROXY };

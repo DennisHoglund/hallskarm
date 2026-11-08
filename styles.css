@@ -344,7 +344,7 @@ small, .etikett {
 #form-inst fieldset { border: 0; border-top: 1px solid var(--linje); margin: 0; padding: 1rem 0 0; display: flex; flex-direction: column; gap: .6rem; }
 #form-inst legend { font-size: 1.15rem; font-weight: 700; padding: 0; float: left; width: 100%; }
 #form-inst label { font-size: 1rem; font-weight: 600; }
-#form-inst input[type="search"], #form-inst select {
+#form-inst input[type="search"], #form-inst input[type="url"], #form-inst select {
   min-height: 48px; padding: 0 .9rem; font: inherit; font-size: 1.1rem;
   border: 2px solid var(--ink); border-radius: 0; background: var(--bg); color: var(--ink); width: 100%;
   -webkit-appearance: none; appearance: none;
@@ -386,6 +386,14 @@ small, .etikett {
   .topp-hoger { gap: 1.4rem; }
   .klocka { font-size: 6.6rem; }
   .minikarta { width: 45%; }
+}
+/* Låga skärmar (t.ex. iPhone liggande): låt sidan skrolla i stället för att klippa */
+@media (max-height: 600px) {
+  body { overflow: auto; }
+  .skarm { height: auto; min-height: 100dvh; grid-template-rows: auto auto auto; }
+  .panel { overflow: visible; }
+  .sl-lista { overflow: visible; }
+  .botten { height: 13.4rem; }
 }
 @media (max-width: 700px) {
   .topp { flex-wrap: wrap; }

@@ -1,6 +1,6 @@
 // Startar Hallskärmen: timers, tema efter solen, statusrader, skärmlås och service worker.
 (function () {
-  const VERSION = 'v1';
+  const VERSION = 'v2';
   const $ = (id) => document.getElementById(id);
   const C = window.HALL_CONFIG;
   const startad = Date.now();
@@ -87,7 +87,11 @@
     } catch (e) {
       console.warn('Flyg:', e);
       if (senast.flyg && Date.now() - senast.flyg > C.gammal.flyg * 1000) $('flyg').classList.add('gammal');
-      if (!senast.flyg) $('flyg-info').innerHTML = '<div class="flyg-etikett">Flygdata saknas</div><div class="ingen-flyg">Kunde inte nå flygnätverken. Försöker igen strax.</div>';
+      if (!senast.flyg) {
+        $('flyg-info').innerHTML = e.utanProxy
+          ? '<div class="flyg-etikett">Flygdata behöver en proxy</div><div class="ingen-flyg">Flygnätverken går inte att nå direkt från Safari. Lägg in proxyns adress under Inställningar → Flyg.</div>'
+          : '<div class="flyg-etikett">Flygdata saknas</div><div class="ingen-flyg">Kunde inte nå flygnätverken. Försöker igen strax.</div>';
+      }
     }
   }
 
@@ -120,6 +124,7 @@
     if (JSON.stringify(fore.hallplatser) !== JSON.stringify(ny.hallplatser)) sl();
     if (fore.tema !== ny.tema) sattTema();
     if (fore.flygRadie !== ny.flygRadie && !platsAndrad) { window.HallFlyg.sattRadie(ny.flygRadie); flyg(); }
+    if (fore.flygProxy !== ny.flygProxy && !platsAndrad) flyg();
   });
 
   // ---------- Start ----------

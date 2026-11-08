@@ -8,7 +8,8 @@ av andra (t.ex. Dennis son på Gärdet) med egna hållplatser och egen plats –
 ## 2. Stack
 - Ren HTML/CSS/JS utan byggsteg. Moduler som IIFE på `window`.
 - Leaflet 1.9.4 (cdnjs) för kartorna, typsnitten Archivo och JetBrains Mono (Google Fonts).
-- GitHub Pages via Actions. Ingen backend, inga nycklar, ingen Supabase.
+- GitHub Pages via Actions. Inga nycklar, ingen Supabase.
+- En liten Cloudflare Worker (`proxy/worker.js`) som proxy för flygdata, eftersom flygnätverken saknar CORS.
 
 ## 3. Design
 - Två utseenden med samma layout, valda med `data-theme` på `<html>`:
@@ -26,21 +27,21 @@ av andra (t.ex. Dennis son på Gärdet) med egna hållplatser och egen plats –
 | Namnsdag, helgdag | Svenska Dagar (`sholiday.faboul.se`) | varje timme, cache per dag |
 | Väder nu + 5 dagar, sol, dagslängd | Open-Meteo | var 15:e minut |
 | SL-avgångar | SL Transport-API (Trafiklab, ingen nyckel) | var 30:e sekund, nedräkning var 15:e |
-| Flyg | adsb.lol → adsb.fi → airplanes.live (reserv i tur och ordning) | var 10:e sekund |
-| Rutt för valt plan | adsbdb | en gång per anropssignal |
+| Flyg | adsb.lol → adsb.fi → airplanes.live via proxyn (reserv i tur och ordning) | var 10:e sekund |
+| Rutt för valt plan | adsbdb via proxyn | en gång per anropssignal |
 | Dagsljuskurva | Beräknas ur latitud | vid väderuppdatering |
 
 ### 4.1 Inställningar (kugghjulet)
 - **Hemmets läge:** sök ort/område (Open-Meteo geokodning), min position (avrundad till ~100 m) eller första valda hållplatsen.
 - **Hållplatser:** upp till tre. Sök i SL:s hållplatslista (hämtas en gång, sparas en vecka). Sökningen tål att å/ä/ö saknas.
   Per hållplats väljs trafikslag: Tunnelbana, Buss, Pendeltåg, Spårväg, Båt.
-- **Tema:** Auto / Dag / Natt. **Flyg:** radie 10/25/50 km.
+- **Tema:** Auto / Dag / Natt. **Flyg:** radie 10/25/50 km och adress till proxyn (om den inte står i `config.js`).
 - Allt sparas i `localStorage` (`hall-installningar`) på enheten. Första start öppnar inställningarna.
 
 ### 4.2 Flyg
 - Plan på marken och utanför radien filtreras bort.
 - Valt plan: det som passerar närmast (< 2,5 km) inom 5 min räknat på kurs och fart, annars det närmaste.
-- Nedre raden: minikarta (Leaflet, Carto utan etiketter) + valt plan med rutt, typ, höjd, avstånd.
+- Nedre raden: minikarta (Leaflet, Esris gråa baskartor utan etiketter) + valt plan med rutt, typ, höjd, avstånd.
 - Tryck på minikartan → helskärm med **Karta** (etiketter, spår) eller **Radar** (ringar, svep, fartvektor 1 min, historikprickar).
   Räckvidd 5/10/25/50 km. Vald vy sparas. Stängs efter 3 min utan tryck.
 - I nattläge färgas planen efter höjd: < 2 km orange, 2–7 km ljus, > 7 km blå.
@@ -73,8 +74,11 @@ Data-API:er cachas inte. Höj `CACHE` vid ändring; sidan laddas om när ny vers
   (en HTTPS-sida får inte läsa `http://esp32.local`).
 - Elpris och CO₂ togs bort ur designen; flyg och dagsljus tog platsen.
 - Plats och hållplatser i webbläsaren, inte i koden, eftersom repot är publikt.
+- adsb.lol och airplanes.live skickar inga CORS-huvuden, så Safari stoppar direkta anrop. Lösning: Cloudflare Worker
+  (gratis) som bara släpper igenom flygkällorna och adsbdb. Utan proxy visar appen vad som behövs i stället för ett fel.
+- Carto kräver numera API-nyckel för sina baskartor – bytt till Esris Canvas-kartor.
 
 ## 9. Kvar att göra
-- Verifiera i riktig Safari att SL, flygnätverken och adsbdb tillåter anrop från webbläsaren (CORS). Om SL inte gör det: proxy.
+- SL och Open-Meteo fungerar direkt från Safari (verifierat på iPhone 2026-11-08).
 - Störningsinformation från SL (`deviations`).
 - Egen sensor (utetemperatur/HAN) via ESP32 → Supabase.
