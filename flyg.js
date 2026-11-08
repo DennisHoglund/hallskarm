@@ -32,6 +32,8 @@ window.HallFlyg = (function () {
   let plan = [], vald = null, senastSedd = null, senastOk = 0, kalla = 0;
   const spar = new Map();
   const rutter = new Map();
+  const larmade = new Map(); // hex → tid för senaste avisering
+  const larmLyssnare = [];
 
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -148,6 +150,18 @@ window.HallFlyg = (function () {
     else vald = plan[0] ? { ...plan[0], ovanforOm: null } : null;
     if (vald) senastSedd = { anrop: vald.anrop, tid: nu };
     if (vald && vald.harAnrop) hamtaRutt(vald.anrop);
+    kollaLarm(nu);
+  }
+
+  // Avisera en gång per plan när det kommer inom vald gräns (ny avisering tidigast efter 30 min)
+  function kollaLarm(nu) {
+    const inst = window.HallInst.hamta();
+    if (inst.avisering === 'av') return;
+    for (const [h, t] of larmade) if (nu - t > 30 * 60 * 1000) larmade.delete(h);
+    const nara = plan.filter((a) => a.km <= (inst.aviseringKm || 2) && !larmade.has(a.hex));
+    if (!nara.length) return;
+    nara.forEach((a) => larmade.set(a.hex, nu));
+    larmLyssnare.forEach((fn) => { try { fn(nara[0]); } catch (e) { console.error(e); } });
   }
 
   async function hamtaRutt(anrop) {
@@ -415,6 +429,7 @@ window.HallFlyg = (function () {
   return {
     koppla, starta, hamta, rita, sattTema, sattRadie, oppnaVy, stangVy,
     senastOk: () => senastOk,
+    onLarm: (fn) => larmLyssnare.push(fn),
     _test: { passage: (a) => passage(a), tolka }
   };
 })();

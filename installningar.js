@@ -15,7 +15,7 @@ window.HallInst = (function () {
     { kod: 'SHIP', namn: 'Båt' }
   ];
 
-  const STANDARD = { version: 1, plats: null, hallplatser: [], tema: 'auto', flygRadie: 25, flygProxy: '' };
+  const STANDARD = { version: 1, plats: null, hallplatser: [], tema: 'auto', flygRadie: 25, flygProxy: '', avisering: 'blinka', aviseringKm: 2, tystNatt: true };
   const lyssnare = [];
   let inst = las();
 
@@ -118,6 +118,9 @@ window.HallInst = (function () {
     document.querySelectorAll('#form-inst input[name="tema"]').forEach((r) => { r.checked = r.value === inst.tema; });
     $('flyg-radie').value = String(inst.flygRadie);
     $('flyg-proxy').value = inst.flygProxy || '';
+    document.querySelectorAll('#form-inst input[name="avisering"]').forEach((r) => { r.checked = r.value === inst.avisering; });
+    $('avisering-km').value = String(inst.aviseringKm);
+    $('tyst-natt').checked = !!inst.tystNatt;
   }
 
   function debounce(fn, ms) {
@@ -220,6 +223,12 @@ window.HallInst = (function () {
       if (e.target.name === 'tema') andra((s) => { s.tema = e.target.value; });
       if (e.target.id === 'flyg-radie') andra((s) => { s.flygRadie = Number(e.target.value); });
       if (e.target.id === 'flyg-proxy') andra((s) => { s.flygProxy = e.target.value.trim(); });
+      if (e.target.name === 'avisering') {
+        andra((s) => { s.avisering = e.target.value; });
+        if (e.target.value === 'pip' && window.HallLjud) window.HallLjud.pip(); // provljud – låser också upp ljudet i Safari
+      }
+      if (e.target.id === 'avisering-km') andra((s) => { s.aviseringKm = Number(e.target.value); });
+      if (e.target.id === 'tyst-natt') andra((s) => { s.tystNatt = e.target.checked; });
     });
     $('form-inst').addEventListener('submit', (e) => { e.preventDefault(); stang(); });
   }

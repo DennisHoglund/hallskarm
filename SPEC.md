@@ -45,6 +45,9 @@ av andra (t.ex. Dennis son på Gärdet) med egna hållplatser och egen plats –
   Minikartan zoomar så att det valda planet alltid syns (minst 5 km, högst vald radie).
 - Tryck på minikartan → helskärm med **Karta** (etiketter, spår) eller **Radar** (ringar, svep, fartvektor 1 min, historikprickar).
   Räckvidd 5/10/25/50 km. Vald vy sparas. Stängs efter 3 min utan tryck.
+- **Avisering** när ett plan kommer inom 1/2/3/5 km (standard 2 km): Av, Blinka eller Blinka och pip. Luftrummet-rutan
+  blinkar i accentfärgen ca 7 s. Pipet är två korta toner via Web Audio (ingen fil). Samma plan aviseras högst var 30:e minut.
+  "Inget pip mellan 22 och 07" är på som standard. Safari spelar bara ljud efter ett tryck på skärmen (efter varje omstart).
 - I nattläge färgas planen efter höjd: < 2 km orange, 2–7 km ljus, > 7 km blå.
 
 ### 4.3 Robusthet
@@ -56,7 +59,7 @@ av andra (t.ex. Dennis son på Gärdet) med egna hållplatser och egen plats –
 ## 5. Lagring
 | Nyckel | Innehåll |
 |---|---|
-| `hall-installningar` | plats, hållplatser, tema, flygradie |
+| `hall-installningar` | plats, hållplatser, tema, flygradie, proxy, avisering |
 | `hall-sl-sites` | SL:s hållplatslista (id, namn, lat, lon), max en vecka |
 | `hall-dagar` | dagens namnsdag |
 | `hall-flygvy` | karta eller radar |

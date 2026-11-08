@@ -76,6 +76,30 @@ test.describe('Flyg', () => {
     await bild(page, 'Plan 18 km bort syns på minikartan');
   });
 
+  test('nedre raden blinkar när ett plan kommer nära', { annotation: { type: 'testfall', description: 'TC-FLY-09' } }, async ({ page, api }) => {
+    await installningar(page, { ...STANDARD_INST, avisering: 'pip', aviseringKm: 5, tystNatt: false });
+    await page.goto('./');
+    await expect(page.locator('#flyg')).toHaveClass(/larm/);
+    // Pipet räknas även om webbläsaren inte får spela ljud utan tryck
+    await expect(page.locator('html')).toHaveAttribute('data-pip', '1');
+    await bild(page, 'Avisering när plan passerar');
+  });
+
+  test('ingen avisering när den är avstängd eller planet är för långt bort', { annotation: { type: 'testfall', description: 'TC-FLY-10' } }, async ({ page, api }) => {
+    await installningar(page, { ...STANDARD_INST, avisering: 'blinka', aviseringKm: 1 });
+    await page.goto('./');
+    await expect(page.locator('.flyg-anrop')).toHaveText('SAS1423');
+    await page.waitForTimeout(500);
+    await expect(page.locator('#flyg')).not.toHaveClass(/larm/);
+    // Slå på 5 km i inställningarna → nästa uppdatering aviserar
+    await page.locator('#knapp-inst').click();
+    await page.locator('#avisering-km').selectOption('5');
+    await page.locator('input[name="avisering"][value="av"]').check();
+    await page.locator('#inst-klar').click();
+    await page.waitForTimeout(500);
+    await expect(page.locator('#flyg')).not.toHaveClass(/larm/);
+  });
+
   test('utan proxy förklaras vad som behövs', { annotation: { type: 'testfall', description: 'TC-FLY-07' } }, async ({ page, api }) => {
     await installningar(page, { ...STANDARD_INST, flygProxy: '' });
     // Ta bort proxyn som står i config.js så att appen saknar proxy helt

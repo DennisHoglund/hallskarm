@@ -170,6 +170,21 @@
         <option value="25">25 km</option>
         <option value="50">50 km</option>
       </select>
+      <span class="etikett-text">När ett plan passerar nära</span>
+      <div class="segment" role="radiogroup" aria-label="Avisering när ett plan passerar">
+        <label><input type="radio" name="avisering" value="av"> Av</label>
+        <label><input type="radio" name="avisering" value="blinka"> Blinka</label>
+        <label><input type="radio" name="avisering" value="pip"> Blinka och pip</label>
+      </div>
+      <label for="avisering-km">Inom</label>
+      <select id="avisering-km">
+        <option value="1">1 km</option>
+        <option value="2">2 km</option>
+        <option value="3">3 km</option>
+        <option value="5">5 km</option>
+      </select>
+      <label class="kryss"><input id="tyst-natt" type="checkbox"> Inget pip mellan 22 och 07</label>
+      <p class="hjalp">Safari spelar bara ljud efter att någon har tryckt på skärmen. Efter omstart räcker ett tryck var som helst.</p>
       <label for="flyg-proxy">Proxy för flygdata</label>
       <input id="flyg-proxy" type="url" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="https://hallskarm-proxy.….workers.dev">
       <p class="hjalp">Behövs eftersom flygnätverken inte kan nås direkt från Safari. Se README i repot.</p>
@@ -186,6 +201,7 @@
 <script src="tid.js"></script>
 <script src="vader.js"></script>
 <script src="sl.js"></script>
+<script src="ljud.js"></script>
 <script src="flyg.js"></script>
 <script src="app.js"></script>
 </body>

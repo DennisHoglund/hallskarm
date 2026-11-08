@@ -5,8 +5,8 @@ Automatiserade testfall körs av Playwright vid varje commit och är kopplade vi
 
 | | |
 |---|---|
-| **Testfall** | 30 |
-| **Automatiserade** | 26 (körs på iPad/WebKit och Chromium i iPad Airs skärmstorlek) |
+| **Testfall** | 32 |
+| **Automatiserade** | 28 (körs på iPad/WebKit och Chromium i iPad Airs skärmstorlek) |
 | **Manuella** | 4 (kräver riktig iPad och riktig data) |
 | **Senaste testrapport** | [dennishoglund.github.io/hallskarm/rapport/](https://dennishoglund.github.io/hallskarm/rapport/) |
 | **Krav** | [SPEC.md](../SPEC.md) |
@@ -51,6 +51,8 @@ Automatiserade testfall körs av Playwright vid varje commit och är kopplade vi
 | [TC-FLY-06](testfall/TC-FLY-06.md) | [Alla flygkällor nere ger ett tydligt besked](testfall/TC-FLY-06.md) | Låg | 🤖 |
 | [TC-FLY-07](testfall/TC-FLY-07.md) | [Utan proxy förklaras vad som behövs](testfall/TC-FLY-07.md) | Hög | 🤖 |
 | [TC-FLY-08](testfall/TC-FLY-08.md) | [Valt plan syns alltid på minikartan](testfall/TC-FLY-08.md) | Hög | 🤖 |
+| [TC-FLY-09](testfall/TC-FLY-09.md) | [Nedre raden blinkar när ett plan kommer nära](testfall/TC-FLY-09.md) | Hög | 🤖 |
+| [TC-FLY-10](testfall/TC-FLY-10.md) | [Ingen avisering när den är avstängd eller planet är för långt bort](testfall/TC-FLY-10.md) | Medel | 🤖 |
 
 ## Tema
 

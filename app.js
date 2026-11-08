@@ -1,6 +1,6 @@
 // Startar Hallskärmen: timers, tema efter solen, statusrader, skärmlås och service worker.
 (function () {
-  const VERSION = 'v4';
+  const VERSION = 'v5';
   const $ = (id) => document.getElementById(id);
   const C = window.HALL_CONFIG;
   const startad = Date.now();
@@ -114,6 +114,20 @@
     window.HallFlyg.starta(window.HallInst.plats(), inst.flygRadie || C.flyg.radieKm, valtTema());
     flyg();
   }
+
+  // ---------- Avisering när ett plan passerar nära ----------
+  let larmTimer = null;
+  window.HallFlyg.onLarm(() => {
+    const el = $('flyg');
+    el.classList.remove('larm');
+    void el.offsetWidth; // starta om animationen
+    el.classList.add('larm');
+    clearTimeout(larmTimer);
+    larmTimer = setTimeout(() => el.classList.remove('larm'), 8000);
+    const tim = new Date().getHours();
+    const tyst = inst.tystNatt && (tim >= 22 || tim < 7);
+    if (inst.avisering === 'pip' && !tyst && synlig()) window.HallLjud.pip();
+  });
 
   // ---------- Inställningar ändrade ----------
   window.HallInst.on((ny) => {

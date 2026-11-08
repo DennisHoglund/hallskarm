@@ -228,6 +228,21 @@ small, .etikett {
 [data-theme="natt"] .flyg-anrop { font-size: 2.3rem; font-weight: 700; }
 .flyg-rutt { font-size: 1.35rem; font-weight: 700; font-stretch: 85%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .flyg-fakta { font-size: 1rem; color: var(--ink2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* Avisering: nedre raden blinkar i accentfärgen några gånger */
+.flyg.larm { animation: larm 1.2s ease-in-out 6; }
+.flyg.larm .flyg-etikett { animation: larm-text 1.2s ease-in-out 6; }
+@keyframes larm {
+  0%, 100% { box-shadow: inset 0 0 0 0 transparent; background: transparent; }
+  50% { box-shadow: inset 0 0 0 3px var(--accent); background: color-mix(in srgb, var(--accent) 14%, transparent); }
+}
+@keyframes larm-text { 50% { transform: scale(1.08); transform-origin: left center; } }
+@media (prefers-reduced-motion: reduce) {
+  .flyg.larm, .flyg.larm .flyg-etikett { animation: none; }
+  .flyg.larm { box-shadow: inset 0 0 0 3px var(--accent); }
+}
+.etikett-text { font-size: 1rem; font-weight: 600; }
+.kryss { display: inline-flex; align-items: center; gap: .55rem; min-height: 44px; }
+.kryss input { width: 1.2rem; height: 1.2rem; accent-color: var(--accent); margin: 0; }
 .tackare { position: absolute; inset: 0; width: 100%; border: 0; background: transparent; cursor: pointer; }
 
 .dagsljus { padding-left: 1.6rem; border-left: var(--kant-tunn); display: flex; flex-direction: column; gap: .4rem; min-width: 0; }
