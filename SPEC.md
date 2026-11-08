@@ -42,6 +42,7 @@ av andra (t.ex. Dennis son på Gärdet) med egna hållplatser och egen plats –
 - Plan på marken och utanför radien filtreras bort.
 - Valt plan: det som passerar närmast (< 2,5 km) inom 5 min räknat på kurs och fart, annars det närmaste.
 - Nedre raden: minikarta (Leaflet, Esris gråa baskartor utan etiketter) + valt plan med rutt, typ, höjd, avstånd.
+  Minikartan zoomar så att det valda planet alltid syns (minst 5 km, högst vald radie).
 - Tryck på minikartan → helskärm med **Karta** (etiketter, spår) eller **Radar** (ringar, svep, fartvektor 1 min, historikprickar).
   Räckvidd 5/10/25/50 km. Vald vy sparas. Stängs efter 3 min utan tryck.
 - I nattläge färgas planen efter höjd: < 2 km orange, 2–7 km ljus, > 7 km blå.

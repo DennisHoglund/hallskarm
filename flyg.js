@@ -181,7 +181,14 @@ window.HallFlyg = (function () {
   function farg(a) { return a.hojd == null ? '#EDE6D6' : a.hojd < 2000 ? '#FF8A3D' : a.hojd < 7000 ? '#EDE6D6' : '#79B4FF'; }
 
   // ---------- Kartor (Leaflet) ----------
-  let mini = null, stor = null;
+  let mini = null, stor = null, miniKm = 0;
+
+  // Minikartan zoomar så att det valda planet alltid syns, men inte närmare än 5 km
+  function zoomaMini() {
+    if (!mini) return;
+    const km = vald ? Math.max(5, Math.min(radieKm, vald.km * 1.25)) : Math.max(5, Math.min(radieKm, 15) * 0.6);
+    if (!miniKm || Math.abs(km - miniKm) / miniKm > 0.15) { miniKm = km; centrera(mini, km); }
+  }
   const lager = { mini: null, stor: null };
 
   function kakel(karta, vilken) {
@@ -327,6 +334,7 @@ window.HallFlyg = (function () {
   function rita() {
     if (!plats) return;
     ritaInfo();
+    zoomaMini();
     ritaKarta(mini, false);
     if (!$('flygvy').hidden) {
       ritaPanel();
@@ -380,7 +388,8 @@ window.HallFlyg = (function () {
   function sattRadie(km) {
     if (km === radieKm) return;
     radieKm = km;
-    if (mini) centrera(mini, Math.min(radieKm, 15) * 0.6);
+    miniKm = 0;
+    zoomaMini();
     if (stor && !$('flygvy').hidden) centrera(stor, radieKm * 0.75);
     document.querySelectorAll('.radie button').forEach((b) => b.setAttribute('aria-pressed', String(Number(b.dataset.radie) === radieKm)));
   }
@@ -388,9 +397,10 @@ window.HallFlyg = (function () {
   function starta(p, km, t) {
     plats = p; radieKm = km; tema = t;
     if (!mini && window.L) { mini = skapaKarta($('minikarta'), false); kakel(mini, 'mini'); }
-    if (mini) { mini.invalidateSize(); centrera(mini, Math.min(radieKm, 15) * 0.6); }
+    if (mini) { mini.invalidateSize(); miniKm = 0; }
     if (stor) centrera(stor, radieKm * 0.75);
     plan = []; spar.clear(); vald = null;
+    zoomaMini();
     rita();
   }
 

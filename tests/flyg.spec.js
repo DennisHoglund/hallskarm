@@ -60,6 +60,22 @@ test.describe('Flyg', () => {
     await expect(page.locator('.ingen-flyg')).toHaveText('Inga plan inom 25 km just nu.');
   });
 
+  test('valt plan syns alltid på minikartan', { annotation: { type: 'testfall', description: 'TC-FLY-08' } }, async ({ page, api }) => {
+    const { GARDET } = require('./mock');
+    api.flygplan = [{ hex: '4cafe1', flight: 'RYR5JQ  ', r: 'EI-IFE', t: 'B38M', alt_baro: 38000, gs: 470, track: 200, baro_rate: 0,
+      lat: GARDET.lat + 18 / 110.57, lon: GARDET.lon }];
+    await installningar(page, STANDARD_INST);
+    await page.goto('./');
+    await expect(page.locator('.flyg-anrop')).toHaveText('RYR5JQ');
+    const karta = await page.locator('#minikarta').boundingBox();
+    const ikon = page.locator('#minikarta .plan-ikon');
+    await expect.poll(async () => {
+      const b = await ikon.boundingBox();
+      return b && b.y >= karta.y && b.y + b.height <= karta.y + karta.height && b.x >= karta.x && b.x + b.width <= karta.x + karta.width;
+    }).toBe(true);
+    await bild(page, 'Plan 18 km bort syns på minikartan');
+  });
+
   test('utan proxy förklaras vad som behövs', { annotation: { type: 'testfall', description: 'TC-FLY-07' } }, async ({ page, api }) => {
     await installningar(page, { ...STANDARD_INST, flygProxy: '' });
     // Ta bort proxyn som står i config.js så att appen saknar proxy helt
