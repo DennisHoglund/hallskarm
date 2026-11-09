@@ -52,6 +52,7 @@ window.HallTid = (function () {
     }
     const namn = dag && Array.isArray(dag.namnsdag) ? dag.namnsdag : [];
     $('namnsdag').textContent = namn.length ? namn.join(', ') : '–';
+    $('namnsdag').classList.toggle('manga', namn.join(', ').length > 10);
     const helg = dag && (dag.helgdag || dag.flaggdag);
     $('helgdag').textContent = helg ? String(helg).toLowerCase() : '';
   }
@@ -82,7 +83,7 @@ window.HallTid = (function () {
   // sol = { upp: Date, ned: Date, langdSek, igarSek } – från vädret. Saknas data räknas det ut.
   function ritaSol(sol, lat, nu) {
     const n = nu || new Date();
-    if (sol && sol.upp && sol.ned) $('sol').textContent = klockslag(sol.upp) + ' – ' + klockslag(sol.ned);
+    if (sol && sol.upp && sol.ned) $('sol').textContent = klockslag(sol.upp) + '\u2009–\u2009' + klockslag(sol.ned);
 
     const idag = dagIAret(n);
     const langd = sol && sol.langdSek ? sol.langdSek / 3600 : dagslangd(idag, lat);

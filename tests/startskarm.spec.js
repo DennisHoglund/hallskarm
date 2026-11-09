@@ -7,7 +7,7 @@ test.describe('Startskärmen', () => {
     await expect(page.locator('#datum')).toHaveText('8 november 2026');
     await expect(page.locator('#vecka')).toHaveText('vecka 45');
     await expect(page.locator('#namnsdag')).toHaveText('Eskil');
-    await expect(page.locator('#sol')).toHaveText('07:39 – 15:41');
+    await expect(page.locator('#sol')).toHaveText('07:39\u2009–\u200915:41');
     await bild(page, 'Startskärmen (dag)');
   });
 

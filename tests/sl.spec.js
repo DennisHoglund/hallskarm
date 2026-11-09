@@ -50,7 +50,11 @@ test.describe('SL-avgångar', () => {
     await page.goto('./');
     await expect(page.locator('.hp')).toHaveCount(2);
     await expect(page.locator('.hp').nth(1).locator('.hp-namn')).toHaveText('Avgångar · Karlaplan');
-    await expect(page.locator('.hp').nth(0).locator('.avg')).toHaveCount(4);
+    // Så många rader som får plats, men aldrig fler än fyra per hållplats och aldrig utanför rutan
+    const antal = await page.locator('.hp').nth(0).locator('.avg').count();
+    expect(antal).toBeGreaterThanOrEqual(2);
+    expect(antal).toBeLessThanOrEqual(4);
+    expect(await page.locator('#sl-lista').evaluate((el) => el.scrollHeight <= el.clientHeight + 1)).toBe(true);
     await expect(page.locator('.hp').nth(1).locator('.avg').first().locator('.mal b')).toHaveText('Fruängen');
     await bild(page, 'Två hållplatser');
   });

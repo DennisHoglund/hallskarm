@@ -90,6 +90,20 @@ window.HallSL = (function () {
       }
       return `<div class="hp" data-hp="${esc(r.hp.id)}"><div class="hp-huvud"><span class="hp-namn">Avgångar · ${esc(r.hp.namn)}</span></div>${rader}</div>`;
     }).join('');
+    anpassa(lista);
+  }
+
+  // Ta bort rader som inte får plats (mindre skärmar, Safari med adressfält) – aldrig halva rader
+  function anpassa(lista) {
+    let varv = 0;
+    while (lista.scrollHeight > lista.clientHeight + 1 && varv++ < 30) {
+      const grupper = Array.from(lista.querySelectorAll('.hp')).filter((g) => g.querySelectorAll('.avg').length > 1);
+      if (!grupper.length) break;
+      // Ta från den hållplats som har flest rader kvar
+      grupper.sort((a, b) => b.querySelectorAll('.avg').length - a.querySelectorAll('.avg').length);
+      const rader = grupper[0].querySelectorAll('.avg');
+      rader[rader.length - 1].remove();
+    }
   }
 
   return { hamta, rita, minuter, LAGE };
