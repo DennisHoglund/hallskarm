@@ -112,13 +112,16 @@ small, .etikett {
 .datum { display: flex; flex-direction: column; gap: .4rem; padding-bottom: .3rem; white-space: nowrap; }
 .veckodag { font-size: 2rem; font-weight: 700; font-stretch: 85%; text-transform: lowercase; }
 .datumtext { font-size: 1.45rem; color: var(--ink2); }
-.topp-hoger { display: flex; align-items: flex-end; gap: 2rem; text-align: right; padding-bottom: .3rem; min-width: 0; }
+/* Faktarutorna toppjusteras, så att namnsdag och sol står i nivå även när bara solen har en extra rad (vecka). */
+.topp-hoger { display: flex; align-items: flex-start; gap: 2rem; text-align: right; padding-bottom: .3rem; min-width: 0; }
+.topp-hoger .ikonknapp { align-self: center; }
 .fakta { display: flex; flex-direction: column; gap: .25rem; min-width: 0; }
 .fakta b { font-family: var(--siffror); font-size: 1.75rem; font-weight: 700; font-stretch: 85%; white-space: nowrap; }
 .fakta b.manga { font-size: 1.35rem; }
 [data-theme="natt"] .fakta b { font-size: 1.45rem; letter-spacing: -.02em; }
 [data-theme="natt"] .fakta b.manga { font-size: 1.15rem; }
 .fakta small { margin-bottom: .1rem; }
+.fakta .liten:empty { display: none; }
 
 .ikonknapp {
   width: 44px; height: 44px;

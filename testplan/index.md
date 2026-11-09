@@ -58,8 +58,8 @@ Automatiserade testfall körs av Playwright vid varje commit och är kopplade vi
 
 | ID | Testfall | Prio | Typ |
 |---|---|---|---|
-| [TC-LAY-01](testfall/TC-LAY-01.md) | [Liten skärm (dag): sol och namnsdag på en rad, inga överlappande avgångar](testfall/TC-LAY-01.md) | Hög | 🤖 |
-| [TC-LAY-02](testfall/TC-LAY-02.md) | [Liten skärm (natt): sol och namnsdag på en rad, inga överlappande avgångar](testfall/TC-LAY-02.md) | Hög | 🤖 |
+| [TC-LAY-01](testfall/TC-LAY-01.md) | [Liten skärm (dag): sol och namnsdag på en rad och i nivå, inga överlappande avgångar](testfall/TC-LAY-01.md) | Hög | 🤖 |
+| [TC-LAY-02](testfall/TC-LAY-02.md) | [Liten skärm (natt): sol och namnsdag på en rad och i nivå, inga överlappande avgångar](testfall/TC-LAY-02.md) | Hög | 🤖 |
 
 ## Tema
 

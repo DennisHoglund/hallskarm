@@ -1,6 +1,6 @@
 [← Testplan](../index.md)
 
-# TC-LAY-01 · Liten skärm (dag): sol och namnsdag på en rad, inga överlappande avgångar
+# TC-LAY-01 · Liten skärm (dag): sol och namnsdag på en rad och i nivå, inga överlappande avgångar
 
 | | |
 |---|---|
@@ -8,7 +8,7 @@
 | **Prioritet** | Hög |
 | **Typ** | 🤖 Automatiserad |
 | **Krav** | [SPEC.md](../../SPEC.md) |
-| **Playwright** | [`tests/layout.spec.js`](../../tests/layout.spec.js#L14) – *liten skärm (dag): sol och namnsdag på en rad och inga överlappande avgångar* |
+| **Playwright** | [`tests/layout.spec.js`](../../tests/layout.spec.js#L14) – *liten skärm (dag): sol och namnsdag på en rad och i nivå, inga överlappande avgångar* |
 
 ## Förutsättningar
 
@@ -18,7 +18,7 @@
 
 | # | Gör så här | Förväntat resultat |
 |---|---|---|
-| 1 | Titta på övre raden | Sol upp – ned, namnsdagen och datumet står på en rad var |
+| 1 | Titta på övre raden | Sol upp – ned, namnsdagen och datumet står på en rad var, och namnsdagen står i nivå med sol upp – ned |
 | 2 | Titta på avgångarna | Bara hela rader visas, statusraden "Uppdaterad" ligger under den sista |
 
 ## Resultat

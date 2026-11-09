@@ -16,7 +16,7 @@ const FALL = [
 ];
 
 for (const { namn, tid, annotation } of FALL) {
-  test(`liten skärm (${namn}): sol och namnsdag på en rad och inga överlappande avgångar`, { annotation }, async ({ page }) => {
+  test(`liten skärm (${namn}): sol och namnsdag på en rad och i nivå, inga överlappande avgångar`, { annotation }, async ({ page }) => {
     const api = await mocka(page, { tid });
     await page.route(/sholiday\.faboul\.se/, (route) => route.fulfill({
       headers: { 'access-control-allow-origin': '*' }, contentType: 'application/json',
@@ -30,6 +30,11 @@ for (const { namn, tid, annotation } of FALL) {
     await expect.poll(() => enRad(page.locator('#sol'))).toBe(true);
     await expect.poll(() => enRad(page.locator('#namnsdag'))).toBe(true);
     await expect.poll(() => enRad(page.locator('#datum'))).toBe(true);
+    // Namnsdag och sol står i nivå (rubrikerna på samma höjd), även när bara solen har en extra rad
+    const [namnRubrik, solRubrik] = await Promise.all(
+      ['#namnsdag', '#sol'].map((s) => page.locator('.fakta').filter({ has: page.locator(s) }).locator('small').boundingBox())
+    );
+    expect(Math.abs(namnRubrik.y - solRubrik.y)).toBeLessThanOrEqual(1);
     // Sista avgången slutar ovanför statusraden
     const sista = await page.locator('.avg').last().boundingBox();
     const status = await page.locator('#sl-status').boundingBox();

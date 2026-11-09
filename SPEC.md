@@ -18,7 +18,7 @@ av andra (t.ex. Dennis son på Gärdet) med egna hållplatser och egen plats –
 - Tema **Auto** byter efter dagens sol upp/ned (från vädret), annars Dag eller Natt fast.
 - Layout: övre rad (klocka, datum, namnsdag, sol, vecka, kugghjul) · mitten (väder | SL) · nedre rad (flyg | dagsljus).
 - Storlekar i `rem` som skalar med skärmen. Stående läge staplar väder ovanför SL.
-- Sol upp/ned, namnsdag och datum bryts aldrig på två rader (flera namn ger mindre text).
+- Sol upp/ned, namnsdag och datum bryts aldrig på två rader (flera namn ger mindre text). Namnsdag och sol står i nivå (toppjusterade).
   SL visar bara så många hela rader som får plats – viktigt på iPad Air 2 i Safari med adressfält (1024×690).
 - Målenhet: iPad Air 2 med iPadOS 15 (Safari 15). Ingen syntax eller CSS som kräver nyare Safari.
 - Inga emojis, inga gradienter, tryckytor ≥ 44 px.

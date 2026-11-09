@@ -1,5 +1,5 @@
 // Höj versionen vid varje ändring av appfilerna så att iPaden hämtar nya filer.
-const CACHE = 'hallskarm-v7';
+const CACHE = 'hallskarm-v8';
 
 const SHELL = [
   './',
