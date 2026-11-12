@@ -81,6 +81,7 @@
       </div>
       <ol id="prognos" class="prognos" aria-label="Prognos fem dagar"></ol>
       <p id="vader-status" class="status" role="status"></p>
+      <button id="vader-oppna" class="tackare" type="button" aria-label="Öppna vädervyn med timmar, regnradar och klädtips"></button>
     </section>
 
     <section id="sl" class="panel sl" aria-label="Avgångar">
@@ -142,6 +143,66 @@
     <button type="button" data-radie="25">25 km</button>
     <button type="button" data-radie="50">50 km</button>
   </div>
+</div>
+
+<!-- VÄDERVY I HELSKÄRM -->
+<div id="vadervy" class="vadervy" hidden>
+  <header class="vadervy-topp">
+    <div class="vadervy-titel">
+      <h2>Vädret</h2>
+      <small id="vadervy-plats"></small>
+    </div>
+    <button id="vadervy-stang" class="ikonknapp" type="button" aria-label="Stäng vädervyn">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </header>
+
+  <section class="klad" aria-label="Klädtips">
+    <small>Klädtips</small>
+    <div>
+      <div id="klad-rubrik" class="klad-rubrik"></div>
+      <div id="klad-skal" class="klad-skal"></div>
+    </div>
+    <div id="klad-taggar" class="klad-taggar"></div>
+  </section>
+
+  <section class="timmar" aria-label="Kommande 24 timmar">
+    <div class="timmar-huvud">
+      <small>Kommande 24 timmar</small>
+      <span id="timmar-sammanfattning" class="liten"></span>
+    </div>
+    <svg id="timmar-diagram" class="timmar-diagram" viewBox="0 0 1032 232" role="img" aria-label="Temperatur, nederbörd och vind timme för timme"></svg>
+  </section>
+
+  <section class="regn" aria-label="Regnradar">
+    <div class="regn-vanster">
+      <div class="regn-ruta">
+        <div id="regnkarta" class="regnkarta"></div>
+        <p id="regn-fel" class="regn-fel" hidden>Regnradarn kunde inte hämtas just nu. Försöker igen nästa gång vyn öppnas.</p>
+      </div>
+      <div class="regn-spelare">
+        <button id="regn-spela" class="ikonknapp spela" type="button" aria-label="Spela regnradarn" aria-pressed="false">
+          <svg class="ikon-spela" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M7 4l13 8-13 8z" fill="currentColor"/></svg>
+          <svg class="ikon-paus" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 4h4v16H6zM14 4h4v16h-4z" fill="currentColor"/></svg>
+        </button>
+        <div class="regn-tidslinje">
+          <div class="regn-spar"><i id="regn-markor" class="regn-markor"></i></div>
+          <div class="regn-skala"><span>−2 h</span><span>−1 h</span><span class="nu">Nu</span></div>
+        </div>
+      </div>
+      <span id="regn-tid" class="liten"></span>
+    </div>
+    <div class="regn-hoger">
+      <small>Regnradar · senaste två timmarna</small>
+      <div id="regn-rubrik" class="regn-rubrik"></div>
+      <p id="regn-text" class="regn-text"></p>
+      <div class="regn-tal">
+        <div><span class="liten">Nästa regn</span><b id="regn-nasta">–</b></div>
+        <div><span class="liten">Mest</span><b id="regn-mest">–</b></div>
+        <div><span class="liten">Intensitet</span><b id="regn-intensitet">–</b></div>
+      </div>
+    </div>
+  </section>
 </div>
 
 <!-- INSTÄLLNINGAR -->
@@ -219,6 +280,7 @@
 <script src="installningar.js"></script>
 <script src="tid.js"></script>
 <script src="vader.js"></script>
+<script src="vadervy.js"></script>
 <script src="sl.js"></script>
 <script src="ljud.js"></script>
 <script src="flyg.js"></script>

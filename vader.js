@@ -1,4 +1,5 @@
-// Väder från Open-Meteo: nuläge och fem dagar framåt. Ger också sol upp/ned och dagslängd.
+// Väder från Open-Meteo: nuläge, fem dagar framåt och 24 timmar timme för timme.
+// Ger också sol upp/ned och dagslängd. Vädervyn i helskärm ligger i vadervy.js.
 window.HallVader = (function () {
   const $ = (id) => document.getElementById(id);
 
@@ -30,6 +31,7 @@ window.HallVader = (function () {
       latitude: plats.lat, longitude: plats.lon,
       current: 'temperature_2m,apparent_temperature,weather_code,wind_speed_10m,wind_gusts_10m,wind_direction_10m,precipitation,relative_humidity_2m',
       daily: 'weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,daylight_duration',
+      hourly: 'temperature_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m',
       past_days: '1', forecast_days: '7', timezone: 'Europe/Stockholm', wind_speed_unit: 'ms'
     });
     const res = await fetch(window.HALL_CONFIG.api.vader + '?' + p.toString());
@@ -37,7 +39,29 @@ window.HallVader = (function () {
     return tolka(await res.json());
   }
 
-  function tolka(j) {
+  // De kommande 24 timmarna från och med den timme som pågår nu
+  function timmar(h, nu) {
+    const tider = (h && h.time) || [];
+    const n = nu || new Date();
+    let start = -1;
+    for (let i = 0; i < tider.length; i++) {
+      const t = lokal(tider[i]);
+      if (t && t <= n && n - t < 3600 * 1000) { start = i; break; }
+    }
+    if (start < 0) return [];
+    const ut = [];
+    for (let i = start; i < tider.length && ut.length < 24; i++) {
+      ut.push({
+        tid: lokal(tider[i]), temp: h.temperature_2m[i], kanns: h.apparent_temperature ? h.apparent_temperature[i] : null,
+        mm: h.precipitation ? h.precipitation[i] || 0 : 0, kod: h.weather_code ? h.weather_code[i] : null,
+        vind: h.wind_speed_10m ? h.wind_speed_10m[i] : null, byar: h.wind_gusts_10m ? h.wind_gusts_10m[i] : null,
+        riktning: h.wind_direction_10m ? h.wind_direction_10m[i] : null
+      });
+    }
+    return ut;
+  }
+
+  function tolka(j, nu) {
     const c = j.current || {};
     const d = j.daily || {};
     const tider = d.time || [];
@@ -54,6 +78,7 @@ window.HallVader = (function () {
         nederbord: c.precipitation, fukt: c.relative_humidity_2m
       },
       dagar,
+      timmar: timmar(j.hourly, nu),
       sol: tider.length ? {
         upp: lokal(d.sunrise[idag]), ned: lokal(d.sunset[idag]),
         langdSek: d.daylight_duration ? d.daylight_duration[idag] : null,
@@ -62,7 +87,9 @@ window.HallVader = (function () {
     };
   }
 
+  let senaste = null;
   function rita(v) {
+    senaste = v;
     const n = v.nu;
     $('vader-temp').textContent = n.temp == null ? '–' : grad(n.temp);
     $('vader-text').textContent = beskriv(n.kod);
@@ -79,7 +106,8 @@ window.HallVader = (function () {
         `<span class="lag">${grad(d.lag)}</span><span class="spann"><i style="left:${left.toFixed(1)}%;width:${w.toFixed(1)}%"></i></span>` +
         `<span class="hog">${grad(d.hog)}</span></li>`;
     }).join('');
+    if (window.HallVaderVy) window.HallVaderVy.uppdatera(v);
   }
 
-  return { hamta, tolka, rita, beskriv, vindriktning };
+  return { hamta, tolka, rita, beskriv, vindriktning, grad, tal, lokal, senast: () => senaste };
 })();

@@ -22,6 +22,7 @@
   --tunnel: #16150F;
   --pa-tunnel: #F2EFE8;
   --kart-dimma: none;
+  --regn: #2B5FA8;
   color-scheme: light;
 }
 
@@ -43,6 +44,7 @@
   --tunnel: #FFB000;
   --pa-tunnel: #0E0F0C;
   --kart-dimma: brightness(0.85);
+  --regn: #6FA3E8;
   color-scheme: dark;
 }
 
@@ -141,7 +143,7 @@ small, .etikett {
   min-height: 0;
 }
 .panel { min-height: 0; overflow: hidden; display: flex; flex-direction: column; }
-.vader { padding: 1.4rem 2.4rem 1.2rem 0; border-right: var(--kant-tunn); gap: 1.1rem; }
+.vader { position: relative; padding: 1.4rem 2.4rem 1.2rem 0; border-right: var(--kant-tunn); gap: 1.1rem; }
 .sl { padding: 1.4rem 0 1.2rem 2.4rem; gap: .2rem; }
 
 .nu { display: flex; align-items: flex-start; gap: 1.4rem; }
@@ -266,6 +268,8 @@ small, .etikett {
 .leaflet-tile-pane { filter: var(--kart-dimma); }
 .minikarta .leaflet-control-attribution { font-size: 8px; padding: 0 3px; background: transparent; color: var(--ink3); }
 .minikarta .leaflet-control-attribution a { color: var(--ink3); }
+.regnkarta .leaflet-control-attribution { font-size: 10px; padding: 0 4px; background: color-mix(in srgb, var(--bg) 70%, transparent); color: var(--ink3); }
+.regnkarta .leaflet-control-attribution a { color: var(--ink3); }
 .plan-ikon { background: none; border: 0; }
 .plan-ikon svg { display: block; overflow: visible; }
 .plan-ikon path { fill: var(--ink); }
@@ -321,6 +325,73 @@ small, .etikett {
 .radie button { min-width: 64px; min-height: 44px; border: 0; background: transparent; font-family: 'JetBrains Mono', monospace; cursor: pointer; }
 .radie button[aria-pressed="true"] { background: var(--accent); color: var(--pa-accent); font-weight: 700; }
 .ingen-flyg { font-size: 1.1rem; color: var(--ink2); }
+
+/* ---------- Vädervy i helskärm ---------- */
+.vadervy {
+  position: fixed; inset: 0; z-index: 1000; background: var(--bg);
+  display: flex; flex-direction: column; gap: 1.1rem;
+  padding: max(1.7rem, env(safe-area-inset-top)) max(2.6rem, env(safe-area-inset-right)) max(1.8rem, env(safe-area-inset-bottom)) max(2.6rem, env(safe-area-inset-left));
+}
+.vadervy-topp { display: flex; justify-content: space-between; align-items: center; gap: 1.5rem; }
+.vadervy-titel { display: flex; align-items: baseline; gap: 1.2rem; min-width: 0; }
+.vadervy-titel h2 { margin: 0; font-size: 2rem; font-weight: 800; font-stretch: 80%; }
+.vadervy-titel small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.klad {
+  display: grid; grid-template-columns: 8rem minmax(0, 1fr) auto; align-items: center; gap: 1.3rem;
+  border-top: var(--kant-tjock); border-bottom: var(--kant-tunn); padding: .9rem 0;
+}
+.klad-rubrik { font-size: 2.2rem; line-height: 1.05; font-weight: 800; font-stretch: 78%; }
+.klad-skal { font-size: 1.05rem; color: var(--ink2); margin-top: .25rem; }
+.klad-taggar { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .5rem; max-width: 22rem; }
+.tagg { font-size: .95rem; font-weight: 700; padding: .5rem .8rem; border: var(--kant-tunn); white-space: nowrap; }
+.tagg.accent { background: var(--accent); color: var(--pa-accent); border-color: var(--accent); }
+
+.timmar { display: flex; flex-direction: column; gap: .3rem; flex: none; }
+.timmar-huvud { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
+.timmar-diagram { display: block; width: 100%; height: auto; max-height: 15rem; overflow: visible; }
+.timmar-diagram text { font-family: 'JetBrains Mono', ui-monospace, monospace; text-anchor: middle; fill: var(--ink3); }
+.timmar-diagram .bas { stroke: var(--linje); }
+.timmar-diagram .regnstapel { fill: var(--regn); fill-opacity: .75; }
+.timmar-diagram .templinje { fill: none; stroke: var(--ink); stroke-width: 2.5; stroke-linejoin: round; }
+.timmar-diagram .punkt { fill: var(--ink); }
+.timmar-diagram .nu-prick { fill: var(--accent); }
+.timmar-diagram .tempetikett { font-size: 14px; font-weight: 700; fill: var(--ink); }
+.timmar-diagram .timme { font-size: 13px; }
+.timmar-diagram .timme.nu { fill: var(--ink); font-weight: 700; }
+.timmar-diagram .vindpil { fill: var(--ink2); }
+.timmar-diagram .vindtal { font-size: 12px; }
+.timmar-diagram .enhet { font-family: 'Archivo', sans-serif; font-size: 12px; text-anchor: end; fill: var(--regn); }
+.timmar-diagram .tom { text-anchor: start; font-size: 16px; }
+
+.regn {
+  flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 1.8rem;
+  border-top: var(--kant-tunn); padding-top: .9rem;
+}
+.regn-vanster { display: flex; flex-direction: column; gap: .6rem; min-height: 0; }
+.regn-ruta { position: relative; flex: 1; min-height: 8rem; background: var(--yta); overflow: hidden; }
+.regnkarta { position: absolute; inset: 0; background: var(--yta); }
+.regnkarta .leaflet-tile-pane { filter: var(--kart-dimma); }
+.regnkarta .leaflet-tile { transition: opacity .35s ease; }
+.regn-fel {
+  position: absolute; left: 1rem; right: 1rem; bottom: 1rem; z-index: 500; margin: 0;
+  background: var(--bg); border: var(--kant-tunn); padding: .7rem .9rem; font-size: 1rem;
+}
+.regn-spelare { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: .8rem; align-items: center; }
+.spela { background: var(--ink); color: var(--bg); }
+.spela .ikon-paus, .spela[aria-pressed="true"] .ikon-spela { display: none; }
+.spela[aria-pressed="true"] .ikon-paus { display: block; }
+.regn-tidslinje { display: flex; flex-direction: column; gap: .4rem; }
+.regn-spar { position: relative; height: 6px; background: var(--spar); }
+.regn-markor { position: absolute; top: -5px; width: 4px; height: 16px; margin-left: -2px; background: var(--accent); left: 100%; transition: left .3s ease; }
+.regn-skala { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .8rem; color: var(--ink3); }
+.regn-skala .nu { color: var(--ink); font-weight: 700; }
+.regn-hoger { display: flex; flex-direction: column; gap: .7rem; min-width: 0; }
+.regn-rubrik { font-size: 1.85rem; line-height: 1.05; font-weight: 800; font-stretch: 80%; }
+.regn-text { margin: 0; font-size: 1.05rem; line-height: 1.4; color: var(--ink2); }
+.regn-tal { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .5rem; margin-top: auto; border-top: 1px solid var(--linje); padding-top: .7rem; }
+.regn-tal span { display: block; font-size: .8rem; }
+.regn-tal b { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 1.1rem; white-space: nowrap; }
 
 /* Radar */
 .radar { position: absolute; inset: 0; width: 100%; height: 100%; background: var(--bg); }
@@ -407,6 +478,9 @@ small, .etikett {
   .topp-hoger { gap: 1.4rem; }
   .klocka { font-size: 6.6rem; }
   .minikarta { width: 45%; }
+  .regn { grid-template-columns: 1fr; }
+  .klad { grid-template-columns: minmax(0, 1fr); }
+  .klad-taggar { justify-content: flex-start; max-width: none; }
 }
 /* Låga skärmar (t.ex. iPhone liggande): låt sidan skrolla i stället för att klippa */
 @media (max-height: 600px) {
@@ -415,6 +489,8 @@ small, .etikett {
   .panel { overflow: visible; }
   .sl-lista { overflow: visible; }
   .botten { height: 13.4rem; }
+  .vadervy { overflow: auto; }
+  .regn { min-height: 18rem; }
 }
 @media (max-width: 700px) {
   .topp { flex-wrap: wrap; }

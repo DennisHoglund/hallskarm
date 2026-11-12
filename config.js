@@ -23,6 +23,8 @@ window.HALL_CONFIG = {
     slAvgangar: 'https://transport.integration.sl.se/v1/sites/{id}/departures?forecast=60',
     dagar: 'https://sholiday.faboul.se/dagar/v2.1/',
     rutt: 'https://api.adsbdb.com/v0/callsign/',
+    // Regnradar: senaste två timmarna, var tionde minut (gratis-API:t har ingen prognos och max zoom 7)
+    regnradar: 'https://api.rainviewer.com/public/weather-maps.json',
     // Flygnätverken saknar CORS, så de hämtas via en egen proxy (se proxy/worker.js och README).
     // Kan också anges i appens inställningar. Tom = försök direkt (fungerar oftast inte i Safari).
     flygProxy: 'https://hallskarm-proxy.dennis-hoglund72.workers.dev',

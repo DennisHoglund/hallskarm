@@ -31,6 +31,7 @@ Workern släpper bara igenom adsb.lol, adsb.fi, airplanes.live och adsbdb och ca
 | `installningar.js` | Inställningar och sök av plats/hållplats |
 | `tid.js` | Klocka, vecka, namnsdag, dagsljus |
 | `vader.js` | Open-Meteo |
+| `vadervy.js` | Vädervyn: klädtips, 24 timmar, regnradar (RainViewer) |
 | `sl.js` | SL Transport-API |
 | `flyg.js` | Flygdata, minikarta, helskärmskarta och radar |
 | `app.js` | Start, timers, tema, status |
@@ -47,5 +48,5 @@ npm run rapport
 Testplanen finns i [`testplan/index.md`](testplan/index.md).
 
 ## Datakällor
-Open-Meteo (CC BY 4.0), Trafiklab SL Transport, Svenska Dagar, adsb.lol, adsb.fi, airplanes.live, adsbdb,
+Open-Meteo (CC BY 4.0), RainViewer, Trafiklab SL Transport, Svenska Dagar, adsb.lol, adsb.fi, airplanes.live, adsbdb,
 kartor © Esri, HERE, Garmin, © OpenStreetMap.

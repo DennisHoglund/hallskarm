@@ -28,7 +28,8 @@ av andra (t.ex. Dennis son på Gärdet) med egna hållplatser och egen plats –
 |---|---|---|
 | Klocka, datum, ISO-vecka | Enheten | varje sekund |
 | Namnsdag, helgdag | Svenska Dagar (`sholiday.faboul.se`) | varje timme, cache per dag |
-| Väder nu + 5 dagar, sol, dagslängd | Open-Meteo | var 15:e minut |
+| Väder nu + 5 dagar + 24 timmar, sol, dagslängd | Open-Meteo | var 15:e minut |
+| Regnradar (senaste 2 h) | RainViewer `weather-maps.json` + rutor | när vädervyn öppnas, högst var 10:e minut |
 | SL-avgångar | SL Transport-API (Trafiklab, ingen nyckel) | var 30:e sekund, nedräkning var 15:e |
 | Flyg | adsb.lol → adsb.fi → airplanes.live via proxyn (reserv i tur och ordning) | var 10:e sekund |
 | Rutt för valt plan | adsbdb via proxyn | en gång per anropssignal |
@@ -53,7 +54,18 @@ av andra (t.ex. Dennis son på Gärdet) med egna hållplatser och egen plats –
   "Inget pip mellan 22 och 07" är på som standard. Safari spelar bara ljud efter ett tryck på skärmen (efter varje omstart).
 - I nattläge färgas planen efter höjd: < 2 km orange, 2–7 km ljus, > 7 km blå.
 
-### 4.3 Robusthet
+### 4.3 Vädervyn
+- Tryck på väderpanelen → helskärm. Stängs med krysset eller efter 3 min utan tryck.
+- **Klädtips:** utgår från lägsta "känns som" de närmaste 4 timmarna: < −10° varm jacka, mössa, vantar, halsduk ·
+  < 0° mössa, vantar · < 6° jacka, mössa · < 12° jacka · < 18° tunn jacka · annars t-shirt.
+  Paraply (eller kängor vid snö) om det regnar nu eller väntas ≥ 0,2 mm/h inom 12 h. Reflex om det är mörkt
+  eller blir mörkt inom 3 h. Raden under förklarar varför.
+- **Kommande 24 timmar:** temperaturkurva från den pågående timmen, staplar för nederbörd (mm/h) och vindpilar med m/s var 3:e timme.
+- **Regnradar:** Leaflet-karta (zoom 8) med hemmet i mitten. Var 20:e minut av RainViewers senaste 2 timmar spelas upp i loop.
+  Sammanfattningen till höger (nästa regn, mest per timme, intensitet) kommer från Open-Meteos timprognos.
+  Om RainViewer inte svarar visas ett meddelande på kartan – resten av vyn fungerar.
+
+### 4.4 Robusthet
 - Statusrad under väder och SL: "Uppdaterad hh:mm" eller "Kunde inte uppdatera – visar data från hh:mm".
 - Gammal data tonas ned (väder > 1 h, SL > 3 min, flyg > 1 min).
 - Hämtning pausas när sidan inte syns. Skärmlås (Wake Lock) när det stöds.
@@ -84,6 +96,8 @@ Data-API:er cachas inte. Höj `CACHE` vid ändring; sidan laddas om när ny vers
 - adsb.lol och airplanes.live skickar inga CORS-huvuden, så Safari stoppar direkta anrop. Lösning: Cloudflare Worker
   (gratis) som bara släpper igenom flygkällorna och adsbdb. Utan proxy visar appen vad som behövs i stället för ett fel.
 - Carto kräver numera API-nyckel för sina baskartor – bytt till Esris Canvas-kartor.
+- RainViewers gratis-API har sedan 2026 ingen prognos (nowcast), bara de senaste 2 timmarna, max zoom 7, ett färgschema
+  (Universal Blue) och 100 anrop/min per IP. Därför visar radarn bakåt i tiden och prognosen kommer från Open-Meteo.
 
 ## 9. Kvar att göra
 - SL och Open-Meteo fungerar direkt från Safari (verifierat på iPhone 2026-11-08).

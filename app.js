@@ -1,6 +1,6 @@
 // Startar Hallskärmen: timers, tema efter solen, statusrader, skärmlås och service worker.
 (function () {
-  const VERSION = 'v8';
+  const VERSION = 'v9';
   const $ = (id) => document.getElementById(id);
   const C = window.HALL_CONFIG;
   const startad = Date.now();
@@ -146,6 +146,7 @@
     $('version').textContent = 'Version ' + VERSION;
     window.HallInst.koppla();
     window.HallFlyg.koppla();
+    window.HallVaderVy.koppla();
     $('sl-lista').addEventListener('click', (e) => { if (e.target.closest('#sl-valj')) window.HallInst.oppna(); });
 
     window.HallTid.ritaKlocka(new Date());

@@ -64,6 +64,30 @@ function avgangar() {
   };
 }
 
+// Timprognos: 8 dygn från 7 nov 00:00. Temperaturen följer dygnet, regn kl 08 och 16–18 den 8 nov.
+function timmar(dagar) {
+  const time = [], temp = [], kanns = [], mm = [], kod = [], vind = [], byar = [], riktning = [];
+  const regn = { 32: 0.3, 33: 0.1, 40: 0.4, 41: 1.2, 42: 0.9 };
+  dagar.forEach((d, di) => {
+    for (let h = 0; h < 24; h++) {
+      const i = di * 24 + h;
+      time.push(d + 'T' + String(h).padStart(2, '0') + ':00');
+      const t = 3 + 2 * Math.sin((h - 9) / 24 * 2 * Math.PI);
+      temp.push(Math.round(t * 10) / 10);
+      kanns.push(Math.round((t - 3) * 10) / 10);
+      mm.push(regn[i] || 0);
+      kod.push(regn[i] ? (regn[i] >= 0.5 ? 61 : 51) : 3);
+      vind.push(4 + (h % 5));
+      byar.push(8 + (h % 5));
+      riktning.push((200 + h * 5) % 360);
+    }
+  });
+  return {
+    time, temperature_2m: temp, apparent_temperature: kanns, precipitation: mm, weather_code: kod,
+    wind_speed_10m: vind, wind_gusts_10m: byar, wind_direction_10m: riktning
+  };
+}
+
 function vader() {
   const dagar = ['2026-11-07', '2026-11-08', '2026-11-09', '2026-11-10', '2026-11-11', '2026-11-12', '2026-11-13', '2026-11-14'];
   return {
@@ -79,7 +103,8 @@ function vader() {
       sunrise: dagar.map((d) => d + 'T07:39'),
       sunset: dagar.map((d) => d + 'T15:41'),
       daylight_duration: [29160, 28920, 28680, 28440, 28200, 27960, 27720, 27480]
-    }
+    },
+    hourly: timmar(dagar)
   };
 }
 
@@ -113,7 +138,7 @@ async function mocka(page, { tid = NU, flyg = null } = {}) {
   NU_LOKAL = lokalDel(tid);
   const api = {
     anrop: [],
-    nere: { vader: false, sl: false, slSites: false, flyg: [], rutt: false, dagar: false },
+    nere: { vader: false, sl: false, slSites: false, flyg: [], rutt: false, dagar: false, radar: false },
     flygplan: flyg,
     vaderData: vader(),
     avgangar: avgangar()
@@ -136,6 +161,20 @@ async function mocka(page, { tid = NU, flyg = null } = {}) {
     if (api.nere.vader) return route.fulfill({ status: 503, headers: cors(), body: 'nere' });
     return json(route, api.vaderData);
   });
+  // Regnradar: 13 bilder var tionde minut de senaste två timmarna
+  await page.route(/api\.rainviewer\.com/, (route) => {
+    logga('radar', route.request().url());
+    if (api.nere.radar) return route.fulfill({ status: 503, headers: cors(), body: 'nere' });
+    const nu = Math.floor(new Date(tid).getTime() / 600000) * 600;
+    const past = [];
+    for (let i = 12; i >= 0; i--) past.push({ time: nu - i * 600, path: '/v2/radar/hash' + i });
+    return json(route, { version: '2.0', generated: nu, host: 'https://tilecache.rainviewer.com', radar: { past, nowcast: [] }, satellite: { infrared: [] } });
+  });
+  await page.route(/tilecache\.rainviewer\.com/, (route) => {
+    logga('radarruta', route.request().url());
+    return route.fulfill({ body: TILE, contentType: 'image/png' });
+  });
+
   await page.route(/geocoding-api\.open-meteo\.com/, (route) => {
     logga('geokod', route.request().url());
     return json(route, { results: [

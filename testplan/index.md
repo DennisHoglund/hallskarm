@@ -5,8 +5,8 @@ Automatiserade testfall körs av Playwright vid varje commit och är kopplade vi
 
 | | |
 |---|---|
-| **Testfall** | 34 |
-| **Automatiserade** | 30 (körs på iPad/WebKit och Chromium i iPad Airs skärmstorlek) |
+| **Testfall** | 37 |
+| **Automatiserade** | 33 (körs på iPad/WebKit och Chromium i iPad Airs skärmstorlek) |
 | **Manuella** | 4 (kräver riktig iPad och riktig data) |
 | **Senaste testrapport** | [dennishoglund.github.io/hallskarm/rapport/](https://dennishoglund.github.io/hallskarm/rapport/) |
 | **Krav** | [SPEC.md](../SPEC.md) |
@@ -27,6 +27,9 @@ Automatiserade testfall körs av Playwright vid varje commit och är kopplade vi
 |---|---|---|---|
 | [TC-VAD-01](testfall/TC-VAD-01.md) | [Visar vädret nu och fem dagar framåt](testfall/TC-VAD-01.md) | Hög | 🤖 |
 | [TC-VAD-02](testfall/TC-VAD-02.md) | [Visar tydligt när vädret inte kan hämtas](testfall/TC-VAD-02.md) | Medel | 🤖 |
+| [TC-VAD-03](testfall/TC-VAD-03.md) | [Vädervyn visar klädtips, 24 timmar och regnradar](testfall/TC-VAD-03.md) | Medel | 🤖 |
+| [TC-VAD-04](testfall/TC-VAD-04.md) | [På kvällen föreslås reflex när det är mörkt](testfall/TC-VAD-04.md) | Låg | 🤖 |
+| [TC-VAD-05](testfall/TC-VAD-05.md) | [Om regnradarn inte svarar fungerar resten av vyn](testfall/TC-VAD-05.md) | Medel | 🤖 |
 
 ## SL-avgångar
 

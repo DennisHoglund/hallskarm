@@ -1,5 +1,5 @@
 // Höj versionen vid varje ändring av appfilerna så att iPaden hämtar nya filer.
-const CACHE = 'hallskarm-v8';
+const CACHE = 'hallskarm-v9';
 
 const SHELL = [
   './',
@@ -9,6 +9,7 @@ const SHELL = [
   './installningar.js',
   './tid.js',
   './vader.js',
+  './vadervy.js',
   './sl.js',
   './ljud.js',
   './flyg.js',
@@ -72,7 +73,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Data-API:er (väder, SL, flyg) går alltid direkt till nätet
+  // Data-API:er (väder, SL, flyg, regnradar) går alltid direkt till nätet
   if (url.origin !== self.location.origin) return;
 
   // Testrapporten ska aldrig cachas eller blandas ihop med appen
