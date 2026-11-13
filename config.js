@@ -5,7 +5,7 @@ window.HALL_CONFIG = {
   standardPlats: { namn: 'Stockholm', lat: 59.3326, lon: 18.0649 },
 
   // Uppdateringsintervall i sekunder
-  intervall: { vader: 900, sl: 30, flyg: 10, namnsdag: 3600 },
+  intervall: { vader: 900, sl: 30, flyg: 10, namnsdag: 3600, storningar: 120, norrsken: 1800 },
 
   // Data äldre än så här markeras som gammal (sekunder)
   gammal: { vader: 3600, sl: 180, flyg: 60 },
@@ -21,6 +21,10 @@ window.HALL_CONFIG = {
     geokod: 'https://geocoding-api.open-meteo.com/v1/search',
     slSites: 'https://transport.integration.sl.se/v1/sites?expand=false',
     slAvgangar: 'https://transport.integration.sl.se/v1/sites/{id}/departures?forecast=60',
+    // Störningar i SL-trafiken (ingen nyckel)
+    slStorningar: 'https://deviations.integration.sl.se/v1/messages',
+    // Kp-prognos för norrsken, 3-timmarsblock (NOAA Space Weather Prediction Center)
+    kp: 'https://services.swpc.noaa.gov/products/noaa-planetary-k-index-forecast.json',
     dagar: 'https://sholiday.faboul.se/dagar/v2.1/',
     rutt: 'https://api.adsbdb.com/v0/callsign/',
     // Regnradar: senaste två timmarna, var tionde minut (gratis-API:t har ingen prognos och max zoom 7)

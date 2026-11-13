@@ -5,8 +5,8 @@ Automatiserade testfall körs av Playwright vid varje commit och är kopplade vi
 
 | | |
 |---|---|
-| **Testfall** | 37 |
-| **Automatiserade** | 33 (körs på iPad/WebKit och Chromium i iPad Airs skärmstorlek) |
+| **Testfall** | 43 |
+| **Automatiserade** | 39 (körs på iPad/WebKit och Chromium i iPad Airs skärmstorlek) |
 | **Manuella** | 4 (kräver riktig iPad och riktig data) |
 | **Senaste testrapport** | [dennishoglund.github.io/hallskarm/rapport/](https://dennishoglund.github.io/hallskarm/rapport/) |
 | **Krav** | [SPEC.md](../SPEC.md) |
@@ -41,6 +41,17 @@ Automatiserade testfall körs av Playwright vid varje commit och är kopplade vi
 | [TC-SL-04](testfall/TC-SL-04.md) | [Flera hållplatser visas var för sig](testfall/TC-SL-04.md) | Medel | 🤖 |
 | [TC-SL-05](testfall/TC-SL-05.md) | [När SL inte svarar visas ett felmeddelande](testfall/TC-SL-05.md) | Medel | 🤖 |
 | [TC-SL-06](testfall/TC-SL-06.md) | [Utan hållplats finns en knapp för att välja](testfall/TC-SL-06.md) | Medel | 🤖 |
+| [TC-SL-07](testfall/TC-SL-07.md) | [Störning på en linje markeras i avgångarna](testfall/TC-SL-07.md) | Medel | 🤖 |
+| [TC-SL-08](testfall/TC-SL-08.md) | [Flera störningar visas en i taget](testfall/TC-SL-08.md) | Låg | 🤖 |
+| [TC-SL-09](testfall/TC-SL-09.md) | [Avgångarna visas om störningstjänsten inte svarar](testfall/TC-SL-09.md) | Medel | 🤖 |
+
+## Norrsken
+
+| ID | Testfall | Prio | Typ |
+|---|---|---|---|
+| [TC-NOR-01](testfall/TC-NOR-01.md) | [Hög Kp, mörkt och klart visar "Troligt nu"](testfall/TC-NOR-01.md) | Medel | 🤖 |
+| [TC-NOR-02](testfall/TC-NOR-02.md) | [På dagen visas "Möjligt i kväll"](testfall/TC-NOR-02.md) | Låg | 🤖 |
+| [TC-NOR-03](testfall/TC-NOR-03.md) | [Ingen händelserad när det inte går att se norrsken](testfall/TC-NOR-03.md) | Medel | 🤖 |
 
 ## Flyg
 

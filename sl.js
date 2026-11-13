@@ -26,6 +26,7 @@ window.HallSL = (function () {
       .filter((d) => d.line && lagen.has(d.line.transport_mode))
       .map((d) => ({
         linje: d.line.designation || String(d.line.id || ''),
+        linjeId: d.line.id,
         lage: d.line.transport_mode,
         grupp: d.line.group_of_lines || '',
         mal: d.destination || '',
@@ -43,6 +44,68 @@ window.HallSL = (function () {
     return Promise.all(hallplatser.map(async (hp) => {
       try { return { hp, avgangar: await hamtaEn(hp), fel: null }; } catch (e) { return { hp, avgangar: null, fel: e.message || String(e) }; }
     }));
+  }
+
+  // ---------- Störningar ----------
+  // Hämtar störningar för valda trafikslag och behåller dem som rör linjerna i avgångarna
+  // eller hållplatserna. Hissar och rulltrappor tas bort – de är för många och sällan viktiga här.
+  const BORT = /hiss|rulltrapp|ramp ur funktion/i;
+
+  async function hamtaStorningar(hallplatser, resultat) {
+    const lagen = new Set();
+    hallplatser.forEach((hp) => (hp.lagen && hp.lagen.length ? hp.lagen : Object.keys(LAGE)).forEach((l) => lagen.add(l)));
+    if (lagen.has('SHIP')) lagen.add('FERRY');
+    const q = Array.from(lagen).map((l) => 'transport_mode=' + encodeURIComponent(l)).join('&');
+    const res = await fetch(window.HALL_CONFIG.api.slStorningar + '?future=false' + (q ? '&' + q : ''));
+    if (!res.ok) throw new Error('SL-störningar svarade ' + res.status);
+    const data = await res.json();
+    const linjer = new Set();
+    (resultat || []).forEach((r) => (r.avgangar || []).forEach((d) => { if (d.linjeId != null) linjer.add(String(d.linjeId)); }));
+    const namn = hallplatser.map((hp) => String(hp.namn || '').toLowerCase());
+    const nu = Date.now();
+    return (Array.isArray(data) ? data : [])
+      .map((m) => {
+        const v = (m.message_variants || []).find((x) => x.language === 'sv') || (m.message_variants || [])[0] || {};
+        const scope = m.scope || {};
+        const pub = m.publish || {};
+        return {
+          id: m.deviation_case_id || m.id || v.header,
+          rubrik: String(v.header || '').trim(),
+          linjer: (scope.lines || []).map((l) => ({ id: String(l.id), linje: l.designation || String(l.id), lage: l.transport_mode })),
+          hallplatser: (scope.stop_areas || []).map((a) => String(a.name || '').toLowerCase()),
+          fran: lokal(pub.from), till: lokal(pub.upto),
+          viktig: (m.priority && m.priority.importance_level) || 0
+        };
+      })
+      .filter((m) => m.rubrik && !BORT.test(m.rubrik))
+      .filter((m) => !m.fran || m.fran <= nu)
+      .filter((m) => m.linjer.some((l) => linjer.has(l.id)) || m.hallplatser.some((h) => namn.indexOf(h) >= 0))
+      .sort((a, b) => b.viktig - a.viktig);
+  }
+
+  let storningar = [], storningsIndex = 0, storningsTimer = null;
+  function sattStorningar(lista) {
+    storningar = lista || [];
+    if (storningsIndex >= storningar.length) storningsIndex = 0;
+    clearInterval(storningsTimer);
+    if (storningar.length > 1) storningsTimer = setInterval(() => { storningsIndex = (storningsIndex + 1) % storningar.length; ritaStorning(); }, 8000);
+  }
+
+  function ritaStorning() {
+    const el = $('sl-storning');
+    const m = storningar[storningsIndex];
+    el.hidden = !m;
+    if (!m) return;
+    $('sl-storning-text').textContent = m.rubrik;
+    $('sl-storning-text').title = m.rubrik;
+    const n = new Date();
+    const till = m.till && m.till > n && m.till - n < 24 * 3600 * 1000 ? 'till ca ' + String(m.till.getHours()).padStart(2, '0') + ':' + String(m.till.getMinutes()).padStart(2, '0') : '';
+    $('sl-storning-till').textContent = till;
+    $('sl-storning-antal').textContent = storningar.length > 1 ? (storningsIndex + 1) + '/' + storningar.length : '';
+  }
+
+  function stord(d) {
+    return storningar.some((m) => m.linjer.some((l) => l.id === String(d.linjeId)));
   }
 
   function minuter(tid, nu) {
@@ -72,8 +135,10 @@ window.HallSL = (function () {
     if (!resultat.length) {
       lista.innerHTML = '<div class="tom"><span>Välj vilka hållplatser som ska visas.</span>' +
         '<button type="button" class="knapp" id="sl-valj">Välj hållplats</button></div>';
+      $('sl-storning').hidden = true;
       return;
     }
+    ritaStorning();
     const max = RADER[resultat.length] || 3;
     lista.innerHTML = resultat.map((r) => {
       let rader;
@@ -84,7 +149,7 @@ window.HallSL = (function () {
           const m = minuter(d.tid, n);
           const klass = d.lage === 'METRO' ? 'linje metro' + metroKlass(d.grupp) : 'linje';
           return `<div class="avg" data-lage="${esc(d.lage)}"><div class="${klass}">${esc(d.linje)}</div>` +
-            `<div class="mal"><b>${esc(d.mal)}</b><span>${esc(underrad(d))}</span></div>` +
+            `<div class="mal"><b>${esc(d.mal)}${stord(d) ? '<span class="storning-tagg">Störning</span>' : ''}</b><span>${esc(underrad(d))}</span></div>` +
             `<div class="min${d.installd ? ' inst' : m.nu ? ' nu' : ''}">${d.installd ? 'Inställd' : m.text}</div></div>`;
         }).join('') : '<div class="tom">Inga avgångar den närmaste timmen.</div>';
       }
@@ -106,5 +171,5 @@ window.HallSL = (function () {
     }
   }
 
-  return { hamta, rita, minuter, LAGE };
+  return { hamta, rita, minuter, LAGE, hamtaStorningar, sattStorningar };
 })();

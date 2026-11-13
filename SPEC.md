@@ -31,6 +31,8 @@ av andra (t.ex. Dennis son på Gärdet) med egna hållplatser och egen plats –
 | Väder nu + 5 dagar + 24 timmar, sol, dagslängd | Open-Meteo | var 15:e minut |
 | Regnradar (senaste 2 h) | RainViewer `weather-maps.json` + rutor | när vädervyn öppnas, högst var 10:e minut |
 | SL-avgångar | SL Transport-API (Trafiklab, ingen nyckel) | var 30:e sekund, nedräkning var 15:e |
+| SL-störningar | SL Deviations (`deviations.integration.sl.se`, ingen nyckel) | var 2:a minut |
+| Norrsken | NOAA SWPC Kp-prognos (3-timmarsblock) + molnighet från Open-Meteo | Kp var 30:e minut, bedömning varje minut |
 | Flyg | adsb.lol → adsb.fi → airplanes.live via proxyn (reserv i tur och ordning) | var 10:e sekund |
 | Rutt för valt plan | adsbdb via proxyn | en gång per anropssignal |
 | Dagsljuskurva | Beräknas ur latitud | vid väderuppdatering |
@@ -65,7 +67,22 @@ av andra (t.ex. Dennis son på Gärdet) med egna hållplatser och egen plats –
   Sammanfattningen till höger (nästa regn, mest per timme, intensitet) kommer från Open-Meteos timprognos.
   Om RainViewer inte svarar visas ett meddelande på kartan – resten av vyn fungerar.
 
-### 4.4 Robusthet
+### 4.4 Norrsken
+- Händelserad under övre raden som bara syns när det finns en chans. Mittdelen krymper då och SL-listan tar bort rader som inte får plats.
+- Visas när någon timme de närmaste 12 är mörk (mer än ca 40 min efter solnedgång/före soluppgång), har under 50 % moln
+  och Kp minst kravet för breddgraden (Stockholm 5, norrut lägre, söderut högre).
+- "Möjligt" vid Kp = kravet, "Troligt" vid minst ett steg över. "nu" om det gäller pågående timme, annars "i kväll"/"i natt".
+  Texten säger hur länge det är klart eller när det klarnar. Kp-mätare med nio staplar.
+- Raden blinkar kort första gången det blir "Troligt nu". Kp-prognos äldre än 6 h används inte. NOAA nere → ingen rad.
+- NOAA bytte JSON-format 2026 (från rubrikrad + tabell till objekt) – appen läser båda.
+
+### 4.5 SL-störningar
+- Hämtas för valda trafikslag och filtreras på linjerna i avgångarna och hållplatsernas namn. Hissar och rulltrappor visas inte.
+- Avgångar på en störd linje får markeringen STÖRNING. Längst ner i SL-panelen står rubriken och "till ca hh:mm" om slutet är inom 24 h.
+- Flera störningar visas en i taget (viktigast först), byter var 8:e sekund, med 1/2.
+- Om störningstjänsten inte svarar visas avgångarna som vanligt.
+
+### 4.6 Robusthet
 - Statusrad under väder och SL: "Uppdaterad hh:mm" eller "Kunde inte uppdatera – visar data från hh:mm".
 - Gammal data tonas ned (väder > 1 h, SL > 3 min, flyg > 1 min).
 - Hämtning pausas när sidan inte syns. Skärmlås (Wake Lock) när det stöds.
@@ -101,5 +118,4 @@ Data-API:er cachas inte. Höj `CACHE` vid ändring; sidan laddas om när ny vers
 
 ## 9. Kvar att göra
 - SL och Open-Meteo fungerar direkt från Safari (verifierat på iPhone 2026-11-08).
-- Störningsinformation från SL (`deviations`).
 - Egen sensor (utetemperatur/HAN) via ESP32 → Supabase.

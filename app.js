@@ -1,6 +1,6 @@
 // Startar Hallskärmen: timers, tema efter solen, statusrader, skärmlås och service worker.
 (function () {
-  const VERSION = 'v9';
+  const VERSION = 'v10';
   const $ = (id) => document.getElementById(id);
   const C = window.HALL_CONFIG;
   const startad = Date.now();
@@ -8,6 +8,8 @@
   let inst = window.HallInst.hamta();
   let sol = null;
   let slResultat = [];
+  let vaderData = null;
+  let kpBlock = null, kpHamtad = 0;
   const senast = { vader: 0, sl: 0, flyg: 0 };
 
   // ---------- Status ----------
@@ -50,9 +52,11 @@
       const v = await window.HallVader.hamta(window.HallInst.plats());
       senast.vader = Date.now();
       window.HallVader.rita(v);
+      vaderData = v;
       sol = v.sol;
       window.HallTid.ritaSol(sol, window.HallInst.plats().lat);
       sattTema();
+      norrskenRita();
       status('vader-status', 'vader', 'vader', false);
     } catch (e) {
       console.warn('Väder:', e);
@@ -73,9 +77,41 @@
     });
     const fel = res.some((r) => r.fel);
     if (res.some((r) => !r.fel)) senast.sl = Date.now();
+    const forstaGangen = !slResultat.length;
     slResultat = res;
     window.HallSL.rita(slResultat);
+    if (forstaGangen) storningar(); // linjerna behövs för att välja ut störningar
     status('sl-status', 'sl', 'sl', fel);
+  }
+
+  async function storningar() {
+    if (!inst.hallplatser.length) { window.HallSL.sattStorningar([]); return; }
+    try {
+      window.HallSL.sattStorningar(await window.HallSL.hamtaStorningar(inst.hallplatser, slResultat));
+      window.HallSL.rita(slResultat);
+    } catch (e) {
+      // Störningsinfon är ett tillägg – avgångarna visas som vanligt, nytt försök vid nästa intervall
+      console.warn('SL-störningar:', e);
+    }
+  }
+
+  // ---------- Norrsken ----------
+  function norrskenRita() {
+    // Gammal Kp-prognos (mer än 6 timmar) används inte
+    const block = kpBlock && Date.now() - kpHamtad < 6 * 3600 * 1000 ? kpBlock : null;
+    const fore = document.querySelector('.skarm').classList.contains('med-handelse');
+    window.HallNorrsken.rita(window.HallNorrsken.bedom(block, vaderData, window.HallInst.plats().lat));
+    const efter = document.querySelector('.skarm').classList.contains('med-handelse');
+    if (fore !== efter) window.HallSL.rita(slResultat); // mittdelen ändrade höjd
+  }
+  async function norrsken() {
+    try {
+      kpBlock = await window.HallNorrsken.hamta();
+      kpHamtad = Date.now();
+    } catch (e) {
+      console.warn('Norrsken:', e);
+    }
+    norrskenRita();
   }
 
   async function flyg() {
@@ -135,7 +171,7 @@
     inst = ny;
     const platsAndrad = JSON.stringify(fore.plats) !== JSON.stringify(ny.plats);
     if (platsAndrad) { sol = null; vader(); startaFlyg(); }
-    if (JSON.stringify(fore.hallplatser) !== JSON.stringify(ny.hallplatser)) sl();
+    if (JSON.stringify(fore.hallplatser) !== JSON.stringify(ny.hallplatser)) sl().then(storningar);
     if (fore.tema !== ny.tema) sattTema();
     if (fore.flygRadie !== ny.flygRadie && !platsAndrad) { window.HallFlyg.sattRadie(ny.flygRadie); flyg(); }
     if (fore.flygProxy !== ny.flygProxy && !platsAndrad) flyg();
@@ -154,15 +190,18 @@
     window.HallTid.hamtaNamnsdag();
     vader();
     sl();
+    norrsken();
     startaFlyg();
 
     setInterval(() => window.HallTid.ritaKlocka(), 1000);
     setInterval(() => { window.HallSL.rita(slResultat); }, 15000);
-    setInterval(() => { sattTema(); nattlig(); }, 60000);
+    setInterval(() => { sattTema(); nattlig(); norrskenRita(); }, 60000);
     var_(C.intervall.vader, vader);
     var_(C.intervall.sl, sl);
     var_(C.intervall.flyg, flyg);
     var_(C.intervall.namnsdag, () => window.HallTid.hamtaNamnsdag());
+    var_(C.intervall.storningar, storningar);
+    var_(C.intervall.norrsken, norrsken);
 
     document.addEventListener('visibilitychange', () => {
       if (!synlig()) return;

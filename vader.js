@@ -31,7 +31,7 @@ window.HallVader = (function () {
       latitude: plats.lat, longitude: plats.lon,
       current: 'temperature_2m,apparent_temperature,weather_code,wind_speed_10m,wind_gusts_10m,wind_direction_10m,precipitation,relative_humidity_2m',
       daily: 'weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,daylight_duration',
-      hourly: 'temperature_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m',
+      hourly: 'temperature_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover',
       past_days: '1', forecast_days: '7', timezone: 'Europe/Stockholm', wind_speed_unit: 'ms'
     });
     const res = await fetch(window.HALL_CONFIG.api.vader + '?' + p.toString());
@@ -55,7 +55,8 @@ window.HallVader = (function () {
         tid: lokal(tider[i]), temp: h.temperature_2m[i], kanns: h.apparent_temperature ? h.apparent_temperature[i] : null,
         mm: h.precipitation ? h.precipitation[i] || 0 : 0, kod: h.weather_code ? h.weather_code[i] : null,
         vind: h.wind_speed_10m ? h.wind_speed_10m[i] : null, byar: h.wind_gusts_10m ? h.wind_gusts_10m[i] : null,
-        riktning: h.wind_direction_10m ? h.wind_direction_10m[i] : null
+        riktning: h.wind_direction_10m ? h.wind_direction_10m[i] : null,
+        moln: h.cloud_cover ? h.cloud_cover[i] : null
       });
     }
     return ut;

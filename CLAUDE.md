@@ -34,7 +34,7 @@ Läs `SPEC.md` för hela specifikationen. Det här är reglerna som gäller vid 
 - SVG-element saknar egenskapen `hidden` – använd `toggleAttribute('hidden', …)`.
 
 ## Kod
-- Moduler som IIFE på `window`: `HallInst`, `HallTid`, `HallVader`, `HallVaderVy`, `HallSL`, `HallFlyg`. `app.js` startar allt.
+- Moduler som IIFE på `window`: `HallInst`, `HallTid`, `HallVader`, `HallVaderVy`, `HallSL`, `HallNorrsken`, `HallFlyg`. `app.js` startar allt.
 - Lokala tider från Open-Meteo och SL saknar tidszon och tolkas som lokal tid.
 
 ## Tester och rapport

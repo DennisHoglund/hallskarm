@@ -66,7 +66,7 @@ function avgangar() {
 
 // Timprognos: 8 dygn från 7 nov 00:00. Temperaturen följer dygnet, regn kl 08 och 16–18 den 8 nov.
 function timmar(dagar) {
-  const time = [], temp = [], kanns = [], mm = [], kod = [], vind = [], byar = [], riktning = [];
+  const time = [], temp = [], kanns = [], mm = [], kod = [], vind = [], byar = [], riktning = [], moln = [];
   const regn = { 32: 0.3, 33: 0.1, 40: 0.4, 41: 1.2, 42: 0.9 };
   dagar.forEach((d, di) => {
     for (let h = 0; h < 24; h++) {
@@ -80,11 +80,12 @@ function timmar(dagar) {
       vind.push(4 + (h % 5));
       byar.push(8 + (h % 5));
       riktning.push((200 + h * 5) % 360);
+      moln.push(90);
     }
   });
   return {
     time, temperature_2m: temp, apparent_temperature: kanns, precipitation: mm, weather_code: kod,
-    wind_speed_10m: vind, wind_gusts_10m: byar, wind_direction_10m: riktning
+    wind_speed_10m: vind, wind_gusts_10m: byar, wind_direction_10m: riktning, cloud_cover: moln
   };
 }
 
@@ -138,7 +139,9 @@ async function mocka(page, { tid = NU, flyg = null } = {}) {
   NU_LOKAL = lokalDel(tid);
   const api = {
     anrop: [],
-    nere: { vader: false, sl: false, slSites: false, flyg: [], rutt: false, dagar: false, radar: false },
+    nere: { vader: false, sl: false, slSites: false, flyg: [], rutt: false, dagar: false, radar: false, kp: false, storningar: false },
+    kp: 2, // Kp för alla block, eller funktion (Date i UTC) => Kp
+    storningar: [],
     flygplan: flyg,
     vaderData: vader(),
     avgangar: avgangar()
@@ -231,6 +234,27 @@ async function mocka(page, { tid = NU, flyg = null } = {}) {
     if (/api\.airplanes\.live/.test(mal)) return flygRoute('airplanes.live')(route, mal);
     if (/api\.adsbdb\.com/.test(mal)) return ruttRoute(route, mal);
     return route.fulfill({ status: 403, headers: cors(), body: 'Adressen är inte tillåten' });
+  });
+
+  // NOAA:s Kp-prognos i 2026 års format (objekt, tid i UTC utan zon)
+  await page.route(/services\.swpc\.noaa\.gov/, (route) => {
+    logga('kp', route.request().url());
+    if (api.nere.kp) return route.fulfill({ status: 503, headers: cors(), body: 'nere' });
+    const start = Math.floor(new Date(tid).getTime() / (3 * 3600e3)) * 3 * 3600e3 - 24 * 3600e3;
+    const rader = [];
+    for (let i = 0; i < 32; i++) {
+      const t = new Date(start + i * 3 * 3600e3);
+      const kp = typeof api.kp === 'function' ? api.kp(t) : api.kp;
+      rader.push({ time_tag: t.toISOString().slice(0, 19), kp, observed: i < 8 ? 'observed' : 'predicted', noaa_scale: kp >= 5 ? 'G' + (kp - 4) : null });
+    }
+    return json(route, rader);
+  });
+
+  // SL-störningar
+  await page.route(/deviations\.integration\.sl\.se/, (route) => {
+    logga('storningar', route.request().url());
+    if (api.nere.storningar) return route.fulfill({ status: 503, headers: cors(), body: 'nere' });
+    return json(route, api.storningar);
   });
 
   await page.route(/sholiday\.faboul\.se/, (route) => {

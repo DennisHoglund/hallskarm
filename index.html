@@ -68,6 +68,13 @@
     </div>
   </header>
 
+  <!-- HÄNDELSERAD: syns bara när något är aktuellt (norrsken) -->
+  <div id="handelse" class="handelse" role="status" hidden>
+    <span class="etikett">Norrsken</span>
+    <div id="handelse-text" class="handelse-text"></div>
+    <div id="handelse-kp" class="handelse-kp"></div>
+  </div>
+
   <!-- MITTEN: väder och SL -->
   <main class="mitt">
     <section id="vader" class="panel vader" aria-label="Väder">
@@ -86,6 +93,12 @@
 
     <section id="sl" class="panel sl" aria-label="Avgångar">
       <div id="sl-lista" class="sl-lista"></div>
+      <div id="sl-storning" class="sl-storning" role="status" hidden>
+        <b>Störning</b>
+        <span id="sl-storning-text" class="sl-storning-text"></span>
+        <small id="sl-storning-till"></small>
+        <small id="sl-storning-antal" class="antal"></small>
+      </div>
       <p id="sl-status" class="status" role="status"></p>
     </section>
   </main>
@@ -282,6 +295,7 @@
 <script src="vader.js"></script>
 <script src="vadervy.js"></script>
 <script src="sl.js"></script>
+<script src="norrsken.js"></script>
 <script src="ljud.js"></script>
 <script src="flyg.js"></script>
 <script src="app.js"></script>
