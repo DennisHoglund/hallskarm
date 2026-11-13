@@ -4,6 +4,15 @@ Klocka, väder, SL-avgångar, flyg ovanför och dagsljus – för en gammal iPad
 
 **Öppna:** https://dennishoglund.github.io/hallskarm/ · **Testrapport:** https://dennishoglund.github.io/hallskarm/rapport/
 
+## Vad skärmen visar
+- **Övre raden:** klocka, datum, vecka, namnsdag och sol upp/ned.
+- **Väder:** nu och fem dagar framåt. Tryck på rutan för **vädervyn** med klädtips, 24 timmar timme för timme och regnradar (senaste två timmarna).
+- **SL:** avgångar från upp till tre hållplatser. Störningar på dina linjer markeras och visas längst ner.
+- **Luftrummet:** planet närmast ovanför med rutt. Tryck för karta eller radar i helskärm. Kan blinka (och pipa) när ett plan är nära.
+- **Dagsljus:** dagslängd, förändring per dag och kurva över året.
+- **Norrsken:** en rad under klockan som bara syns när Kp är tillräckligt högt och det är mörkt och klart.
+- Dag- och nattema som byts vid solnedgång.
+
 ## Kom igång på iPaden
 1. Öppna länken i Safari. Första gången öppnas Inställningar.
 2. Sök upp hemmets område och en eller flera hållplatser, välj trafikslag och tryck **Klar**.
