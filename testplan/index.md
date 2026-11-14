@@ -5,8 +5,8 @@ Automatiserade testfall körs av Playwright vid varje commit och är kopplade vi
 
 | | |
 |---|---|
-| **Testfall** | 48 |
-| **Automatiserade** | 44 (körs på iPad/WebKit och Chromium i iPad Airs skärmstorlek) |
+| **Testfall** | 52 |
+| **Automatiserade** | 48 (körs på iPad/WebKit och Chromium i iPad Airs skärmstorlek) |
 | **Manuella** | 4 (kräver riktig iPad och riktig data) |
 | **Senaste testrapport** | [dennishoglund.github.io/hallskarm/rapport/](https://dennishoglund.github.io/hallskarm/rapport/) |
 | **Krav** | [SPEC.md](../SPEC.md) |
@@ -60,6 +60,15 @@ Automatiserade testfall körs av Playwright vid varje commit och är kopplade vi
 | [TC-NOR-01](testfall/TC-NOR-01.md) | [Hög Kp, mörkt och klart visar "Troligt nu"](testfall/TC-NOR-01.md) | Medel | 🤖 |
 | [TC-NOR-02](testfall/TC-NOR-02.md) | [På dagen visas "Möjligt i kväll"](testfall/TC-NOR-02.md) | Låg | 🤖 |
 | [TC-NOR-03](testfall/TC-NOR-03.md) | [Ingen händelserad när det inte går att se norrsken](testfall/TC-NOR-03.md) | Medel | 🤖 |
+
+## Elpris
+
+| ID | Testfall | Prio | Typ |
+|---|---|---|---|
+| [TC-EL-01](testfall/TC-EL-01.md) | [Elpriset visas i dagsljuspanelen](testfall/TC-EL-01.md) | Medel | 🤖 |
+| [TC-EL-02](testfall/TC-EL-02.md) | [Elprisvyn visar dygnets priser](testfall/TC-EL-02.md) | Medel | 🤖 |
+| [TC-EL-03](testfall/TC-EL-03.md) | [Elområdet följer platsen och kan väljas](testfall/TC-EL-03.md) | Låg | 🤖 |
+| [TC-EL-04](testfall/TC-EL-04.md) | [Utan elpris fungerar resten](testfall/TC-EL-04.md) | Medel | 🤖 |
 
 ## Flyg
 

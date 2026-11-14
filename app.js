@@ -1,6 +1,6 @@
 // Startar Hallskärmen: timers, tema efter solen, statusrader, skärmlås och service worker.
 (function () {
-  const VERSION = 'v12';
+  const VERSION = 'v13';
   const $ = (id) => document.getElementById(id);
   const C = window.HALL_CONFIG;
   const startad = Date.now();
@@ -102,6 +102,21 @@
     window.HallHandelser.satt('norrsken', window.HallNorrsken.post(window.HallNorrsken.bedom(block, vaderData, window.HallInst.plats().lat)));
   }
 
+  // ---------- Elpris ----------
+  let elData = null;
+  function elRita() {
+    window.HallElpris.rita(window.HallElpris.berakna(elData));
+  }
+  async function elpris() {
+    try {
+      elData = await window.HallElpris.hamta();
+    } catch (e) {
+      // Elpriset är ett tillägg – senaste priserna ligger kvar och nytt försök görs vid nästa intervall
+      console.warn('Elpris:', e);
+    }
+    elRita();
+  }
+
   // ---------- SMHI-varningar ----------
   let varningsData = null, varningarHamtade = 0;
   function varningarRita() {
@@ -186,6 +201,7 @@
     inst = ny;
     const platsAndrad = JSON.stringify(fore.plats) !== JSON.stringify(ny.plats);
     if (platsAndrad) { sol = null; vader(); startaFlyg(); varningarRita(); }
+    if (platsAndrad || fore.elomrade !== ny.elomrade) { elData = null; elpris(); }
     if (JSON.stringify(fore.hallplatser) !== JSON.stringify(ny.hallplatser)) sl().then(storningar);
     if (fore.tema !== ny.tema) sattTema();
     if (fore.flygRadie !== ny.flygRadie && !platsAndrad) { window.HallFlyg.sattRadie(ny.flygRadie); flyg(); }
@@ -206,13 +222,15 @@
     vader();
     sl();
     window.HallHandelser.koppla(() => window.HallSL.rita(slResultat)); // mittdelen ändrade höjd
+    window.HallElpris.koppla();
     varningar();
     norrsken();
+    elpris();
     startaFlyg();
 
     setInterval(() => window.HallTid.ritaKlocka(), 1000);
     setInterval(() => { window.HallSL.rita(slResultat); }, 15000);
-    setInterval(() => { sattTema(); nattlig(); norrskenRita(); varningarRita(); }, 60000);
+    setInterval(() => { sattTema(); nattlig(); norrskenRita(); varningarRita(); elRita(); }, 60000);
     var_(C.intervall.vader, vader);
     var_(C.intervall.sl, sl);
     var_(C.intervall.flyg, flyg);
@@ -220,6 +238,7 @@
     var_(C.intervall.storningar, storningar);
     var_(C.intervall.norrsken, norrsken);
     var_(C.intervall.varningar, varningar);
+    var_(C.intervall.elpris, elpris);
 
     document.addEventListener('visibilitychange', () => {
       if (!synlig()) return;

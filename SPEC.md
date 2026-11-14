@@ -32,6 +32,7 @@ av andra (t.ex. Dennis son på Gärdet) med egna hållplatser och egen plats –
 | Regnradar (senaste 2 h) | RainViewer `weather-maps.json` + rutor | när vädervyn öppnas, högst var 10:e minut |
 | SL-avgångar | SL Transport-API (Trafiklab, ingen nyckel) | var 30:e sekund, nedräkning var 15:e |
 | SL-störningar | SL Deviations (`deviations.integration.sl.se`, ingen nyckel) | var 2:a minut |
+| Elpris | Elpriset just nu (Nord Pool spot per kvart, SEK/kWh utan moms) | var 15:e minut; i morgon från 13:00 |
 | SMHI-varningar | SMHI öppna data, konsekvensbaserade vädervarningar (`warning.json`) | var 10:e minut |
 | Norrsken | NOAA SWPC Kp-prognos (3-timmarsblock) + molnighet från Open-Meteo | Kp var 30:e minut, bedömning varje minut |
 | Flyg | adsb.lol → adsb.fi → airplanes.live via proxyn (reserv i tur och ordning) | var 10:e sekund |
@@ -94,7 +95,16 @@ av andra (t.ex. Dennis son på Gärdet) med egna hållplatser och egen plats –
 - Flera störningar visas en i taget (viktigast först), byter var 8:e sekund, med 1/2.
 - Om störningstjänsten inte svarar visas avgångarna som vanligt.
 
-### 4.7 Robusthet
+### 4.7 Elpris
+- Rad längst ner i dagsljuspanelen: "ELPRIS 169 öre · Dyrt · billigast 21–00". Pris = spotpris × 1,25 (moms), utan påslag och nätavgift.
+- "Dyrt" när priset är ≥ 30 % och ≥ 15 öre över dagens snitt, "Billigt" när ≤ 70 % och ≥ 15 öre under, annars inget omdöme.
+- Billigast = billigaste tre hela timmarna i rad från den pågående timmen och 24 h framåt (med morgondagen när den finns).
+- Tryck öppnar elprisvyn: pris nu, omdöme, billigaste perioden, snitt/lägst/högst och staplar per timme för i dag och i morgon.
+  Stängs med krysset eller efter 3 min.
+- Elområde räknas ut från platsens latitud (≥ 65,3 SE1, ≥ 61 SE2, ≥ 56,95 SE3, annars SE4) och kan väljas i inställningarna.
+- Om tjänsten inte svarar visas ingen rad. Morgondagen hämtas från 13:00 (404 innan dess).
+
+### 4.8 Robusthet
 - Statusrad under väder och SL: "Uppdaterad hh:mm" eller "Kunde inte uppdatera – visar data från hh:mm".
 - Gammal data tonas ned (väder > 1 h, SL > 3 min, flyg > 1 min).
 - Hämtning pausas när sidan inte syns. Skärmlås (Wake Lock) när det stöds.
@@ -131,6 +141,7 @@ Data-API:er cachas inte. Höj `CACHE` vid ändring; sidan laddas om när ny vers
 ## 9. Kvar att göra
 - SL och Open-Meteo fungerar direkt från Safari (verifierat på iPhone 2026-11-08).
 - Egen sensor (utetemperatur/HAN) via ESP32 → Supabase.
+- CI loggar varje körning om de externa API:erna tillåter anrop från sidan (CORS) i körningens sammanfattning.
 
 ### Önskelista
 - **Kalender (pausad):** händelserad "I dag"/"I morgon" och kalendervy med vecka, lista och detaljer. Endast läsning via

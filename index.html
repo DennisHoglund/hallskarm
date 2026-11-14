@@ -131,6 +131,10 @@
         <circle id="dagsljus-prick" class="kurva-prick" cx="0" cy="0" r="4"/>
       </svg>
       <span id="dagsljus-vander" class="liten"></span>
+      <button id="el-rad" class="el-rad" type="button" hidden>
+        <small>Elpris</small><b><span id="el-nu">–</span><em>öre</em></b>
+        <span class="el-info"><span id="el-niva" class="el-niva"></span> <span id="el-tips"></span></span>
+      </button>
     </section>
   </footer>
 </div>
@@ -221,6 +225,34 @@
   </section>
 </div>
 
+<!-- ELPRISVY I HELSKÄRM -->
+<div id="elvy" class="elvy" hidden>
+  <header class="vadervy-topp">
+    <div class="vadervy-titel"><h2>Elpriset</h2><small id="elvy-omrade"></small></div>
+    <button id="elvy-stang" class="ikonknapp" type="button" aria-label="Stäng elpriset">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </header>
+  <section class="elvy-nu" aria-label="Elpriset just nu">
+    <div class="elvy-stort"><span id="elvy-nu">–</span><small>öre/kWh just nu</small></div>
+    <p id="elvy-omdome" class="elvy-omdome"></p>
+    <div class="elvy-tal">
+      <div><span>Snitt i dag</span><b id="elvy-snitt">–</b></div>
+      <div><span>Lägst</span><b id="elvy-lagst">–</b></div>
+      <div><span>Högst</span><b id="elvy-hogst">–</b></div>
+    </div>
+  </section>
+  <div class="elvy-diagram">
+    <svg id="elvy-diagram" viewBox="0 0 1032 360" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Elpriset timme för timme i dag och i morgon"></svg>
+  </div>
+  <footer class="elvy-fot">
+    <div class="elvy-forklaring">
+      <span><i class="f-nu"></i>nu</span><span><i class="f-dag"></i>resten av dagen</span><span><i class="f-imorgon"></i><span id="elvy-imorgon">i morgon</span></span>
+    </div>
+    <span>Spotpris inkl. moms, utan påslag och nätavgift · Elpriset just nu</span>
+  </footer>
+</div>
+
 <!-- INSTÄLLNINGAR -->
 <dialog id="inst" class="inst" aria-labelledby="inst-rubrik">
   <form id="form-inst" method="dialog">
@@ -256,6 +288,18 @@
         <label><input type="radio" name="tema" value="dag"> Dag</label>
         <label><input type="radio" name="tema" value="natt"> Natt</label>
       </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Elpris</legend>
+      <label for="elomrade">Elområde</label>
+      <select id="elomrade">
+        <option value="auto">Auto (från platsen)</option>
+        <option value="SE1">SE1 – Luleå</option>
+        <option value="SE2">SE2 – Sundsvall</option>
+        <option value="SE3">SE3 – Stockholm</option>
+        <option value="SE4">SE4 – Malmö</option>
+      </select>
     </fieldset>
 
     <fieldset>
@@ -301,6 +345,7 @@
 <script src="handelser.js"></script>
 <script src="varningar.js"></script>
 <script src="norrsken.js"></script>
+<script src="elpris.js"></script>
 <script src="ljud.js"></script>
 <script src="flyg.js"></script>
 <script src="app.js"></script>

@@ -139,8 +139,11 @@ async function mocka(page, { tid = NU, flyg = null } = {}) {
   NU_LOKAL = lokalDel(tid);
   const api = {
     anrop: [],
-    nere: { vader: false, sl: false, slSites: false, flyg: [], rutt: false, dagar: false, radar: false, kp: false, storningar: false, varningar: false },
+    nere: { vader: false, sl: false, slSites: false, flyg: [], rutt: false, dagar: false, radar: false, kp: false, storningar: false, varningar: false, elpris: false },
     varningar: [], // SMHI-varningar, se smhiVarning()
+    // Elpris per timme i öre/kWh inkl. moms (typiskt novemberdygn); serveras som kvartspriser utan moms
+    elpris: [62, 58, 55, 52, 51, 54, 78, 132, 168, 142, 118, 104, 96, 92, 98, 121, 176, 214, 196, 158, 124, 98, 84, 71],
+    elprisImorgon: true, // false = morgondagen inte publicerad (404)
     kp: 2, // Kp för alla block, eller funktion (Date i UTC) => Kp
     storningar: [],
     flygplan: flyg,
@@ -247,6 +250,30 @@ async function mocka(page, { tid = NU, flyg = null } = {}) {
       const t = new Date(start + i * 3 * 3600e3);
       const kp = typeof api.kp === 'function' ? api.kp(t) : api.kp;
       rader.push({ time_tag: t.toISOString().slice(0, 19), kp, observed: i < 8 ? 'observed' : 'predicted', noaa_scale: kp >= 5 ? 'G' + (kp - 4) : null });
+    }
+    return json(route, rader);
+  });
+
+  // Elpriset just nu: /api/v1/prices/2026/11-08_SE3.json
+  await page.route(/elprisetjustnu\.se/, (route) => {
+    const url = route.request().url();
+    logga('elpris', url);
+    if (api.nere.elpris) return route.fulfill({ status: 503, headers: cors(), body: 'nere' });
+    const m = url.match(/prices\/(\d{4})\/(\d{2})-(\d{2})_(SE\d)\.json/);
+    if (!m) return route.fulfill({ status: 404, headers: cors(), body: 'saknas' });
+    const idag = new Date(tid);
+    const dag = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+    const skillnad = Math.round((dag - new Date(idag.getFullYear(), idag.getMonth(), idag.getDate())) / 864e5);
+    if (skillnad > 1 || (skillnad === 1 && !api.elprisImorgon)) return route.fulfill({ status: 404, headers: cors(), body: 'saknas' });
+    const rader = [];
+    for (let h = 0; h < 24; h++) {
+      for (let q = 0; q < 4; q++) {
+        const start = `${m[1]}-${m[2]}-${m[3]}T${String(h).padStart(2, '0')}:${String(q * 15).padStart(2, '0')}:00+01:00`;
+        const slutT = new Date(new Date(start).getTime() + 15 * 60000);
+        const ore = api.elpris[h] * (skillnad === 1 ? 0.95 : 1) + (q - 1.5) * 2;
+        const sek = Math.round(ore / 1.25 / 100 * 100000) / 100000;
+        rader.push({ SEK_per_kWh: sek, EUR_per_kWh: sek / 11.5, EXR: 11.5, time_start: start, time_end: slutT.toISOString().replace('.000Z', '+00:00') });
+      }
     }
     return json(route, rader);
   });

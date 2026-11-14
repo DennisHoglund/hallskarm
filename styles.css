@@ -374,6 +374,59 @@ small, .etikett {
 .sl-storning small { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--ink3); white-space: nowrap; }
 .sl-storning small:empty { display: none; }
 
+/* ---------- Elpris ---------- */
+.el-rad {
+  display: grid; grid-template-columns: auto auto minmax(0, 1fr); align-items: baseline; gap: .7rem;
+  margin-top: auto; padding: .45rem 0 0; min-height: 44px; width: 100%;
+  border: 0; border-top: 1px solid var(--linje); background: none; color: var(--ink); font: inherit; text-align: left; cursor: pointer;
+}
+.el-rad[hidden] { display: none; }
+.el-rad small { font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink3); }
+.el-rad b { font-family: var(--siffror, 'JetBrains Mono', ui-monospace, monospace); font-size: 1.3rem; white-space: nowrap; }
+.el-rad b em { font-style: normal; font-size: .85rem; font-weight: 400; color: var(--ink2); margin-left: .2rem; }
+.el-info { color: var(--ink2); font-size: .9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.el-niva { font-weight: 700; }
+.el-niva:empty { display: none; }
+.el-niva.dyrt { color: var(--accent); }
+.el-niva.billigt { color: var(--gron); }
+.el-niva:not(:empty) + span::before { content: '· '; }
+.dagsljus.med-el .kurva { height: 2.6rem; }
+
+.elvy {
+  position: fixed; inset: 0; z-index: 1000; background: var(--bg);
+  display: flex; flex-direction: column; gap: 1.2rem;
+  padding: max(1.7rem, env(safe-area-inset-top)) max(2.6rem, env(safe-area-inset-right)) max(1.8rem, env(safe-area-inset-bottom)) max(2.6rem, env(safe-area-inset-left));
+}
+.elvy-nu { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 2rem; align-items: end; border-top: var(--kant-tjock); border-bottom: var(--kant-tunn); padding: 1rem 0; }
+.elvy-stort span { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 4.6rem; font-weight: 700; line-height: .9; }
+.elvy-stort small { display: block; margin-top: .3rem; }
+.elvy-omdome { margin: 0; font-size: 1.1rem; line-height: 1.4; color: var(--ink2); }
+.elvy-omdome b { color: var(--ink); }
+.elvy-omdome b.dyrt { color: var(--accent); }
+.elvy-omdome b.billigt { color: var(--gron); }
+.elvy-tal { display: grid; grid-template-columns: repeat(3, auto); gap: .4rem 2rem; }
+.elvy-tal span { display: block; font-size: .8rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink3); }
+.elvy-tal b { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 1.25rem; white-space: nowrap; }
+.elvy-diagram { flex: 1; min-height: 0; }
+.elvy-diagram svg { display: block; width: 100%; height: 100%; }
+.elvy-diagram text { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; fill: var(--ink3); text-anchor: middle; }
+.elvy-diagram .el-stapel { fill: var(--ink); }
+.elvy-diagram .el-stapel.forbi { fill: var(--ink3); opacity: .45; }
+.elvy-diagram .el-stapel.imorgon { fill: none; stroke: var(--ink3); stroke-width: 1.5; }
+.elvy-diagram .el-stapel.nu { fill: var(--accent); }
+.elvy-diagram .el-nu-t { fill: var(--accent); font-weight: 700; }
+.elvy-diagram .el-billig { fill: var(--gron); opacity: .18; }
+.elvy-diagram .el-billig-t { fill: var(--gron); font-weight: 700; }
+.elvy-diagram .el-snitt { stroke: var(--ink3); stroke-dasharray: 2 5; }
+.elvy-diagram .el-snitt-t, .elvy-diagram .el-dag-t { text-anchor: start; }
+.elvy-diagram .el-bas { stroke: var(--linje); }
+.elvy-fot { display: flex; justify-content: space-between; gap: 1rem; font-size: .9rem; color: var(--ink3); }
+.elvy-forklaring { display: flex; gap: 1.4rem; align-items: center; }
+.elvy-forklaring i { display: inline-block; width: .8rem; height: .8rem; margin-right: .4rem; vertical-align: -1px; }
+.elvy-forklaring .f-nu { background: var(--accent); }
+.elvy-forklaring .f-dag { background: var(--ink); }
+.elvy-forklaring .f-imorgon { border: 1.5px solid var(--ink3); }
+
 /* ---------- Vädervy i helskärm ---------- */
 .vadervy {
   position: fixed; inset: 0; z-index: 1000; background: var(--bg);

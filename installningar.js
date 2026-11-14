@@ -15,7 +15,7 @@ window.HallInst = (function () {
     { kod: 'SHIP', namn: 'Båt' }
   ];
 
-  const STANDARD = { version: 1, plats: null, hallplatser: [], tema: 'auto', flygRadie: 25, flygProxy: '', avisering: 'blinka', aviseringKm: 2, tystNatt: true };
+  const STANDARD = { version: 1, plats: null, hallplatser: [], tema: 'auto', flygRadie: 25, flygProxy: '', avisering: 'blinka', aviseringKm: 2, tystNatt: true, elomrade: 'auto' };
   const lyssnare = [];
   let inst = las();
 
@@ -149,6 +149,7 @@ window.HallInst = (function () {
     $('hp-sok').placeholder = inst.hallplatser.length >= MAX_HALLPLATSER ? 'Max tre hållplatser' : 't.ex. Karlaplan';
     document.querySelectorAll('#form-inst input[name="tema"]').forEach((r) => { r.checked = r.value === inst.tema; });
     $('flyg-radie').value = String(inst.flygRadie);
+    $('elomrade').value = inst.elomrade || 'auto';
     $('flyg-proxy').value = inst.flygProxy || '';
     document.querySelectorAll('#form-inst input[name="avisering"]').forEach((r) => { r.checked = r.value === inst.avisering; });
     $('avisering-km').value = String(inst.aviseringKm);
@@ -257,6 +258,7 @@ window.HallInst = (function () {
     $('form-inst').addEventListener('change', (e) => {
       if (e.target.name === 'tema') andra((s) => { s.tema = e.target.value; });
       if (e.target.id === 'flyg-radie') andra((s) => { s.flygRadie = Number(e.target.value); });
+      if (e.target.id === 'elomrade') andra((s) => { s.elomrade = e.target.value; });
       if (e.target.id === 'flyg-proxy') andra((s) => { s.flygProxy = e.target.value.trim(); });
       if (e.target.name === 'avisering') {
         andra((s) => { s.avisering = e.target.value; });
