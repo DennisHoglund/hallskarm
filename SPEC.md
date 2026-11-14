@@ -119,3 +119,13 @@ Data-API:er cachas inte. Höj `CACHE` vid ändring; sidan laddas om när ny vers
 ## 9. Kvar att göra
 - SL och Open-Meteo fungerar direkt från Safari (verifierat på iPhone 2026-11-08).
 - Egen sensor (utetemperatur/HAN) via ESP32 → Supabase.
+
+### Önskelista
+- **Kalender (pausad):** händelserad "I dag"/"I morgon" och kalendervy med vecka, lista och detaljer. Endast läsning via
+  hemlig/offentlig prenumerationslänk (iCloud eller Google) som sparas på enheten och hämtas via proxyn. Inget Apple-ID
+  på iPaden. Lägga till/ändra görs på mobilen; "+" kan visa en QR-kod. Skisser finns.
+- SMHI-vädervarningar i händelseraden.
+- Månfas bredvid sol upp/ned.
+- ISS-passager som syns i kväll.
+- Dagens flygstatistik i flygpanelen.
+- Pip vid flyg ovanför och möjlighet att stänga av radarsvepet (pausat).
