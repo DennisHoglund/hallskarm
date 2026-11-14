@@ -10,7 +10,7 @@ Klocka, väder, SL-avgångar, flyg ovanför och dagsljus – för en gammal iPad
 - **SL:** avgångar från upp till tre hållplatser. Störningar på dina linjer markeras och visas längst ner.
 - **Luftrummet:** planet närmast ovanför med rutt. Tryck för karta eller radar i helskärm. Kan blinka (och pipa) när ett plan är nära.
 - **Dagsljus:** dagslängd, förändring per dag och kurva över året.
-- **Norrsken:** en rad under klockan som bara syns när Kp är tillräckligt högt och det är mörkt och klart.
+- **Händelseraden** under klockan, bara när något är aktuellt: SMHI-varningar för där du bor och norrsken när Kp är tillräckligt högt och det är mörkt och klart.
 - Dag- och nattema som byts vid solnedgång.
 
 ## Kom igång på iPaden
@@ -42,6 +42,8 @@ Workern släpper bara igenom adsb.lol, adsb.fi, airplanes.live och adsbdb och ca
 | `vader.js` | Open-Meteo |
 | `vadervy.js` | Vädervyn: klädtips, 24 timmar, regnradar (RainViewer) |
 | `sl.js` | SL Transport-API och störningar |
+| `handelser.js` | Händelseraden under klockan |
+| `varningar.js` | SMHI-varningar för hemmets område |
 | `norrsken.js` | Norrsken: Kp-prognos från NOAA + mörker och moln |
 | `flyg.js` | Flygdata, minikarta, helskärmskarta och radar |
 | `app.js` | Start, timers, tema, status |
@@ -58,5 +60,5 @@ npm run rapport
 Testplanen finns i [`testplan/index.md`](testplan/index.md).
 
 ## Datakällor
-Open-Meteo (CC BY 4.0), RainViewer, NOAA SWPC, Trafiklab SL Transport och SL Deviations, Svenska Dagar, adsb.lol, adsb.fi, airplanes.live, adsbdb,
+Open-Meteo (CC BY 4.0), RainViewer, SMHI (vädervarningar), NOAA SWPC, Trafiklab SL Transport och SL Deviations, Svenska Dagar, adsb.lol, adsb.fi, airplanes.live, adsbdb,
 kartor © Esri, HERE, Garmin, © OpenStreetMap.

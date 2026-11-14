@@ -1,6 +1,6 @@
 // Startar Hallskärmen: timers, tema efter solen, statusrader, skärmlås och service worker.
 (function () {
-  const VERSION = 'v10';
+  const VERSION = 'v11';
   const $ = (id) => document.getElementById(id);
   const C = window.HALL_CONFIG;
   const startad = Date.now();
@@ -99,10 +99,25 @@
   function norrskenRita() {
     // Gammal Kp-prognos (mer än 6 timmar) används inte
     const block = kpBlock && Date.now() - kpHamtad < 6 * 3600 * 1000 ? kpBlock : null;
-    const fore = document.querySelector('.skarm').classList.contains('med-handelse');
-    window.HallNorrsken.rita(window.HallNorrsken.bedom(block, vaderData, window.HallInst.plats().lat));
-    const efter = document.querySelector('.skarm').classList.contains('med-handelse');
-    if (fore !== efter) window.HallSL.rita(slResultat); // mittdelen ändrade höjd
+    window.HallHandelser.satt('norrsken', window.HallNorrsken.post(window.HallNorrsken.bedom(block, vaderData, window.HallInst.plats().lat)));
+  }
+
+  // ---------- SMHI-varningar ----------
+  let varningsData = null, varningarHamtade = 0;
+  function varningarRita() {
+    // Gamla varningar (mer än 2 timmar) visas inte
+    const data = varningsData && Date.now() - varningarHamtade < 2 * 3600 * 1000 ? varningsData : null;
+    window.HallHandelser.satt('varning', window.HallVarning.valj(data, window.HallInst.plats()));
+  }
+  async function varningar() {
+    try {
+      varningsData = await window.HallVarning.hamta();
+      varningarHamtade = Date.now();
+    } catch (e) {
+      // Varningarna är ett tillägg – nytt försök vid nästa intervall
+      console.warn('SMHI-varningar:', e);
+    }
+    varningarRita();
   }
   async function norrsken() {
     try {
@@ -170,7 +185,7 @@
     const fore = inst;
     inst = ny;
     const platsAndrad = JSON.stringify(fore.plats) !== JSON.stringify(ny.plats);
-    if (platsAndrad) { sol = null; vader(); startaFlyg(); }
+    if (platsAndrad) { sol = null; vader(); startaFlyg(); varningarRita(); }
     if (JSON.stringify(fore.hallplatser) !== JSON.stringify(ny.hallplatser)) sl().then(storningar);
     if (fore.tema !== ny.tema) sattTema();
     if (fore.flygRadie !== ny.flygRadie && !platsAndrad) { window.HallFlyg.sattRadie(ny.flygRadie); flyg(); }
@@ -190,18 +205,21 @@
     window.HallTid.hamtaNamnsdag();
     vader();
     sl();
+    window.HallHandelser.koppla(() => window.HallSL.rita(slResultat)); // mittdelen ändrade höjd
+    varningar();
     norrsken();
     startaFlyg();
 
     setInterval(() => window.HallTid.ritaKlocka(), 1000);
     setInterval(() => { window.HallSL.rita(slResultat); }, 15000);
-    setInterval(() => { sattTema(); nattlig(); norrskenRita(); }, 60000);
+    setInterval(() => { sattTema(); nattlig(); norrskenRita(); varningarRita(); }, 60000);
     var_(C.intervall.vader, vader);
     var_(C.intervall.sl, sl);
     var_(C.intervall.flyg, flyg);
     var_(C.intervall.namnsdag, () => window.HallTid.hamtaNamnsdag());
     var_(C.intervall.storningar, storningar);
     var_(C.intervall.norrsken, norrsken);
+    var_(C.intervall.varningar, varningar);
 
     document.addEventListener('visibilitychange', () => {
       if (!synlig()) return;

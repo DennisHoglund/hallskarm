@@ -68,11 +68,14 @@
     </div>
   </header>
 
-  <!-- HÄNDELSERAD: syns bara när något är aktuellt (norrsken) -->
-  <div id="handelse" class="handelse" role="status" hidden>
-    <span class="etikett">Norrsken</span>
-    <div id="handelse-text" class="handelse-text"></div>
-    <div id="handelse-kp" class="handelse-kp"></div>
+  <!-- HÄNDELSERAD: syns bara när något är aktuellt (SMHI-varningar, norrsken) -->
+  <div id="handelse" class="handelse" role="status" aria-expanded="false" hidden>
+    <div class="handelse-rad">
+      <span id="handelse-etikett" class="etikett"></span>
+      <div id="handelse-text" class="handelse-text"></div>
+      <div id="handelse-hoger" class="handelse-hoger"></div>
+    </div>
+    <p id="handelse-mer" class="handelse-mer"></p>
   </div>
 
   <!-- MITTEN: väder och SL -->
@@ -295,6 +298,8 @@
 <script src="vader.js"></script>
 <script src="vadervy.js"></script>
 <script src="sl.js"></script>
+<script src="handelser.js"></script>
+<script src="varningar.js"></script>
 <script src="norrsken.js"></script>
 <script src="ljud.js"></script>
 <script src="flyg.js"></script>

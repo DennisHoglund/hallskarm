@@ -139,7 +139,8 @@ async function mocka(page, { tid = NU, flyg = null } = {}) {
   NU_LOKAL = lokalDel(tid);
   const api = {
     anrop: [],
-    nere: { vader: false, sl: false, slSites: false, flyg: [], rutt: false, dagar: false, radar: false, kp: false, storningar: false },
+    nere: { vader: false, sl: false, slSites: false, flyg: [], rutt: false, dagar: false, radar: false, kp: false, storningar: false, varningar: false },
+    varningar: [], // SMHI-varningar, se smhiVarning()
     kp: 2, // Kp för alla block, eller funktion (Date i UTC) => Kp
     storningar: [],
     flygplan: flyg,
@@ -250,6 +251,13 @@ async function mocka(page, { tid = NU, flyg = null } = {}) {
     return json(route, rader);
   });
 
+  // SMHI-varningar
+  await page.route(/opendata-download-warnings\.smhi\.se/, (route) => {
+    logga('varningar', route.request().url());
+    if (api.nere.varningar) return route.fulfill({ status: 503, headers: cors(), body: 'nere' });
+    return json(route, api.varningar);
+  });
+
   // SL-störningar
   await page.route(/deviations\.integration\.sl\.se/, (route) => {
     logga('storningar', route.request().url());
@@ -285,4 +293,28 @@ const STANDARD_INST = {
   hallplatser: [{ id: GARDET.id, namn: 'Gärdet', lagen: ['METRO', 'BUS', 'TRAIN', 'TRAM', 'SHIP'] }]
 };
 
-module.exports = { mocka, installningar, STANDARD_INST, GARDET, KARLAPLAN, NU, PROXY };
+// En SMHI-varning i samma format som opendata-download-warnings.smhi.se/ibww (test_2.json)
+const STOCKHOLM_YTA = [[[17.5, 59.0], [18.9, 59.0], [18.9, 59.8], [17.5, 59.8], [17.5, 59.0]]];
+const GOTEBORG_YTA = [[[11.6, 57.5], [12.3, 57.5], [12.3, 57.9], [11.6, 57.9], [11.6, 57.5]]];
+let varningsId = 1;
+function smhiVarning({ niva = 'YELLOW', typ = 'Vind', start, slut, yta = STOCKHOLM_YTA, omrade = 'Stockholms län', mho = 'MET', text = 'Hårda vindbyar kan fälla träd och ge strömavbrott.' } = {}) {
+  const id = varningsId++;
+  const nivaSv = { YELLOW: 'Gul varning', ORANGE: 'Orange varning', RED: 'Röd varning', MESSAGE: 'Meddelande' }[niva];
+  return {
+    id, normalProbability: true,
+    event: { sv: typ, en: typ, code: typ.toUpperCase(), mhoClassification: { sv: mho === 'MET' ? 'Meteorologi' : 'Hydrologi', en: '', code: mho } },
+    descriptions: [],
+    warningAreas: [{
+      id: id * 10, approximateStart: start, ...(slut ? { approximateEnd: slut } : {}), published: start, normalProbability: true,
+      areaName: { sv: omrade, en: omrade },
+      warningLevel: { sv: nivaSv, en: niva, code: niva },
+      eventDescription: { sv: typ, en: typ, code: typ.toUpperCase() },
+      affectedAreas: [{ id: 1, sv: omrade, en: omrade }],
+      descriptions: [{ title: { sv: 'Vad händer', en: 'What happens', code: 'WHAT' }, text: { sv: text, en: text } }],
+      area: { type: 'FeatureCollection', features: [{ type: 'Feature', properties: {}, geometry: { type: 'Polygon', coordinates: yta } }] }
+    }]
+  };
+}
+
+module.exports = {
+  smhiVarning, GOTEBORG_YTA, mocka, installningar, STANDARD_INST, GARDET, KARLAPLAN, NU, PROXY };

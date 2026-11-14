@@ -81,31 +81,18 @@ window.HallNorrsken = (function () {
     return { niva: troligt ? 'troligt' : 'mojligt', nu: nuTid, rubrik: (troligt ? 'Troligt ' : 'Möjligt ') + nar, detalj, kp: Math.round(kp) };
   }
 
-  let forra = null, blinkTimer = null;
-  function rita(h) {
-    const el = $('handelse');
-    const visa = !!h;
-    document.querySelector('.skarm').classList.toggle('med-handelse', visa);
-    el.hidden = !visa;
-    if (!visa) { forra = null; return false; }
-    $('handelse-text').innerHTML = '';
-    const b = document.createElement('b'); b.textContent = h.rubrik;
-    const s = document.createElement('span'); s.textContent = ' · ' + h.detalj;
-    $('handelse-text').append(b, s);
-    $('handelse-kp').innerHTML = 'Kp ' + h.kp + ' <span class="kp-staplar" aria-hidden="true">' +
-      Array.from({ length: 9 }, (_, i) => '<i' + (i < h.kp ? ' class="pa"' : '') + '></i>').join('') + '</span>';
-    $('handelse-kp').setAttribute('aria-label', 'Kp-index ' + h.kp + ' av 9');
-    // Blinka kort första gången det blir "troligt nu"
-    const nyckel = h.niva + (h.nu ? '-nu' : '');
-    if (nyckel === 'troligt-nu' && forra !== nyckel) {
-      el.classList.add('larm');
-      clearTimeout(blinkTimer);
-      blinkTimer = setTimeout(() => el.classList.remove('larm'), 8000);
-    }
-    const andrad = forra === null;
-    forra = nyckel;
-    return andrad;
+  // Post till händelseraden (HallHandelser)
+  function post(h) {
+    if (!h) return [];
+    const staplar = Array.from({ length: 9 }, (_, i) => '<i' + (i < h.kp ? ' class="pa"' : '') + '></i>').join('');
+    return [{
+      id: 'norrsken-' + h.niva + (h.nu ? '-nu' : ''),
+      etikett: 'Norrsken', klass: '',
+      rubrik: h.rubrik, detalj: h.detalj,
+      hoger: '<span class="kp" aria-label="Kp-index ' + h.kp + ' av 9">Kp ' + h.kp + ' <span class="kp-staplar" aria-hidden="true">' + staplar + '</span></span>',
+      blinka: h.niva === 'troligt' && h.nu
+    }];
   }
 
-  return { hamta, tolka, bedom, krav, rita };
+  return { hamta, tolka, bedom, krav, post };
 })();

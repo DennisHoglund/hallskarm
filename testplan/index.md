@@ -5,8 +5,8 @@ Automatiserade testfall körs av Playwright vid varje commit och är kopplade vi
 
 | | |
 |---|---|
-| **Testfall** | 43 |
-| **Automatiserade** | 39 (körs på iPad/WebKit och Chromium i iPad Airs skärmstorlek) |
+| **Testfall** | 46 |
+| **Automatiserade** | 42 (körs på iPad/WebKit och Chromium i iPad Airs skärmstorlek) |
 | **Manuella** | 4 (kräver riktig iPad och riktig data) |
 | **Senaste testrapport** | [dennishoglund.github.io/hallskarm/rapport/](https://dennishoglund.github.io/hallskarm/rapport/) |
 | **Krav** | [SPEC.md](../SPEC.md) |
@@ -44,6 +44,14 @@ Automatiserade testfall körs av Playwright vid varje commit och är kopplade vi
 | [TC-SL-07](testfall/TC-SL-07.md) | [Störning på en linje markeras i avgångarna](testfall/TC-SL-07.md) | Medel | 🤖 |
 | [TC-SL-08](testfall/TC-SL-08.md) | [Flera störningar visas en i taget](testfall/TC-SL-08.md) | Låg | 🤖 |
 | [TC-SL-09](testfall/TC-SL-09.md) | [Avgångarna visas om störningstjänsten inte svarar](testfall/TC-SL-09.md) | Medel | 🤖 |
+
+## SMHI-varningar
+
+| ID | Testfall | Prio | Typ |
+|---|---|---|---|
+| [TC-VAR-01](testfall/TC-VAR-01.md) | [Gul varning för hemmet visas och kan fällas ut](testfall/TC-VAR-01.md) | Hög | 🤖 |
+| [TC-VAR-02](testfall/TC-VAR-02.md) | [Röd varning går före norrsken och blinkar](testfall/TC-VAR-02.md) | Medel | 🤖 |
+| [TC-VAR-03](testfall/TC-VAR-03.md) | [Ingen rad för gamla, avlägsna eller saknade varningar](testfall/TC-VAR-03.md) | Medel | 🤖 |
 
 ## Norrsken
 

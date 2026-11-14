@@ -22,8 +22,8 @@ test.describe('Norrsken', () => {
     const rad = page.locator('#handelse');
     await expect(rad).toBeVisible();
     await expect(page.locator('#handelse-text')).toHaveText('Troligt nu · klar himmel till 07 · titta mot norr, bort från gatuljus');
-    await expect(page.locator('#handelse-kp')).toContainText('Kp 6');
-    await expect(page.locator('#handelse-kp i.pa')).toHaveCount(6);
+    await expect(page.locator('#handelse-hoger')).toContainText('Kp 6');
+    await expect(page.locator('#handelse-hoger i.pa')).toHaveCount(6);
     await expect(rad).toHaveClass(/larm/);
     expect(api.anrop.some((a) => a.typ === 'kp')).toBe(true);
     // Mittdelen krymper men inga avgångar klipps
@@ -41,7 +41,7 @@ test.describe('Norrsken', () => {
     klartFran(api, 21);
     await starta(page, api);
     await expect(page.locator('#handelse-text')).toHaveText('Möjligt i kväll · klart från ca 21 · titta mot norr');
-    await expect(page.locator('#handelse-kp i.pa')).toHaveCount(5);
+    await expect(page.locator('#handelse-hoger i.pa')).toHaveCount(5);
     await expect(page.locator('#handelse')).not.toHaveClass(/larm/);
     await bild(page, 'Norrsken möjligt i kväll');
   });

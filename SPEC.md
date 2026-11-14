@@ -32,6 +32,7 @@ av andra (t.ex. Dennis son på Gärdet) med egna hållplatser och egen plats –
 | Regnradar (senaste 2 h) | RainViewer `weather-maps.json` + rutor | när vädervyn öppnas, högst var 10:e minut |
 | SL-avgångar | SL Transport-API (Trafiklab, ingen nyckel) | var 30:e sekund, nedräkning var 15:e |
 | SL-störningar | SL Deviations (`deviations.integration.sl.se`, ingen nyckel) | var 2:a minut |
+| SMHI-varningar | SMHI öppna data, konsekvensbaserade vädervarningar (`warning.json`) | var 10:e minut |
 | Norrsken | NOAA SWPC Kp-prognos (3-timmarsblock) + molnighet från Open-Meteo | Kp var 30:e minut, bedömning varje minut |
 | Flyg | adsb.lol → adsb.fi → airplanes.live via proxyn (reserv i tur och ordning) | var 10:e sekund |
 | Rutt för valt plan | adsbdb via proxyn | en gång per anropssignal |
@@ -67,8 +68,15 @@ av andra (t.ex. Dennis son på Gärdet) med egna hållplatser och egen plats –
   Sammanfattningen till höger (nästa regn, mest per timme, intensitet) kommer från Open-Meteos timprognos.
   Om RainViewer inte svarar visas ett meddelande på kartan – resten av vyn fungerar.
 
-### 4.4 Norrsken
-- Händelserad under övre raden som bara syns när det finns en chans. Mittdelen krymper då och SL-listan tar bort rader som inte får plats.
+### 4.4 Händelseraden och SMHI-varningar
+- Händelserad under övre raden som bara syns när något är aktuellt. Mittdelen krymper då och SL-listan tar bort rader som inte får plats.
+- Flera händelser visas en i taget, varningar (allvarligast först) före norrsken, byter var 8:e sekund med 1/2.
+- **SMHI-varningar:** bara gul, orange och röd varning inom meteorologi (inte meddelanden som vattenbrist). Bara om varningens
+  område (polygon) täcker hemmets koordinater, om den inte är slut och börjar inom 24 h. Etikett i nivåns färg, typ,
+  "nu till i morgon 10:00"/"från i natt 00:00 …" och område. Tryck fäller ut SMHI:s beskrivning (stängs efter 30 s).
+  Röd varning blinkar kort. Data äldre än 2 h visas inte. SMHI nere → ingen rad.
+
+### 4.5 Norrsken
 - Visas när någon timme de närmaste 12 är mörk (mer än ca 40 min efter solnedgång/före soluppgång), har under 50 % moln
   och Kp minst kravet för breddgraden (Stockholm 5, norrut lägre, söderut högre).
 - "Möjligt" vid Kp = kravet, "Troligt" vid minst ett steg över. "nu" om det gäller pågående timme, annars "i kväll"/"i natt".
@@ -76,13 +84,13 @@ av andra (t.ex. Dennis son på Gärdet) med egna hållplatser och egen plats –
 - Raden blinkar kort första gången det blir "Troligt nu". Kp-prognos äldre än 6 h används inte. NOAA nere → ingen rad.
 - NOAA bytte JSON-format 2026 (från rubrikrad + tabell till objekt) – appen läser båda.
 
-### 4.5 SL-störningar
+### 4.6 SL-störningar
 - Hämtas för valda trafikslag och filtreras på linjerna i avgångarna och hållplatsernas namn. Hissar och rulltrappor visas inte.
 - Avgångar på en störd linje får markeringen STÖRNING. Längst ner i SL-panelen står rubriken och "till ca hh:mm" om slutet är inom 24 h.
 - Flera störningar visas en i taget (viktigast först), byter var 8:e sekund, med 1/2.
 - Om störningstjänsten inte svarar visas avgångarna som vanligt.
 
-### 4.6 Robusthet
+### 4.7 Robusthet
 - Statusrad under väder och SL: "Uppdaterad hh:mm" eller "Kunde inte uppdatera – visar data från hh:mm".
 - Gammal data tonas ned (väder > 1 h, SL > 3 min, flyg > 1 min).
 - Hämtning pausas när sidan inte syns. Skärmlås (Wake Lock) när det stöds.
@@ -124,7 +132,6 @@ Data-API:er cachas inte. Höj `CACHE` vid ändring; sidan laddas om när ny vers
 - **Kalender (pausad):** händelserad "I dag"/"I morgon" och kalendervy med vecka, lista och detaljer. Endast läsning via
   hemlig/offentlig prenumerationslänk (iCloud eller Google) som sparas på enheten och hämtas via proxyn. Inget Apple-ID
   på iPaden. Lägga till/ändra görs på mobilen; "+" kan visa en QR-kod. Skisser finns.
-- SMHI-vädervarningar i händelseraden.
 - Månfas bredvid sol upp/ned.
 - ISS-passager som syns i kväll.
 - Dagens flygstatistik i flygpanelen.

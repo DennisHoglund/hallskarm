@@ -23,6 +23,11 @@
   --pa-tunnel: #F2EFE8;
   --kart-dimma: none;
   --regn: #2B5FA8;
+  --varn-gul: #E8B800;
+  --varn-orange: #E06A00;
+  --varn-rod: #C81E1E;
+  --pa-varn: #16150F;
+  --pa-varn-rod: #FFFFFF;
   color-scheme: light;
 }
 
@@ -45,6 +50,11 @@
   --pa-tunnel: #0E0F0C;
   --kart-dimma: brightness(0.85);
   --regn: #6FA3E8;
+  --varn-gul: #F2C200;
+  --varn-orange: #FF7A1A;
+  --varn-rod: #FF4A3D;
+  --pa-varn: #0E0F0C;
+  --pa-varn-rod: #FFFFFF;
   color-scheme: dark;
 }
 
@@ -326,20 +336,30 @@ small, .etikett {
 .radie button[aria-pressed="true"] { background: var(--accent); color: var(--pa-accent); font-weight: 700; }
 .ingen-flyg { font-size: 1.1rem; color: var(--ink2); }
 
-/* ---------- Händelserad (norrsken) ---------- */
+/* ---------- Händelserad (SMHI-varningar, norrsken) ---------- */
 .skarm.med-handelse { grid-template-rows: auto auto minmax(0, 1fr) auto; }
-.handelse { display: flex; align-items: center; gap: 1.4rem; padding: .7rem 0; border-bottom: var(--kant-tunn); min-width: 0; }
+.handelse { padding: .7rem 0; border-bottom: var(--kant-tunn); min-width: 0; }
+.handelse.kan-fallas-ut { cursor: pointer; }
+.handelse-rad { display: flex; align-items: center; gap: 1.4rem; min-width: 0; min-height: 2.2rem; }
 .handelse .etikett {
   font-size: .87rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; white-space: nowrap;
   color: var(--pa-accent); background: var(--accent); padding: .35rem .6rem;
 }
+.handelse .etikett.varn-gul { background: var(--varn-gul); color: var(--pa-varn); }
+.handelse .etikett.varn-orange { background: var(--varn-orange); color: var(--pa-varn); }
+.handelse .etikett.varn-rod { background: var(--varn-rod); color: var(--pa-varn-rod); }
 .handelse-text { flex: 1; min-width: 0; font-size: 1.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .handelse-text b { font-weight: 700; }
 .handelse-text span { color: var(--ink2); }
-.handelse-kp { display: flex; align-items: center; gap: .6rem; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85rem; color: var(--ink3); white-space: nowrap; }
+.handelse-hoger { display: flex; align-items: center; gap: 1rem; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85rem; color: var(--ink3); white-space: nowrap; }
+.handelse-hoger .kp { display: flex; align-items: center; gap: .6rem; }
+.handelse-hoger .kalla { letter-spacing: .1em; }
 .kp-staplar { display: flex; gap: .3rem; }
 .kp-staplar i { display: block; width: .55rem; height: 1.1rem; background: var(--spar); }
 .kp-staplar i.pa { background: var(--accent); }
+.handelse-mer { display: none; margin: .6rem 0 0; font-size: 1.05rem; line-height: 1.4; color: var(--ink2);
+  display: none; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.handelse.utfalld .handelse-mer { display: -webkit-box; }
 .handelse.larm { animation: larm 1.2s ease-in-out 6; }
 
 /* ---------- SL-störningar ---------- */
