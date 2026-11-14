@@ -1,6 +1,6 @@
 // Startar Hallskärmen: timers, tema efter solen, statusrader, skärmlås och service worker.
 (function () {
-  const VERSION = 'v11';
+  const VERSION = 'v12';
   const $ = (id) => document.getElementById(id);
   const C = window.HALL_CONFIG;
   const startad = Date.now();

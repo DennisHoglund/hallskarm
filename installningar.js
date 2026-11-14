@@ -73,9 +73,41 @@ window.HallInst = (function () {
       .map((s) => ({ id: s[0], namn: s[1], lat: s[2], lon: s[3] }));
   }
 
+  // Koordinater inklistrade från en karta: "59.755, 18.590", "59,75526° N, 18,59035° Ö"
+  // (Apple Kartor) eller grader/minuter/sekunder: 59°45'19"N 18°35'25"E
+  function tolkaKoordinater(text) {
+    const t = String(text).trim().replace(/\u2212/g, '-').replace(/[′’]/g, "'").replace(/[″”]/g, '"');
+    let tal = [];
+    const dms = /(\d{1,3})\s*°\s*(\d{1,2})\s*'\s*(?:(\d{1,2}(?:[.,]\d+)?)\s*"?)?\s*([NSÖOEVW])?/gi;
+    let m;
+    while ((m = dms.exec(t))) tal.push({ v: +m[1] + +m[2] / 60 + (m[3] ? +m[3].replace(',', '.') / 3600 : 0), r: (m[4] || '').toUpperCase() });
+    if (tal.length !== 2) {
+      tal = [];
+      const dec = /(-?\d{1,3}(?:[.,]\d+)?)\s*°?\s*([NSÖOEVW](?![a-zåäö]))?/gi;
+      while ((m = dec.exec(t))) tal.push({ v: +m[1].replace(',', '.'), r: (m[2] || '').toUpperCase() });
+    }
+    if (tal.length !== 2) return null;
+    // Bara siffror, tecken och väderstreck – annars är det ett ortnamn
+    if (/[a-zåäö]{2,}/i.test(t.replace(/\b[NSÖOEVW]\b/gi, ''))) return null;
+    let [a, b] = tal;
+    if ('ÖOEVW'.includes(a.r) && a.r && 'NS'.includes(b.r) && b.r) [a, b] = [b, a]; // longitud först
+    const lat = a.r === 'S' ? -a.v : a.v;
+    const lon = b.r === 'V' || b.r === 'W' ? -b.v : b.v;
+    if (!(Math.abs(lat) <= 90 && Math.abs(lon) <= 180)) return null;
+    const f = (x) => (Math.round(Math.abs(x) * 1000) / 1000).toFixed(3).replace('.', ',');
+    return {
+      namn: f(lat) + '° ' + (lat < 0 ? 'S' : 'N') + ', ' + f(lon) + '° ' + (lon < 0 ? 'V' : 'Ö'),
+      omrade: 'Koordinater',
+      lat: Math.round(lat * 1000) / 1000,
+      lon: Math.round(lon * 1000) / 1000
+    };
+  }
+
   async function sokPlats(text) {
     const q = text.trim();
     if (q.length < 2) return [];
+    const koord = tolkaKoordinater(q);
+    if (koord) return [koord];
     const url = window.HALL_CONFIG.api.geokod + '?name=' + encodeURIComponent(q) + '&count=6&language=sv&format=json&countryCode=SE';
     const res = await fetch(url);
     if (!res.ok) throw new Error('Platssökningen svarade ' + res.status);
@@ -154,7 +186,7 @@ window.HallInst = (function () {
       rita();
     });
     $('plats-gps').addEventListener('click', () => {
-      if (!navigator.geolocation) return;
+      if (!navigator.geolocation) { $('plats-gps').textContent = 'Positionen saknas här – sök på ort i stället'; return; }
       $('plats-gps').textContent = 'Hämtar position…';
       navigator.geolocation.getCurrentPosition((p) => {
         andra((s) => {
@@ -162,8 +194,11 @@ window.HallInst = (function () {
         });
         $('plats-gps').textContent = 'Använd min position';
         rita();
-      }, () => {
-        $('plats-gps').textContent = 'Positionen nekades – sök i stället';
+      }, (fel) => {
+        // 1 = nekad, 2 = gick inte att få fram, 3 = tog för lång tid
+        $('plats-gps').textContent = fel && fel.code === 1
+          ? 'Platsåtkomst nekad – slå på för Safari i Inställningar'
+          : 'Hittade ingen position – sök på ort eller klistra in koordinater';
       }, { enableHighAccuracy: false, timeout: 15000, maximumAge: 600000 });
     });
 
@@ -235,6 +270,7 @@ window.HallInst = (function () {
 
   return {
     LAGEN,
+    tolkaKoordinater,
     hamta,
     plats,
     andra,

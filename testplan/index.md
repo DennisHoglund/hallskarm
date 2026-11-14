@@ -5,8 +5,8 @@ Automatiserade testfall körs av Playwright vid varje commit och är kopplade vi
 
 | | |
 |---|---|
-| **Testfall** | 46 |
-| **Automatiserade** | 42 (körs på iPad/WebKit och Chromium i iPad Airs skärmstorlek) |
+| **Testfall** | 48 |
+| **Automatiserade** | 44 (körs på iPad/WebKit och Chromium i iPad Airs skärmstorlek) |
 | **Manuella** | 4 (kräver riktig iPad och riktig data) |
 | **Senaste testrapport** | [dennishoglund.github.io/hallskarm/rapport/](https://dennishoglund.github.io/hallskarm/rapport/) |
 | **Krav** | [SPEC.md](../SPEC.md) |
@@ -97,6 +97,8 @@ Automatiserade testfall körs av Playwright vid varje commit och är kopplade vi
 |---|---|---|---|
 | [TC-PLA-01](testfall/TC-PLA-01.md) | [Sök plats byter läge för väder och flyg](testfall/TC-PLA-01.md) | Hög | 🤖 |
 | [TC-PLA-02](testfall/TC-PLA-02.md) | [Använd min position](testfall/TC-PLA-02.md) | Medel | 🤖 |
+| [TC-PLA-03](testfall/TC-PLA-03.md) | [Koordinater kan klistras in som plats](testfall/TC-PLA-03.md) | Medel | 🤖 |
+| [TC-PLA-04](testfall/TC-PLA-04.md) | [Tydligt besked när positionen inte går att få](testfall/TC-PLA-04.md) | Medel | 🤖 |
 
 ## Hemskärm
 

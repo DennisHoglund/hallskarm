@@ -44,6 +44,10 @@ av andra (t.ex. Dennis son på Gärdet) med egna hållplatser och egen plats –
   Per hållplats väljs trafikslag: Tunnelbana, Buss, Pendeltåg, Spårväg, Båt.
 - **Tema:** Auto / Dag / Natt. **Flyg:** radie 10/25/50 km och adress till proxyn (om den inte står i `config.js`).
 - Allt sparas i `localStorage` (`hall-installningar`) på enheten. Första start öppnar inställningarna.
+- Platssöket förstår koordinater inklistrade från en karta: "59.755, 18.590", "59,75526° N, 18,59035° Ö" (Apple Kartor)
+  och grader/minuter/sekunder. Då visas ett förslag "Koordinater" utan anrop till platssöket.
+- "Använd min position": tydligt besked om åtkomst nekas (slå på för Safari) eller om iPaden inte hittar sin position
+  (vanligt på Wi-Fi-iPad utan mobilnät) – då föreslås sök på ort eller koordinater. Vald plats ligger kvar.
 
 ### 4.2 Flyg
 - Plan på marken och utanför radien filtreras bort.
