@@ -326,6 +326,9 @@ small, .etikett {
 .flygvy-panel .rutt span small { font-family: 'Archivo', sans-serif; letter-spacing: 0; text-transform: none; font-weight: 400; font-size: .85rem; }
 .nyckeltal { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .6rem; border-top: 1px solid var(--linje); padding-top: .8rem; }
 .nyckeltal b { display: block; font-family: 'JetBrains Mono', monospace; font-size: 1rem; white-space: nowrap; }
+.flyg-dag > small { display: block; margin-bottom: .3rem; color: var(--ink3); letter-spacing: .12em; text-transform: uppercase; font-size: .78rem; }
+.flyg-dag .nyckeltal { grid-template-columns: .7fr 1fr 1.3fr; }
+.flyg-dag .nyckeltal span { display: block; font-size: .8rem; color: var(--ink3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .flygvy .leaflet-top { top: 5.6rem; }
 .flygvy .leaflet-right { right: 1rem; }
 .planlista { list-style: none; margin: 0; padding: 0; font-family: 'JetBrains Mono', monospace; font-size: .95rem; }

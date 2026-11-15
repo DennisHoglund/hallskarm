@@ -8,7 +8,7 @@ Klocka, väder, SL-avgångar, flyg ovanför och dagsljus – för en gammal iPad
 - **Övre raden:** klocka, datum, vecka, namnsdag och sol upp/ned.
 - **Väder:** nu och fem dagar framåt. Tryck på rutan för **vädervyn** med klädtips, 24 timmar timme för timme och regnradar (senaste två timmarna).
 - **SL:** avgångar från upp till tre hållplatser. Störningar på dina linjer markeras och visas längst ner.
-- **Luftrummet:** planet närmast ovanför med rutt. Tryck för karta eller radar i helskärm. Kan blinka (och pipa) när ett plan är nära.
+- **Luftrummet:** planet närmast ovanför med rutt. Tryck för karta eller radar i helskärm. Kan blinka (och pipa) när ett plan är nära. Räknar dagens plan, närmaste och högsta.
 - **Dagsljus:** dagslängd, förändring per dag och kurva över året.
 - **Elpris:** pris just nu, dyrt/billigt och billigaste tiden. Tryck för dygnets priser och morgondagen.
 - **Händelseraden** under klockan, bara när något är aktuellt: SMHI-varningar för där du bor och norrsken när Kp är tillräckligt högt och det är mörkt och klart.

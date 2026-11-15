@@ -1,6 +1,6 @@
 // Startar Hallskärmen: timers, tema efter solen, statusrader, skärmlås och service worker.
 (function () {
-  const VERSION = 'v14';
+  const VERSION = 'v15';
   // Felsökningsläge: ?utan=elpris,flyg … stänger av delar vid start (för att ringa in krascher på äldre iPad)
   const UTAN = new Set(((new URLSearchParams(location.search).get('utan')) || '').split(',').map((x) => x.trim()).filter(Boolean));
   const med = (del) => !UTAN.has(del) && !UTAN.has('allt');

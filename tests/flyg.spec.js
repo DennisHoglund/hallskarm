@@ -3,7 +3,7 @@ const { installningar, STANDARD_INST, PROXY } = require('./mock');
 
 test.describe('Flyg', () => {
   test('nedre raden visar planet som passerar ovanför med rutt', { annotation: { type: 'testfall', description: 'TC-FLY-01' } }, async ({ skarm: page }) => {
-    await expect(page.locator('#flyg-antal')).toHaveText('4 plan inom 25 km');
+    await expect(page.locator('#flyg-antal')).toHaveText('4 plan inom 25 km · 4 i dag');
     await expect(page.locator('.flyg-etikett')).toHaveText(/Rakt ovanför (om \d+ s|nu)/);
     await expect(page.locator('.flyg-anrop')).toHaveText('SAS1423');
     await expect(page.locator('.flyg-rutt')).toHaveText('Stockholm → Nice');
@@ -124,5 +124,35 @@ test.describe('Flyg', () => {
     await installningar(page, STANDARD_INST);
     await page.goto('./');
     await expect(page.locator('.flyg-etikett')).toHaveText('Flygdata saknas');
+  });
+
+  test('dagens flygstatistik räknas, sparas och nollställs vid midnatt', { annotation: { type: 'testfall', description: 'TC-FLY-11' } }, async ({ page, api }) => {
+    // Gårdagens statistik ska inte räknas in
+    await page.addInitScript(() => {
+      if (!sessionStorage.getItem('test-flygdag')) {
+        sessionStorage.setItem('test-flygdag', '1');
+        localStorage.setItem('hall-flygdag', JSON.stringify({ datum: '2026-11-7', hex: Array.from({ length: 99 }, (_, i) => 'x' + i), narmast: null, hogst: null }));
+      }
+    });
+    await installningar(page, STANDARD_INST);
+    await page.goto('./');
+    await expect(page.locator('#flyg-antal')).toHaveText('4 plan inom 25 km · 4 i dag');
+
+    await page.locator('#flyg-oppna').click();
+    const dag = page.locator('#flygvy-panel .flyg-dag');
+    await expect(dag).toBeVisible();
+    await expect(dag.locator('.nyckeltal > div').nth(0).locator('b')).toHaveText('4');
+    await expect(dag.locator('.nyckeltal > div').nth(1)).toContainText('3,0 km');
+    await expect(dag.locator('.nyckeltal > div').nth(1)).toContainText('SAS1423');
+    await expect(dag.locator('.nyckeltal > div').nth(2).locator('b')).toHaveText(/^9\s800 m$/);
+    await expect(dag.locator('.nyckeltal > div').nth(2)).toContainText('SAS1423 · A20N');
+    await bild(page, 'Dagens flygstatistik');
+
+    // Planen försvinner men dagens siffror ligger kvar, även efter omladdning
+    api.flygplan = [];
+    await expect(page.locator('#flygvy-rubrik')).toHaveText('0 plan inom 25 km', { timeout: 15000 });
+    await expect(dag.locator('.nyckeltal > div').nth(0).locator('b')).toHaveText('4');
+    await page.reload();
+    await expect(page.locator('#flyg-antal')).toHaveText('0 plan inom 25 km · 4 i dag', { timeout: 15000 });
   });
 });

@@ -35,6 +35,32 @@ window.HallFlyg = (function () {
   const larmade = new Map(); // hex → tid för senaste avisering
   const larmLyssnare = [];
 
+  // ---------- Dagens statistik (sparas på enheten, nollställs vid midnatt) ----------
+  const DAG_NYCKEL = 'hall-flygdag';
+  function datumNu(n) { const d = n || new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
+  function tomDag() { return { datum: datumNu(), hex: [], narmast: null, hogst: null }; }
+  function laddaDag() {
+    try {
+      const d = JSON.parse(localStorage.getItem(DAG_NYCKEL));
+      if (d && d.datum === datumNu() && Array.isArray(d.hex)) return d;
+    } catch (e) { /* ignorera */ }
+    return tomDag();
+  }
+  let dag = null, dagSett = null, dagSparad = 0, dagAndrad = false;
+  function raknaDag(nu) {
+    if (!dag || dag.datum !== datumNu()) { dag = laddaDag(); dagSett = new Set(dag.hex); }
+    for (const a of plan) {
+      if (a.hex && !dagSett.has(a.hex)) { dagSett.add(a.hex); dag.hex.push(a.hex); dagAndrad = true; }
+      if (!dag.narmast || a.km < dag.narmast.km) { dag.narmast = { anrop: a.anrop, km: a.km, typ: a.typ }; dagAndrad = true; }
+      if (a.hojd != null && (!dag.hogst || a.hojd > dag.hogst.hojd)) { dag.hogst = { anrop: a.anrop, hojd: a.hojd, typ: a.typ }; dagAndrad = true; }
+    }
+    if (dagAndrad && nu - dagSparad > 60 * 1000) {
+      try { localStorage.setItem(DAG_NYCKEL, JSON.stringify(dag)); } catch (e) { /* fullt eller avstängt */ }
+      dagSparad = nu; dagAndrad = false;
+    }
+  }
+  function dagStatistik() { return dag ? { antal: dag.hex.length, narmast: dag.narmast, hogst: dag.hogst } : { antal: 0, narmast: null, hogst: null }; }
+
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   }
@@ -150,6 +176,7 @@ window.HallFlyg = (function () {
     else vald = plan[0] ? { ...plan[0], ovanforOm: null } : null;
     if (vald) senastSedd = { anrop: vald.anrop, tid: nu };
     if (vald && vald.harAnrop) hamtaRutt(vald.anrop);
+    raknaDag(nu);
     kollaLarm(nu);
   }
 
@@ -316,7 +343,8 @@ window.HallFlyg = (function () {
 
   // ---------- Text i nedre raden och i helskärm ----------
   function ritaInfo() {
-    $('flyg-antal').textContent = plan.length + ' plan inom ' + radieKm + ' km';
+    const st = dagStatistik();
+    $('flyg-antal').textContent = plan.length + ' plan inom ' + radieKm + ' km' + (st.antal ? ' · ' + st.antal + ' i dag' : '');
     const el = $('flyg-info');
     if (!vald) {
       const sist = senastSedd ? 'Senast: ' + esc(senastSedd.anrop) + ' för ' + Math.max(1, Math.round((Date.now() - senastSedd.tid) / 60000)) + ' min sedan' : '';
@@ -331,10 +359,21 @@ window.HallFlyg = (function () {
       `<div class="flyg-fakta">${esc([a.typ, hojdText(a), kmText(a.km)].filter(Boolean).join(' · '))}</div>`;
   }
 
+  function dagHtml() {
+    const st = dagStatistik();
+    if (!st.antal) return '';
+    const hojd = st.hogst ? Math.round(st.hogst.hojd / 100) * 100 : null;
+    return `<div class="flyg-dag"><small>I dag</small><div class="nyckeltal">` +
+      `<div><small>Plan</small><b>${st.antal}</b></div>` +
+      `<div><small>Närmast</small><b>${st.narmast ? esc(kmText(st.narmast.km)) : '–'}</b><span>${st.narmast ? esc(st.narmast.anrop) : ''}</span></div>` +
+      `<div><small>Högst</small><b>${hojd != null ? hojd.toLocaleString('sv-SE') + ' m' : '–'}</b><span>${st.hogst ? esc([st.hogst.anrop, st.hogst.typ].filter(Boolean).join(' · ')) : ''}</span></div>` +
+      `</div></div>`;
+  }
+
   function ritaPanel() {
     const el = $('flygvy-panel');
     $('flygvy-rubrik').textContent = plan.length + ' plan inom ' + radieKm + ' km';
-    if (!vald) { el.innerHTML = '<div class="ingen-flyg">Inga plan i närheten just nu.</div>'; return; }
+    if (!vald) { el.innerHTML = '<div class="ingen-flyg">Inga plan i närheten just nu.</div>' + dagHtml(); return; }
     const a = vald, r = rutter.get(a.anrop);
     el.innerHTML = `<small style="color:var(--accent)">${esc(rubrikText(a))}</small>` +
       `<div class="flyg-anrop">${esc(a.anrop)}</div>` +
@@ -342,6 +381,7 @@ window.HallFlyg = (function () {
       (r ? `<div class="rutt"><span>${esc(r.franKod)}<small>${esc(r.fran)}</small></span><i></i><span style="text-align:right">${esc(r.tillKod)}<small>${esc(r.till)}</small></span></div>` : '') +
       `<div class="nyckeltal"><div><small>Höjd</small><b>${esc(hojdText(a) || '–')}</b></div><div><small>Fart</small><b>${a.fart ? Math.round(a.fart) + ' km/h' : '–'}</b></div>` +
       `<div><small>Avstånd</small><b>${esc(kmText(a.km))}</b></div><div><small>Bäring</small><b>${Math.round(a.bar)}°</b></div></div>` +
+      dagHtml() +
       `<ol class="planlista">${plan.slice(0, 6).map((p) => `<li class="${p.hex === a.hex ? 'vald' : ''}"><span>${esc(p.anrop)}</span><span>${esc(kmText(p.km))}</span></li>`).join('')}</ol>`;
   }
 
@@ -430,6 +470,7 @@ window.HallFlyg = (function () {
     koppla, starta, hamta, rita, sattTema, sattRadie, oppnaVy, stangVy,
     senastOk: () => senastOk,
     onLarm: (fn) => larmLyssnare.push(fn),
+    dagStatistik,
     _test: { passage: (a) => passage(a), tolka }
   };
 })();

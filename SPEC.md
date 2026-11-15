@@ -60,6 +60,8 @@ av andra (t.ex. Dennis son på Gärdet) med egna hållplatser och egen plats –
 - **Avisering** när ett plan kommer inom 1/2/3/5 km (standard 2 km): Av, Blinka eller Blinka och pip. Luftrummet-rutan
   blinkar i accentfärgen ca 7 s. Pipet är två korta toner via Web Audio (ingen fil). Samma plan aviseras högst var 30:e minut.
   "Inget pip mellan 22 och 07" är på som standard. Safari spelar bara ljud efter ett tryck på skärmen (efter varje omstart).
+- **Dagens statistik:** unika plan (hex) inom radien sedan midnatt, närmaste passagen och högsta planet. Rubrikraden visar
+  "4 plan inom 25 km · 143 i dag"; flygvyn har rutan I DAG. Sparas i `hall-flygdag` (högst varje minut) och nollställs vid midnatt.
 - I nattläge färgas planen efter höjd: < 2 km orange, 2–7 km ljus, > 7 km blå.
 
 ### 4.3 Vädervyn
@@ -113,7 +115,8 @@ av andra (t.ex. Dennis son på Gärdet) med egna hållplatser och egen plats –
 ## 5. Lagring
 | Nyckel | Innehåll |
 |---|---|
-| `hall-installningar` | plats, hållplatser, tema, flygradie, proxy, avisering |
+| `hall-installningar` | plats, hållplatser, tema, flygradie, proxy, avisering, elområde |
+| `hall-flygdag` | dagens flygstatistik (datum, unika plan, närmast, högst) |
 | `hall-sl-sites` | SL:s hållplatslista (id, namn, lat, lon), max en vecka |
 | `hall-dagar` | dagens namnsdag |
 | `hall-flygvy` | karta eller radar |
@@ -153,5 +156,4 @@ Data-API:er cachas inte. Höj `CACHE` vid ändring; sidan laddas om när ny vers
   på iPaden. Lägga till/ändra görs på mobilen; "+" kan visa en QR-kod. Skisser finns.
 - Månfas bredvid sol upp/ned.
 - ISS-passager som syns i kväll.
-- Dagens flygstatistik i flygpanelen.
-- Pip vid flyg ovanför och möjlighet att stänga av radarsvepet (pausat).
+- Möjlighet att stänga av radarsvepet (pausat).
