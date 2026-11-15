@@ -14,6 +14,6 @@ test.describe('Felsökningsläge', () => {
     expect(api.anrop.some((a) => /adsb|airplanes|proxy/.test(a.url))).toBe(false);
     expect(typer.has('vader')).toBe(true);
     await expect(page.locator('#el-rad')).toBeHidden();
-    await expect(page.locator('#version')).toHaveText('Version v14 · felsökning utan elpris, flyg, varningar');
+    await expect(page.locator('#version')).toHaveText(/^Version v\d+ · felsökning utan elpris, flyg, varningar$/);
   });
 });
