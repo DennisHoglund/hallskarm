@@ -45,21 +45,23 @@ jobs:
           idag=$(TZ=Europe/Stockholm date +%Y/%m-%d)
           {
             echo "### Externa API:er (CORS från GitHub Pages)"
-            echo "| Tjänst | Status | access-control-allow-origin |"
-            echo "|---|---|---|"
+            echo "| Tjänst | Status | access-control-allow-origin | Storlek |"
+            echo "|---|---|---|---|"
             for rad in \
               "Open-Meteo|https://api.open-meteo.com/v1/forecast?latitude=59.3&longitude=18.1&current=temperature_2m" \
               "SL avgångar|https://transport.integration.sl.se/v1/sites/9220/departures?forecast=60" \
-              "SL störningar|https://deviations.integration.sl.se/v1/messages?future=false&transport_mode=METRO" \
+              "SL störningar (alla trafikslag)|https://deviations.integration.sl.se/v1/messages?future=false&transport_mode=METRO&transport_mode=BUS&transport_mode=TRAIN&transport_mode=TRAM&transport_mode=SHIP&transport_mode=FERRY" \
+              "SL störningar (en linje)|https://deviations.integration.sl.se/v1/messages?future=false&line=13" \
               "SMHI varningar|https://opendata-download-warnings.smhi.se/ibww/api/version/1/warning.json" \
               "NOAA Kp|https://services.swpc.noaa.gov/products/noaa-planetary-k-index-forecast.json" \
               "RainViewer|https://api.rainviewer.com/public/weather-maps.json" \
               "Elpriset just nu|https://www.elprisetjustnu.se/api/v1/prices/${idag}_SE3.json"; do
               namn="${rad%%|*}"; url="${rad#*|}"
-              huvud=$(curl -sS -m 20 -o /dev/null -D - -H 'Origin: https://dennishoglund.github.io' "$url" 2>&1 || true)
+              huvud=$(curl -sS -m 30 -o /tmp/svar -D - -H 'Origin: https://dennishoglund.github.io' "$url" 2>&1 || true)
+              storlek=$(wc -c < /tmp/svar 2>/dev/null | awk '{printf "%.0f kB", $1/1024}')
               status=$(echo "$huvud" | grep -m1 '^HTTP' | awk '{print $2}')
               acao=$(echo "$huvud" | grep -i '^access-control-allow-origin' | cut -d' ' -f2- | tr -d '\r')
-              echo "| $namn | ${status:-–} | ${acao:-**saknas**} |"
+              echo "| $namn | ${status:-–} | ${acao:-**saknas**} | ${storlek:-–} |"
             done
           } | tee -a "$GITHUB_STEP_SUMMARY"
 
