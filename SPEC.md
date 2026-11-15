@@ -143,6 +143,10 @@ Data-API:er cachas inte. Höj `CACHE` vid ändring; sidan laddas om när ny vers
 - Egen sensor (utetemperatur/HAN) via ESP32 → Supabase.
 - CI loggar varje körning om de externa API:erna tillåter anrop från sidan (CORS) i körningens sammanfattning.
 
+- **Felsökningsläge:** `?utan=del1,del2` stänger av delar vid start, för att ringa in krascher på äldre iPad.
+  Delar: `vader`, `sl`, `storningar`, `varningar`, `norrsken`, `elpris`, `flyg`, `namnsdag`, `sw` (tar bort service worker
+  och cachar), `allt`. Versionsraden i inställningarna visar vad som är avstängt.
+
 ### Önskelista
 - **Kalender (pausad):** händelserad "I dag"/"I morgon" och kalendervy med vecka, lista och detaljer. Endast läsning via
   hemlig/offentlig prenumerationslänk (iCloud eller Google) som sparas på enheten och hämtas via proxyn. Inget Apple-ID

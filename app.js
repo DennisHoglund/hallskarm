@@ -1,6 +1,9 @@
 // Startar Hallskärmen: timers, tema efter solen, statusrader, skärmlås och service worker.
 (function () {
-  const VERSION = 'v13';
+  const VERSION = 'v14';
+  // Felsökningsläge: ?utan=elpris,flyg … stänger av delar vid start (för att ringa in krascher på äldre iPad)
+  const UTAN = new Set(((new URLSearchParams(location.search).get('utan')) || '').split(',').map((x) => x.trim()).filter(Boolean));
+  const med = (del) => !UTAN.has(del) && !UTAN.has('allt');
   const $ = (id) => document.getElementById(id);
   const C = window.HALL_CONFIG;
   const startad = Date.now();
@@ -80,7 +83,7 @@
     const forstaGangen = !slResultat.length;
     slResultat = res;
     window.HallSL.rita(slResultat);
-    if (forstaGangen) storningar(); // linjerna behövs för att välja ut störningar
+    if (forstaGangen && med('storningar')) storningar(); // linjerna behövs för att välja ut störningar
     status('sl-status', 'sl', 'sl', fel);
   }
 
@@ -218,42 +221,47 @@
 
     window.HallTid.ritaKlocka(new Date());
     sattTema();
-    window.HallTid.hamtaNamnsdag();
-    vader();
-    sl();
+    if (med('namnsdag')) window.HallTid.hamtaNamnsdag();
+    if (med('vader')) vader();
+    if (med('sl')) sl();
     window.HallHandelser.koppla(() => window.HallSL.rita(slResultat)); // mittdelen ändrade höjd
     window.HallElpris.koppla();
-    varningar();
-    norrsken();
-    elpris();
-    startaFlyg();
+    if (med('varningar')) varningar();
+    if (med('norrsken')) norrsken();
+    if (med('elpris')) elpris();
+    if (med('flyg')) startaFlyg();
+    if (UTAN.size) $('version').textContent = 'Version ' + VERSION + ' · felsökning utan ' + Array.from(UTAN).join(', ');
 
     setInterval(() => window.HallTid.ritaKlocka(), 1000);
     setInterval(() => { window.HallSL.rita(slResultat); }, 15000);
     setInterval(() => { sattTema(); nattlig(); norrskenRita(); varningarRita(); elRita(); }, 60000);
-    var_(C.intervall.vader, vader);
-    var_(C.intervall.sl, sl);
-    var_(C.intervall.flyg, flyg);
-    var_(C.intervall.namnsdag, () => window.HallTid.hamtaNamnsdag());
-    var_(C.intervall.storningar, storningar);
-    var_(C.intervall.norrsken, norrsken);
-    var_(C.intervall.varningar, varningar);
-    var_(C.intervall.elpris, elpris);
+    if (med('vader')) var_(C.intervall.vader, vader);
+    if (med('sl')) var_(C.intervall.sl, sl);
+    if (med('flyg')) var_(C.intervall.flyg, flyg);
+    if (med('namnsdag')) var_(C.intervall.namnsdag, () => window.HallTid.hamtaNamnsdag());
+    if (med('storningar') && med('sl')) var_(C.intervall.storningar, storningar);
+    if (med('norrsken')) var_(C.intervall.norrsken, norrsken);
+    if (med('varningar')) var_(C.intervall.varningar, varningar);
+    if (med('elpris')) var_(C.intervall.elpris, elpris);
 
     document.addEventListener('visibilitychange', () => {
       if (!synlig()) return;
       window.HallTid.ritaKlocka(new Date());
       vakna();
-      if (Date.now() - senast.sl > C.intervall.sl * 1000) sl();
-      if (Date.now() - senast.flyg > C.intervall.flyg * 1000) flyg();
-      if (Date.now() - senast.vader > C.intervall.vader * 1000) vader();
+      if (med('sl') && Date.now() - senast.sl > C.intervall.sl * 1000) sl();
+      if (med('flyg') && Date.now() - senast.flyg > C.intervall.flyg * 1000) flyg();
+      if (med('vader') && Date.now() - senast.vader > C.intervall.vader * 1000) vader();
     });
     vakna();
     document.addEventListener('click', vakna, { once: true });
 
     if (window.HallInst.arForsta()) setTimeout(() => window.HallInst.oppna(), 400);
 
-    if ('serviceWorker' in navigator && location.protocol === 'https:') {
+    if (!med('sw') && 'serviceWorker' in navigator) {
+      // Felsökning: ta bort service worker och cachar helt
+      navigator.serviceWorker.getRegistrations().then((r) => r.forEach((x) => x.unregister())).catch(() => {});
+      if (window.caches) caches.keys().then((k) => k.forEach((x) => caches.delete(x))).catch(() => {});
+    } else if ('serviceWorker' in navigator && location.protocol === 'https:') {
       const hadeKontroll = !!navigator.serviceWorker.controller;
       navigator.serviceWorker.register('sw.js').catch((e) => console.warn('SW:', e));
       navigator.serviceWorker.addEventListener('controllerchange', () => { if (hadeKontroll) location.reload(); });

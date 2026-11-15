@@ -5,8 +5,8 @@ Automatiserade testfall körs av Playwright vid varje commit och är kopplade vi
 
 | | |
 |---|---|
-| **Testfall** | 52 |
-| **Automatiserade** | 48 (körs på iPad/WebKit och Chromium i iPad Airs skärmstorlek) |
+| **Testfall** | 53 |
+| **Automatiserade** | 49 (körs på iPad/WebKit och Chromium i iPad Airs skärmstorlek) |
 | **Manuella** | 4 (kräver riktig iPad och riktig data) |
 | **Senaste testrapport** | [dennishoglund.github.io/hallskarm/rapport/](https://dennishoglund.github.io/hallskarm/rapport/) |
 | **Krav** | [SPEC.md](../SPEC.md) |
@@ -69,6 +69,12 @@ Automatiserade testfall körs av Playwright vid varje commit och är kopplade vi
 | [TC-EL-02](testfall/TC-EL-02.md) | [Elprisvyn visar dygnets priser](testfall/TC-EL-02.md) | Medel | 🤖 |
 | [TC-EL-03](testfall/TC-EL-03.md) | [Elområdet följer platsen och kan väljas](testfall/TC-EL-03.md) | Låg | 🤖 |
 | [TC-EL-04](testfall/TC-EL-04.md) | [Utan elpris fungerar resten](testfall/TC-EL-04.md) | Medel | 🤖 |
+
+## Felsökning
+
+| ID | Testfall | Prio | Typ |
+|---|---|---|---|
+| [TC-FEL-01](testfall/TC-FEL-01.md) | [Felsökningsläge stänger av delar](testfall/TC-FEL-01.md) | Låg | 🤖 |
 
 ## Flyg
 
