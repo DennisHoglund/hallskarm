@@ -155,4 +155,34 @@ test.describe('Flyg', () => {
     await page.reload();
     await expect(page.locator('#flyg-antal')).toHaveText('0 plan inom 25 km · 4 i dag', { timeout: 15000 });
   });
+
+  test('helikoptrar och andra kategorier får egna ikoner', { annotation: { type: 'testfall', description: 'TC-FLY-12' } }, async ({ page, api }) => {
+    const { flygplan, runt, GARDET } = require('./mock');
+    api.flygplan = flygplan(GARDET).concat([
+      // Polishelikopter rakt ovanför, utan kategori men med känd helikoptertyp
+      { hex: '4a9001', flight: 'POLIS42 ', r: 'SE-JPZ', t: 'EC35', alt_baro: 1200, gs: 90, track: 45, baro_rate: 0, ...runt(GARDET, 0.3, 0.2) },
+      { hex: '4a9002', flight: 'QTR168  ', r: 'A7-ALZ', t: 'A359', category: 'A5', alt_baro: 36000, gs: 480, track: 300, baro_rate: 0, ...runt(GARDET, 8, 6) },
+      { hex: '4a9003', flight: '', r: 'SE-DRN', t: '', category: 'B6', alt_baro: 300, gs: 20, track: 0, baro_rate: 0, ...runt(GARDET, -4, 3) }
+    ]);
+    await installningar(page, STANDARD_INST);
+    await page.goto('./');
+    await expect(page.locator('#flyg-info')).toContainText('POLIS42');
+    await expect(page.locator('#flyg-info .flyg-fakta')).toContainText('EC35 · Helikopter');
+    // Minikartan: helikoptern är vald, har ring och egen ikon
+    await expect(page.locator('#minikarta .plan-ikon.vald svg.ikon-heli .ring')).toHaveCount(1);
+    await expect(page.locator('#minikarta svg.ikon-tung')).toHaveCount(1);
+    await expect(page.locator('#minikarta svg.ikon-liten')).toHaveCount(1);
+    await expect(page.locator('#minikarta svg.ikon-dronare')).toHaveCount(1);
+    await expect(page.locator('#minikarta svg.ikon-jet')).toHaveCount(3);
+
+    // Radarn använder samma ikoner
+    await page.locator('#flyg-oppna').click();
+    await page.locator('#flik-radar').click();
+    await expect(page.locator('#radar .mal.vald .ikon-heli')).toHaveCount(1);
+    await expect(page.locator('#radar .ikon-tung')).toHaveCount(1);
+    await expect(page.locator('#radar .ikon-dronare')).toHaveCount(1);
+    // Helikopter och drönare vrids inte efter kursen
+    await expect(page.locator('#radar .mal.vald .ikon-heli > g')).toHaveAttribute('transform', /rotate\(0\)/);
+    await bild(page, 'Helikopter och kategorier på radarn');
+  });
 });

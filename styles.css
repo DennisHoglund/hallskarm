@@ -282,10 +282,14 @@ small, .etikett {
 .regnkarta .leaflet-control-attribution a { color: var(--ink3); }
 .plan-ikon { background: none; border: 0; }
 .plan-ikon svg { display: block; overflow: visible; }
-.plan-ikon path { fill: var(--ink); }
-.plan-ikon.vald path { fill: var(--accent); }
-[data-theme="natt"] .plan-ikon path { fill: var(--plan-farg, var(--ink)); }
-[data-theme="natt"] .plan-ikon.vald path { fill: #FFFFFF; }
+.plan-ikon .f { fill: var(--ink); }
+.plan-ikon .s { fill: none; stroke: var(--ink); }
+.plan-ikon.vald .f { fill: var(--accent); }
+.plan-ikon.vald .s { stroke: var(--accent); }
+[data-theme="natt"] .plan-ikon .f { fill: var(--plan-farg, var(--ink)); }
+[data-theme="natt"] .plan-ikon .s { stroke: var(--plan-farg, var(--ink)); }
+[data-theme="natt"] .plan-ikon.vald .f { fill: #FFFFFF; }
+[data-theme="natt"] .plan-ikon.vald .s { stroke: #FFFFFF; }
 .plan-ikon.vald .ring { fill: none; stroke: var(--accent); stroke-width: 1.5; }
 .spar-dag { stroke: var(--ink); }
 .spar-dag.spar-vald { stroke: var(--accent); }
@@ -505,12 +509,14 @@ small, .etikett {
 .radar .grad { stroke: var(--ink3); }
 .radar text { font-family: 'JetBrains Mono', monospace; fill: var(--ink3); font-size: 12px; }
 .radar .vaderstreck { font-size: 15px; font-weight: 700; fill: var(--ink2); }
-.radar .mal path { fill: var(--accent); }
+.radar .mal .f { fill: var(--accent); }
+.radar .mal .s { fill: none; stroke: var(--accent); }
 .radar .mal line { stroke: var(--accent); stroke-width: 1.3; }
 .radar .mal circle { fill: var(--accent); }
 .radar .mal text { fill: var(--accent); }
 .radar .mal text.sek { fill: var(--ink2); }
-.radar .mal.vald path, .radar .mal.vald circle { fill: var(--ink); }
+.radar .mal.vald .f, .radar .mal.vald circle { fill: var(--ink); }
+.radar .mal.vald .s { fill: none; stroke: var(--ink); }
 .radar .mal.vald line, .radar .mal.vald rect { stroke: var(--ink); fill: none; }
 .radar .mal.vald text { fill: var(--ink); font-weight: 700; }
 .radar .hem { fill: var(--accent); }

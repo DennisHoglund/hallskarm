@@ -115,10 +115,10 @@ function runt(plats, ostKm, norrKm) {
 }
 function flygplan(plats) {
   return [
-    { hex: '4ac9e1', flight: 'SAS1423 ', r: 'SE-ROM', t: 'A20N', alt_baro: 32150, gs: 453, track: 222, baro_rate: -640, ...runt(plats, 2.0, 2.2) },
-    { hex: '47c2a8', flight: 'NAX4CU  ', r: 'LN-FGB', t: 'B38M', alt_baro: 13800, gs: 290, track: 330, baro_rate: 1800, ...runt(plats, -6, 10) },
-    { hex: '461f4c', flight: 'FIN6TL  ', r: 'OH-ATK', t: 'AT76', alt_baro: 6900, gs: 220, track: 300, baro_rate: -900, ...runt(plats, 12, -5) },
-    { hex: '4ab0c1', flight: '', r: 'SE-MKP', t: 'C172', alt_baro: 2000, gs: 95, track: 92, baro_rate: 0, ...runt(plats, -2.5, -2) },
+    { hex: '4ac9e1', flight: 'SAS1423 ', r: 'SE-ROM', t: 'A20N', category: 'A3', alt_baro: 32150, gs: 453, track: 222, baro_rate: -640, ...runt(plats, 2.0, 2.2) },
+    { hex: '47c2a8', flight: 'NAX4CU  ', r: 'LN-FGB', t: 'B38M', category: 'A3', alt_baro: 13800, gs: 290, track: 330, baro_rate: 1800, ...runt(plats, -6, 10) },
+    { hex: '461f4c', flight: 'FIN6TL  ', r: 'OH-ATK', t: 'AT76', category: 'A2', alt_baro: 6900, gs: 220, track: 300, baro_rate: -900, ...runt(plats, 12, -5) },
+    { hex: '4ab0c1', flight: '', r: 'SE-MKP', t: 'C172', category: 'A1', alt_baro: 2000, gs: 95, track: 92, baro_rate: 0, ...runt(plats, -2.5, -2) },
     { hex: '4a0001', flight: 'SAS100  ', r: 'SE-RES', t: 'A20N', alt_baro: 'ground', gs: 0, track: 10, ...runt(plats, 1, 1) },
     { hex: '4b0002', flight: 'DLH2VA  ', r: 'D-AISZ', t: 'A321', alt_baro: 20000, gs: 400, track: 18, baro_rate: -1000, ...runt(plats, -40, -40) }
   ];
@@ -344,4 +344,4 @@ function smhiVarning({ niva = 'YELLOW', typ = 'Vind', start, slut, yta = STOCKHO
 }
 
 module.exports = {
-  smhiVarning, GOTEBORG_YTA, mocka, installningar, STANDARD_INST, GARDET, KARLAPLAN, NU, PROXY };
+  smhiVarning, GOTEBORG_YTA, flygplan, runt, mocka, installningar, STANDARD_INST, GARDET, KARLAPLAN, NU, PROXY };

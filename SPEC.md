@@ -60,6 +60,10 @@ av andra (t.ex. Dennis son på Gärdet) med egna hållplatser och egen plats –
 - **Avisering** när ett plan kommer inom 1/2/3/5 km (standard 2 km): Av, Blinka eller Blinka och pip. Luftrummet-rutan
   blinkar i accentfärgen ca 7 s. Pipet är två korta toner via Web Audio (ingen fil). Samma plan aviseras högst var 30:e minut.
   "Inget pip mellan 22 och 07" är på som standard. Safari spelar bara ljud efter ett tryck på skärmen (efter varje omstart).
+- **Ikoner per kategori** (ADS-B `category`): A7 helikopter (även kända helikoptertyper som EC35, H135, AS50 när kategori saknas),
+  A5 tungt plan (större), A1 litet propellerplan, B1 segelflyg, B2 ballong, B6 drönare, övriga jetplan. Samma ikoner på kartorna
+  och radarn. Plan vrids efter kursen; helikopter, ballong och drönare står upprätt. Valt plan har ring och accentfärg.
+  Faktaraden visar kategorin, t.ex. "EC35 · Helikopter".
 - **Dagens statistik:** unika plan (hex) inom radien sedan midnatt, närmaste passagen och högsta planet. Rubrikraden visar
   "4 plan inom 25 km · 143 i dag"; flygvyn har rutan I DAG. Sparas i `hall-flygdag` (högst varje minut) och nollställs vid midnatt.
 - I nattläge färgas planen efter höjd: < 2 km orange, 2–7 km ljus, > 7 km blå.

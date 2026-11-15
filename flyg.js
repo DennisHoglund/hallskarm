@@ -28,6 +28,37 @@ window.HallFlyg = (function () {
   };
   const PLAN = 'M0,-9 L1.8,-2.2 L9,1.9 L9,3.8 L1.8,2 L1.4,6.8 L3.8,8.6 L3.8,9.8 L0,9 L-3.8,9.8 L-3.8,8.6 L-1.4,6.8 L-1.8,2 L-9,3.8 L-9,1.9 L-1.8,-2.2 Z';
 
+  // Ikoner per kategori (ADS-B emitter category). .f fylls, .s ritas som linje. Pekar uppåt, vrids efter kursen.
+  const IKON = {
+    jet: `<path class="f" d="${PLAN}"/>`,
+    tung: `<g transform="scale(1.32)"><path class="f" d="${PLAN}"/><rect class="f" x="3.6" y="-0.2" width="1.3" height="2.6" rx=".5"/><rect class="f" x="-4.9" y="-0.2" width="1.3" height="2.6" rx=".5"/></g>`,
+    liten: '<g transform="scale(.85)"><path class="f" d="M0,-8.6 L1.3,-7.6 L1.3,-3.6 L9.8,-3.6 L9.8,-0.9 L1.3,-0.9 L1,5.4 L4,6 L4,8 L0,7.6 L-4,8 L-4,6 L-1,5.4 L-1.3,-0.9 L-9.8,-0.9 L-9.8,-3.6 L-1.3,-3.6 L-1.3,-7.6 Z"/><rect class="f" x="-3.4" y="-10" width="6.8" height="1.1" rx=".5"/></g>',
+    heli: '<path class="s" d="M-7.6,-7.6 L7.6,7.6 M7.6,-7.6 L-7.6,7.6" stroke-width="1.8" stroke-linecap="round"/><ellipse class="f" cx="0" cy="-0.6" rx="3" ry="4.5"/><rect class="f" x="-0.7" y="2.8" width="1.4" height="7.6" rx=".6"/><rect class="f" x="-2.8" y="9.4" width="5.6" height="1.4" rx=".6"/>',
+    segel: '<path class="f" d="M0,-6.5 L0.8,-5.4 L0.8,-1.5 L13,-1 L13,0.5 L0.8,0.3 L0.55,6.6 L3.4,7 L3.4,8.1 L0,7.7 L-3.4,8.1 L-3.4,7 L-0.55,6.6 L-0.8,0.3 L-13,0.5 L-13,-1 L-0.8,-1.5 L-0.8,-5.4 Z"/>',
+    ballong: '<circle class="f" cx="0" cy="-2.5" r="6.5"/><path class="s" d="M-3.6,3 L-1.6,7 M3.6,3 L1.6,7" stroke-width="1.1"/><rect class="f" x="-1.8" y="7" width="3.6" height="2.6" rx=".5"/>',
+    dronare: '<path class="s" d="M-5.5,-5.5 L5.5,5.5 M5.5,-5.5 L-5.5,5.5" stroke-width="1.8"/><rect class="f" x="-2" y="-2" width="4" height="4" rx="1"/><circle class="s" cx="-6" cy="-6" r="3" stroke-width="1.4"/><circle class="s" cx="6" cy="-6" r="3" stroke-width="1.4"/><circle class="s" cx="-6" cy="6" r="3" stroke-width="1.4"/><circle class="s" cx="6" cy="6" r="3" stroke-width="1.4"/>'
+  };
+  const VRIDS = { jet: true, tung: true, liten: true, segel: true };
+  const NAMN = { tung: 'Tungt plan', liten: 'Litet plan', heli: 'Helikopter', segel: 'Segelflyg', ballong: 'Ballong', dronare: 'Drönare' };
+  // Reserv när kategorin saknas: vanliga helikoptertyper (ICAO-koder)
+  const HELI = /^(EC\d\d|H1[2-7]\d|H160|AS[3-6]\d|A1[0-8]9|A1[0-9]{2}|B0[5-6]|B4\d\d|B2\d\d|R22|R44|R66|S76|S92|EH10|NH90|H60|UH60|BK17|KA\d\d|MI\d+|EXPL|H500|MD60|AW\d+|AS65|AS32|AS55|AS50|ALO\d|GAZL|LYNX)$/;
+  function ikonTyp(a) {
+    const k = a.kategori || '';
+    if (k === 'A7' || HELI.test(a.typ || '')) return 'heli';
+    if (k === 'A5') return 'tung';
+    if (k === 'A1') return 'liten';
+    if (k === 'B1') return 'segel';
+    if (k === 'B2') return 'ballong';
+    if (k === 'B6') return 'dronare';
+    return 'jet';
+  }
+  function ikonSvg(a, skala) {
+    const t = ikonTyp(a);
+    const v = VRIDS[t] ? Math.round(a.kurs || 0) : 0;
+    return `<g transform="rotate(${v})${skala && skala !== 1 ? ' scale(' + skala + ')' : ''}">${IKON[t]}</g>`;
+  }
+  function kategoriNamn(a) { return NAMN[ikonTyp(a)] || ''; }
+
   let plats = null, radieKm = 25, tema = 'dag';
   let plan = [], vald = null, senastSedd = null, senastOk = 0, kalla = 0;
   const spar = new Map();
@@ -94,6 +125,7 @@ window.HallFlyg = (function () {
         harAnrop: !!anrop,
         reg: a.r || '',
         typ: a.t || '',
+        kategori: typeof a.category === 'string' ? a.category.toUpperCase() : '',
         lat: a.lat, lon: a.lon,
         hojd: alt == null ? null : alt * 0.3048,
         mark: a.alt_baro === 'ground',
@@ -243,7 +275,7 @@ window.HallFlyg = (function () {
     return L.divIcon({
       className: 'plan-ikon' + (arVald ? ' vald' : ''),
       iconSize: [30, 30], iconAnchor: [15, 15],
-      html: `<svg width="30" height="30" viewBox="-15 -15 30 30" style="--plan-farg:${farg(a)}"><g transform="rotate(${Math.round(a.kurs || 0)})">${arVald ? '<circle class="ring" r="13"/>' : ''}<path d="${PLAN}" transform="scale(${a.hojd != null && a.hojd < 2000 ? 0.8 : 1})"/></g></svg>`
+      html: `<svg width="30" height="30" viewBox="-15 -15 30 30" class="ikon-${ikonTyp(a)}" style="--plan-farg:${farg(a)}">${arVald ? '<circle class="ring" r="13.5"/>' : ''}${ikonSvg(a, ikonTyp(a) === 'jet' && a.hojd != null && a.hojd < 2000 ? 0.8 : 1)}</svg>`
     });
   }
 
@@ -330,7 +362,7 @@ window.HallFlyg = (function () {
         g += `<line x1="${x.toFixed(1)}" y1="${y.toFixed(1)}" x2="${(x + Math.sin(rad) * km * skala).toFixed(1)}" y2="${(y - Math.cos(rad) * km * skala).toFixed(1)}"/>`;
       }
       if (arVald) g += `<rect x="${(x - 12).toFixed(1)}" y="${(y - 12).toFixed(1)}" width="24" height="24"/>`;
-      g += `<path d="M0,-7 L5,5 L0,2 L-5,5 Z" transform="translate(${x.toFixed(1)},${y.toFixed(1)}) rotate(${Math.round(a.kurs || 0)})"/>`;
+      g += `<g class="ikon ikon-${ikonTyp(a)}" transform="translate(${x.toFixed(1)},${y.toFixed(1)})">${ikonSvg(a, 0.85)}</g>`;
       g += `<text x="${(x + 16).toFixed(1)}" y="${(y - 4).toFixed(1)}">${esc(a.anrop)}</text>`;
       g += `<text class="sek" x="${(x + 16).toFixed(1)}" y="${(y + 11).toFixed(1)}">${esc(a.typ)} ${esc(hojdText(a).replace(' m', ''))}${pil(a)}</text></g>`;
       s += g;
@@ -356,7 +388,7 @@ window.HallFlyg = (function () {
     el.innerHTML = `<div class="flyg-etikett">${esc(rubrikText(a))}</div>` +
       `<div class="flyg-anrop">${esc(a.anrop)}</div>` +
       `<div class="flyg-rutt">${esc(rutt)}</div>` +
-      `<div class="flyg-fakta">${esc([a.typ, hojdText(a), kmText(a.km)].filter(Boolean).join(' · '))}</div>`;
+      `<div class="flyg-fakta">${esc([a.typ, kategoriNamn(a), hojdText(a), kmText(a.km)].filter(Boolean).join(' · '))}</div>`;
   }
 
   function dagHtml() {
@@ -471,6 +503,7 @@ window.HallFlyg = (function () {
     senastOk: () => senastOk,
     onLarm: (fn) => larmLyssnare.push(fn),
     dagStatistik,
+    ikonTyp,
     _test: { passage: (a) => passage(a), tolka }
   };
 })();
