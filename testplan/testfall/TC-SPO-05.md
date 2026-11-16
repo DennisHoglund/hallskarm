@@ -21,6 +21,7 @@
 | 1 | Öppna Inställningar → Spotify | Redirect URI, fält för Client ID och knappen Logga in med Spotify |
 | 2 | Klistra in fel Client ID och tryck Logga in | Meddelande om att ett giltigt Client ID behövs |
 | 3 | Titta på startskärmen | Ingen rad Spelas nu och inga anrop till Spotify |
+| 4 | Klistra in rätt Client ID och tryck Logga in | "Öppnar Spotify …" och Spotifys inloggning öppnas |
 
 ## Resultat
 

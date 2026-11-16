@@ -85,6 +85,19 @@ test.describe('Spotify', () => {
     await page.locator('#spotify-klient').fill('fel');
     await page.locator('#spotify-logga-in').click();
     await expect(page.locator('#spotify-status')).toHaveText('Klistra in ett giltigt Client ID (32 tecken) först.');
+
+    // Rätt Client ID öppnar Spotify, även där crypto.subtle saknas (äldre Safari)
+    let url = null;
+    await page.route(/accounts\.spotify\.com\/authorize/, (r) => { url = r.request().url(); return r.fulfill({ body: 'ok', contentType: 'text/html' }); });
+    await page.evaluate(() => { try { Object.defineProperty(window.crypto, 'subtle', { value: undefined }); } catch (e) { /* */ } });
+    await page.locator('#spotify-klient').fill(' 0123456789abcdef0123456789abcdef ');
+    await page.locator('#spotify-logga-in').click();
+    await expect.poll(() => url).not.toBeNull();
+    const q = new URL(url).searchParams;
+    expect(q.get('client_id')).toBe('0123456789abcdef0123456789abcdef');
+    expect(q.get('code_challenge_method')).toBe('S256');
+    expect(q.get('code_challenge')).toMatch(/^[A-Za-z0-9_-]{43}$/);
+    expect(q.get('scope')).toBe('user-read-playback-state user-read-currently-playing user-modify-playback-state');
   });
 
   test('inloggningen tar emot koden från Spotify och städar adressen', { annotation: { type: 'testfall', description: 'TC-SPO-06' } }, async ({ page }) => {

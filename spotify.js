@@ -18,23 +18,66 @@ window.HallSpotify = (function () {
 
   // ---------- Inloggning (PKCE) ----------
   function slump(n) {
-    const a = new Uint8Array(n); crypto.getRandomValues(a);
+    const a = new Uint8Array(n);
+    try { crypto.getRandomValues(a); } catch (e) { for (let i = 0; i < n; i++) a[i] = Math.floor(Math.random() * 256); }
     return Array.from(a, (b) => 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~'[b % 66]).join('');
   }
+  // SHA-256 i ren JS som reserv när crypto.subtle saknas (äldre Safari, hemskärmsläge)
+  function sha256(text) {
+    const K = [], H = [];
+    let n = 2, i = 0;
+    const frac = (x) => ((x - Math.floor(x)) * 4294967296) | 0;
+    while (i < 64) {
+      let primtal = true;
+      for (let f = 2; f * f <= n; f++) if (n % f === 0) { primtal = false; break; }
+      if (primtal) { if (i < 8) H[i] = frac(Math.pow(n, 1 / 2)); K[i++] = frac(Math.pow(n, 1 / 3)); }
+      n++;
+    }
+    const b = Array.from(new TextEncoder().encode(text)), bitar = b.length * 8;
+    b.push(0x80); while (b.length % 64 !== 56) b.push(0);
+    for (let j = 7; j >= 0; j--) b.push(j > 3 ? 0 : (bitar >>> (j * 8)) & 255);
+    const r = (x, k) => (x >>> k) | (x << (32 - k)), w = new Array(64);
+    for (let o = 0; o < b.length; o += 64) {
+      for (let t = 0; t < 64; t++) {
+        if (t < 16) w[t] = (b[o + t * 4] << 24) | (b[o + t * 4 + 1] << 16) | (b[o + t * 4 + 2] << 8) | b[o + t * 4 + 3];
+        else {
+          const s0 = r(w[t - 15], 7) ^ r(w[t - 15], 18) ^ (w[t - 15] >>> 3), s1 = r(w[t - 2], 17) ^ r(w[t - 2], 19) ^ (w[t - 2] >>> 10);
+          w[t] = (w[t - 16] + s0 + w[t - 7] + s1) | 0;
+        }
+      }
+      let [a, bb, c, d, e, f, g, h] = H;
+      for (let t = 0; t < 64; t++) {
+        const t1 = (h + (r(e, 6) ^ r(e, 11) ^ r(e, 25)) + ((e & f) ^ (~e & g)) + K[t] + w[t]) | 0;
+        const t2 = ((r(a, 2) ^ r(a, 13) ^ r(a, 22)) + ((a & bb) ^ (a & c) ^ (bb & c))) | 0;
+        h = g; g = f; f = e; e = (d + t1) | 0; d = c; c = bb; bb = a; a = (t1 + t2) | 0;
+      }
+      [a, bb, c, d, e, f, g, h].forEach((v, k) => { H[k] = (H[k] + v) | 0; });
+    }
+    const ut = new Uint8Array(32);
+    H.forEach((v, k) => { ut[k * 4] = v >>> 24; ut[k * 4 + 1] = (v >>> 16) & 255; ut[k * 4 + 2] = (v >>> 8) & 255; ut[k * 4 + 3] = v & 255; });
+    return ut;
+  }
   async function utmaning(verifierare) {
-    const h = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifierare));
-    return btoa(String.fromCharCode.apply(null, new Uint8Array(h))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    let h;
+    try { h = new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifierare))); } catch (e) { h = sha256(verifierare); }
+    let bin = ''; h.forEach((x) => { bin += String.fromCharCode(x); });
+    return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   }
   async function loggaIn() {
-    const klient = ($('spotify-klient').value || '').trim();
+    const klient = ($('spotify-klient').value || '').replace(/\s/g, '');
     if (!/^[0-9a-f]{32}$/i.test(klient)) { status('Klistra in ett giltigt Client ID (32 tecken) först.'); return; }
-    const verifierare = slump(64), state = slump(16);
-    uppdatera((d) => { d.klient = klient; d.verifierare = verifierare; d.state = state; });
-    const q = new URLSearchParams({
-      client_id: klient, response_type: 'code', redirect_uri: omdirigering(), scope: OMFANG,
-      code_challenge_method: 'S256', code_challenge: await utmaning(verifierare), state
-    });
-    location.assign(C().spotifyKonto + '/authorize?' + q.toString());
+    status('Öppnar Spotify …');
+    try {
+      const verifierare = slump(64), state = slump(16);
+      uppdatera((d) => { d.klient = klient; d.verifierare = verifierare; d.state = state; });
+      const q = new URLSearchParams({
+        client_id: klient, response_type: 'code', redirect_uri: omdirigering(), scope: OMFANG,
+        code_challenge_method: 'S256', code_challenge: await utmaning(verifierare), state
+      });
+      location.href = C().spotifyKonto + '/authorize?' + q.toString();
+    } catch (e) {
+      status('Kunde inte öppna Spotify: ' + (e && e.message ? e.message : e) + '. Försök igen.');
+    }
   }
   function loggaUt() {
     spara({ klient: las().klient });
