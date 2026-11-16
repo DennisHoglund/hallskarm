@@ -1,6 +1,6 @@
 // Startar Hallskärmen: timers, tema efter solen, statusrader, skärmlås och service worker.
 (function () {
-  const VERSION = 'v17';
+  const VERSION = 'v18';
   // Felsökningsläge: ?utan=elpris,flyg … stänger av delar vid start (för att ringa in krascher på äldre iPad)
   const UTAN = new Set(((new URLSearchParams(location.search).get('utan')) || '').split(',').map((x) => x.trim()).filter(Boolean));
   const med = (del) => !UTAN.has(del) && !UTAN.has('allt');
@@ -103,6 +103,16 @@
     // Gammal Kp-prognos (mer än 6 timmar) används inte
     const block = kpBlock && Date.now() - kpHamtad < 6 * 3600 * 1000 ? kpBlock : null;
     window.HallHandelser.satt('norrsken', window.HallNorrsken.post(window.HallNorrsken.bedom(block, vaderData, window.HallInst.plats().lat)));
+  }
+
+  // ---------- Spotify ----------
+  async function spotify() {
+    try {
+      await window.HallSpotify.hamta();
+    } catch (e) {
+      // Spelas nu är ett tillägg – raden ligger kvar och nytt försök görs om några sekunder
+      console.warn('Spotify:', e);
+    }
   }
 
   // ---------- Elpris ----------
@@ -226,6 +236,8 @@
     if (med('sl')) sl();
     window.HallHandelser.koppla(() => window.HallSL.rita(slResultat)); // mittdelen ändrade höjd
     window.HallElpris.koppla();
+    window.HallSpotify.koppla(() => window.HallSL.rita(slResultat)); // mittdelen ändrade höjd
+    if (med('spotify')) window.HallSpotify.hanteraRetur().then(spotify);
     if (med('varningar')) varningar();
     if (med('norrsken')) norrsken();
     if (med('elpris')) elpris();
@@ -243,6 +255,7 @@
     if (med('norrsken')) var_(C.intervall.norrsken, norrsken);
     if (med('varningar')) var_(C.intervall.varningar, varningar);
     if (med('elpris')) var_(C.intervall.elpris, elpris);
+    if (med('spotify')) var_(C.intervall.spotify, spotify);
 
     document.addEventListener('visibilitychange', () => {
       if (!synlig()) return;

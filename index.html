@@ -68,6 +68,26 @@
     </div>
   </header>
 
+  <div class="rader">
+  <!-- SPELAS NU: syns bara när musik spelar på Spotify-kontot -->
+  <div id="spelar" class="spelar" hidden>
+    <button id="spelar-info" class="spelar-info" type="button" aria-label="Visa mer om låten">
+      <span class="etikett">Spelas nu</span>
+      <img id="spelar-bild" class="spelar-bild" alt="" width="40" height="40">
+      <span class="spelar-text"><b id="spelar-titel"></b> <span>· <span id="spelar-artist"></span></span></span>
+      <span id="spelar-enhet" class="spelar-enhet"></span>
+    </button>
+    <div class="spelar-knappar">
+      <button id="spelar-paus" class="ikonknapp" type="button" aria-label="Paus">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 4h4v16H6zM14 4h4v16h-4z" fill="currentColor"/></svg>
+      </button>
+      <button id="spelar-nasta" class="ikonknapp" type="button" aria-label="Nästa låt">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 4l10 8-10 8zM16 4h3v16h-3z" fill="currentColor"/></svg>
+      </button>
+    </div>
+    <div class="spelar-spar"><i id="spelar-forlopp"></i></div>
+  </div>
+
   <!-- HÄNDELSERAD: syns bara när något är aktuellt (SMHI-varningar, norrsken) -->
   <div id="handelse" class="handelse" role="status" aria-expanded="false" hidden>
     <div class="handelse-rad">
@@ -76,6 +96,7 @@
       <div id="handelse-hoger" class="handelse-hoger"></div>
     </div>
     <p id="handelse-mer" class="handelse-mer"></p>
+  </div>
   </div>
 
   <!-- MITTEN: väder och SL -->
@@ -257,6 +278,39 @@
   </footer>
 </div>
 
+<!-- SPOTIFY: E-BLÄCKSSIDA -->
+<div id="spotifyvy" class="spotifyvy" hidden>
+  <button id="sv-stang" class="sv-stang" type="button" aria-label="Stäng">
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+  </button>
+  <div class="sv-vanster">
+    <img id="sv-omslag" class="sv-omslag" alt="Skivomslag">
+    <div class="sv-spar"><i id="sv-forlopp"></i></div>
+    <div class="sv-tider"><span id="sv-pos">0:00</span><span id="sv-langd">0:00</span></div>
+    <div id="sv-enhet" class="sv-enhet"></div>
+    <div class="sv-kontroller">
+      <button id="sv-forra" type="button">Föregående</button>
+      <button id="sv-spela" class="fylld" type="button">Paus</button>
+      <button id="sv-nasta-knapp" type="button">Nästa</button>
+    </div>
+    <p id="sv-fel" class="sv-fel" role="alert" hidden></p>
+  </div>
+  <div class="sv-hoger">
+    <small>Spelas nu</small>
+    <h2 id="sv-titel"></h2>
+    <div id="sv-artist" class="sv-artist"></div>
+    <div id="sv-album" class="sv-album"></div>
+    <h3>Om artisten</h3>
+    <p id="sv-om" class="sv-om"></p>
+    <div id="sv-kalla" class="sv-kalla"></div>
+    <div id="sv-genrer-rad"><h3>Genrer</h3><div id="sv-genrer"></div></div>
+    <div class="sv-fakta">
+      <div><span>Följare</span><b id="sv-foljare">–</b></div>
+      <div><span>Nästa låt</span><b id="sv-nasta">–</b></div>
+    </div>
+  </div>
+</div>
+
 <!-- INSTÄLLNINGAR -->
 <dialog id="inst" class="inst" aria-labelledby="inst-rubrik">
   <form id="form-inst" method="dialog">
@@ -292,6 +346,20 @@
         <label><input type="radio" name="tema" value="dag"> Dag</label>
         <label><input type="radio" name="tema" value="natt"> Natt</label>
       </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Spotify</legend>
+      <p class="hjalp">Visar vad som spelas på ditt konto. Kräver Spotify Premium och en egen app hos Spotify Developer
+        med adressen nedan som Redirect URI. Inloggningen sparas bara på den här enheten.</p>
+      <p class="hjalp">Redirect URI: <code id="spotify-adress"></code></p>
+      <label for="spotify-klient">Client ID</label>
+      <input id="spotify-klient" type="text" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="32 tecken från Spotify Developer">
+      <div class="knapprad">
+        <button id="spotify-logga-in" class="knapp" type="button">Logga in med Spotify</button>
+        <button id="spotify-logga-ut" class="knapp" type="button" hidden>Logga ut</button>
+      </div>
+      <p id="spotify-status" class="hjalp" role="status"></p>
     </fieldset>
 
     <fieldset>
@@ -350,6 +418,7 @@
 <script src="varningar.js"></script>
 <script src="norrsken.js"></script>
 <script src="elpris.js"></script>
+<script src="spotify.js"></script>
 <script src="ljud.js"></script>
 <script src="flyg.js"></script>
 <script src="app.js"></script>

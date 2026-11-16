@@ -139,13 +139,16 @@ async function mocka(page, { tid = NU, flyg = null } = {}) {
   NU_LOKAL = lokalDel(tid);
   const api = {
     anrop: [],
-    nere: { vader: false, sl: false, slSites: false, flyg: [], rutt: false, dagar: false, radar: false, kp: false, storningar: false, varningar: false, elpris: false },
+    nere: { vader: false, sl: false, slSites: false, flyg: [], rutt: false, dagar: false, radar: false, kp: false, storningar: false, varningar: false, elpris: false, spotify: false },
     varningar: [], // SMHI-varningar, se smhiVarning()
     // Elpris per timme i öre/kWh inkl. moms (typiskt novemberdygn); serveras som kvartspriser utan moms
     elpris: [62, 58, 55, 52, 51, 54, 78, 132, 168, 142, 118, 104, 96, 92, 98, 121, 176, 214, 196, 158, 124, 98, 84, 71],
     elprisImorgon: true, // false = morgondagen inte publicerad (404)
     kp: 2, // Kp för alla block, eller funktion (Date i UTC) => Kp
     storningar: [],
+    // Spotify: vad som spelas (null = inget, ger 204) och om styrning kräver Premium (403)
+    spotify: spotifySpelare(),
+    spotifyPremium: true,
     flygplan: flyg,
     vaderData: vader(),
     avgangar: avgangar()
@@ -292,6 +295,36 @@ async function mocka(page, { tid = NU, flyg = null } = {}) {
     return json(route, api.storningar);
   });
 
+  // Spotify: token, spelare, kö, artist, styrning
+  await page.route(/accounts\.spotify\.com\/api\/token/, (route) => {
+    logga('spotify-token', route.request().postData() || '');
+    return json(route, { access_token: 'testnyckel', token_type: 'Bearer', expires_in: 3600, refresh_token: 'testfornyelse' });
+  });
+  await page.route(/api\.spotify\.com\/v1\//, (route) => {
+    const req = route.request(), url = req.url(), metod = req.method();
+    logga('spotify', metod + ' ' + url.replace(/^.*\/v1/, ''));
+    if (api.nere.spotify) return route.fulfill({ status: 503, headers: cors(), body: 'nere' });
+    if (metod !== 'GET') {
+      if (!api.spotifyPremium) return json(route, { error: { status: 403, message: 'Premium required' } }, 403);
+      if (api.spotify && /pause$/.test(url)) api.spotify.is_playing = false;
+      if (api.spotify && /play$/.test(url)) api.spotify.is_playing = true;
+      return route.fulfill({ status: 204, headers: cors(), body: '' });
+    }
+    if (/\/me\/player\/queue/.test(url)) return json(route, { currently_playing: api.spotify && api.spotify.item, queue: [{ name: 'Ingenting', artists: [{ name: 'Kent' }] }] });
+    if (/\/me\/player$/.test(url)) return api.spotify ? json(route, api.spotify) : route.fulfill({ status: 204, headers: cors(), body: '' });
+    if (/\/artists\//.test(url)) return json(route, { id: 'kent1', name: 'Kent', genres: ['svensk rock', 'indierock'], followers: { total: 412345 } });
+    return route.fulfill({ status: 404, headers: cors(), body: 'saknas' });
+  });
+  await page.route(/wikipedia\.org\/api\/rest_v1\/page\/summary/, (route) => {
+    const url = decodeURIComponent(route.request().url());
+    logga('wiki', url);
+    if (/sv\.wikipedia\.org.*Kent_\(musikgrupp\)$/.test(url)) {
+      return json(route, { type: 'standard', title: 'Kent (musikgrupp)', description: 'svensk rockgrupp', extract: 'Kent var en svensk rockgrupp från Eskilstuna, bildad 1990 och upplöst 2016.' });
+    }
+    return json(route, { type: 'https://mediawiki.org/wiki/HyperSwitch/errors/not_found' }, 404);
+  });
+  await page.route(/i\.scdn\.co/, (route) => route.fulfill({ status: 200, headers: cors(), contentType: 'image/png', body: TILE }));
+
   await page.route(/sholiday\.faboul\.se/, (route) => {
     logga('dagar', route.request().url());
     if (api.nere.dagar) return route.fulfill({ status: 503, headers: cors(), body: 'nere' });
@@ -299,6 +332,27 @@ async function mocka(page, { tid = NU, flyg = null } = {}) {
   });
 
   return api;
+}
+
+// Ett svar från Spotifys /me/player
+function spotifySpelare() {
+  return {
+    is_playing: true, progress_ms: 83000,
+    device: { name: 'Köket', type: 'Speaker' },
+    item: {
+      id: 'spar1', name: 'Mannen i den vita hatten (16 år senare)', duration_ms: 271000, track_number: 3,
+      artists: [{ id: 'kent1', name: 'Kent' }],
+      album: { name: 'Vapen & ammunition', release_date: '2002-04-10', total_tracks: 10,
+        images: [{ url: 'https://i.scdn.co/image/stor', width: 640 }, { url: 'https://i.scdn.co/image/liten', width: 64 }] }
+    }
+  };
+}
+
+// Inloggad på Spotify (bara på enheten, aldrig i repot)
+async function spotifyInloggad(page) {
+  await page.addInitScript(() => {
+    try { localStorage.setItem('hall-spotify', JSON.stringify({ klient: '0123456789abcdef0123456789abcdef', access: 'testnyckel', utgar: 4102444800000, refresh: 'testfornyelse' })); } catch (e) { /* */ }
+  });
 }
 
 // Sparar inställningar innan sidan laddas (som om man redan valt i panelen)
@@ -344,4 +398,4 @@ function smhiVarning({ niva = 'YELLOW', typ = 'Vind', start, slut, yta = STOCKHO
 }
 
 module.exports = {
-  smhiVarning, GOTEBORG_YTA, flygplan, runt, mocka, installningar, STANDARD_INST, GARDET, KARLAPLAN, NU, PROXY };
+  smhiVarning, GOTEBORG_YTA, spotifyInloggad, spotifySpelare, flygplan, runt, mocka, installningar, STANDARD_INST, GARDET, KARLAPLAN, NU, PROXY };

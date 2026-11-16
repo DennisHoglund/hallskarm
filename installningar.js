@@ -126,6 +126,7 @@ window.HallInst = (function () {
 
   function oppna() {
     rita();
+    if (window.HallSpotify) window.HallSpotify.ritaInst();
     if (typeof dialog.showModal === 'function') dialog.showModal(); else dialog.setAttribute('open', '');
   }
   function stang() {

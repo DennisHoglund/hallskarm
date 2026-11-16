@@ -23,6 +23,9 @@
   --pa-tunnel: #F2EFE8;
   --kart-dimma: none;
   --regn: #2B5FA8;
+  --eink-papper: #ECEAE3;
+  --eink-black: #141414;
+  --eink-ton: #D8D5CC;
   --plan-lag: #FF8A3D;
   --plan-mellan: #EDE6D6;
   --plan-hog: #79B4FF;
@@ -53,6 +56,9 @@
   --pa-tunnel: #0E0F0C;
   --kart-dimma: brightness(0.85);
   --regn: #6FA3E8;
+  --eink-papper: #ECEAE3;
+  --eink-black: #141414;
+  --eink-ton: #D8D5CC;
   --plan-lag: #FF8A3D;
   --plan-mellan: #EDE6D6;
   --plan-hog: #79B4FF;
@@ -104,7 +110,7 @@ small, .etikett {
   height: 100vh;
   height: 100dvh;
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr) auto;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
   padding: max(2.2rem, env(safe-area-inset-top)) max(2.8rem, env(safe-area-inset-right)) max(2.2rem, env(safe-area-inset-bottom)) max(2.8rem, env(safe-area-inset-left));
 }
 
@@ -378,8 +384,57 @@ small, .etikett {
 .radie button[aria-pressed="true"] { background: var(--accent); color: var(--pa-accent); font-weight: 700; }
 .ingen-flyg { font-size: 1.1rem; color: var(--ink2); }
 
+/* ---------- Spelas nu (Spotify) ---------- */
+.spelar { position: relative; display: flex; align-items: center; gap: .8rem; padding: .5rem 0; border-bottom: var(--kant-tunn); min-width: 0; }
+.spelar[hidden] { display: none; }
+.spelar-info { flex: 1; min-width: 0; display: flex; align-items: center; gap: 1rem; min-height: 44px; padding: 0; border: 0; background: none; color: var(--ink); font: inherit; text-align: left; cursor: pointer; }
+.spelar .etikett { font-size: .87rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; color: var(--bg); background: var(--ink); padding: .35rem .6rem; }
+.spelar-bild { width: 2.6rem; height: 2.6rem; object-fit: cover; flex: none; background: var(--yta); }
+.spelar-text { flex: 1; min-width: 0; font-size: 1.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.spelar-text b { font-weight: 400; }
+.spelar-text > span { color: var(--ink2); }
+.spelar-enhet { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85rem; color: var(--ink3); white-space: nowrap; text-transform: uppercase; }
+.spelar-knappar { display: flex; gap: .4rem; }
+.spelar-spar { position: absolute; left: 0; right: 0; bottom: -1px; height: 3px; background: var(--spar); }
+.spelar-spar i { display: block; height: 100%; width: 0; background: var(--accent); transition: width 1s linear; }
+
+/* ---------- E-bläckssidan ---------- */
+.spotifyvy {
+  position: fixed; inset: 0; z-index: 1000; background: var(--eink-papper); color: var(--eink-black);
+  font-family: Georgia, 'Times New Roman', serif;
+  display: grid; grid-template-columns: minmax(0, 24rem) minmax(0, 1fr); gap: 3rem; align-content: center;
+  padding: max(2.6rem, env(safe-area-inset-top)) max(3rem, env(safe-area-inset-right)) max(2.6rem, env(safe-area-inset-bottom)) max(3rem, env(safe-area-inset-left));
+  overflow: auto;
+}
+.spotifyvy[hidden] { display: none; }
+.sv-stang { position: absolute; top: 1.6rem; right: 1.8rem; width: 48px; height: 48px; display: grid; place-items: center; border: 2px solid var(--eink-black); background: transparent; color: var(--eink-black); }
+.sv-omslag { display: block; width: 100%; aspect-ratio: 1 / 1; object-fit: cover; image-rendering: pixelated; filter: grayscale(1) contrast(1.15); background: var(--eink-ton); }
+.sv-omslag.rastrerad { filter: none; }
+.sv-spar { position: relative; height: 6px; margin-top: .8rem; border-bottom: 3px dotted var(--eink-black); }
+.sv-spar i { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: var(--eink-black); }
+.sv-tider { display: flex; justify-content: space-between; margin-top: .35rem; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85rem; }
+.sv-enhet { margin-top: 1rem; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85rem; letter-spacing: .08em; text-transform: uppercase; }
+.sv-kontroller { display: flex; gap: .6rem; margin-top: 1.2rem; }
+.sv-kontroller button { flex: 1; min-height: 48px; border: 2px solid var(--eink-black); background: transparent; color: var(--eink-black); font: 600 1rem Georgia, serif; }
+.sv-kontroller button.fylld { background: var(--eink-black); color: var(--eink-papper); }
+.sv-fel { margin: .8rem 0 0; font-style: italic; }
+.sv-hoger { min-width: 0; padding-right: 3rem; }
+.sv-hoger small, .sv-hoger h3, .sv-fakta span { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .8rem; letter-spacing: .14em; text-transform: uppercase; font-weight: 400; }
+.sv-hoger h2 { margin: .5rem 0 .4rem; font-size: 3.4rem; line-height: 1; font-weight: 700; overflow-wrap: anywhere; }
+.sv-artist { font-size: 1.7rem; font-style: italic; }
+.sv-album { margin-top: .5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--eink-black); font-size: 1.05rem; }
+.sv-hoger h3 { margin: 1.3rem 0 .5rem; }
+.sv-om { margin: 0; max-width: 38rem; font-size: 1.15rem; line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 7; -webkit-box-orient: vertical; overflow: hidden; }
+.sv-kalla { margin-top: .4rem; font-size: .85rem; font-style: italic; }
+.sv-genre { display: inline-block; margin: 0 .3rem .3rem 0; padding: .1rem .5rem; border: 1px solid var(--eink-black); font-size: .95rem; }
+.sv-fakta { display: flex; gap: 2.4rem; margin-top: 1.3rem; padding-top: 1rem; border-top: 1px solid var(--eink-black); }
+.sv-fakta span { display: block; }
+.sv-fakta b { font-size: 1.15rem; font-weight: 600; }
+
 /* ---------- Händelserad (SMHI-varningar, norrsken) ---------- */
-.skarm.med-handelse { grid-template-rows: auto auto minmax(0, 1fr) auto; }
+.rader { min-width: 0; }
+.knapprad { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: .6rem; }
+.knapprad[hidden], .knapprad > [hidden] { display: none; }
 .handelse { padding: .7rem 0; border-bottom: var(--kant-tunn); min-width: 0; }
 .handelse.kan-fallas-ut { cursor: pointer; }
 .handelse-rad { display: flex; align-items: center; gap: 1.4rem; min-width: 0; min-height: 2.2rem; }
@@ -624,6 +679,8 @@ small, .etikett {
   .klocka { font-size: 6.6rem; }
   .minikarta { width: 45%; }
   .regn { grid-template-columns: 1fr; }
+  .spotifyvy { grid-template-columns: 1fr; align-content: start; }
+  .sv-omslag { max-width: 22rem; }
   .klad { grid-template-columns: minmax(0, 1fr); }
   .klad-taggar { justify-content: flex-start; max-width: none; }
 }
@@ -631,6 +688,7 @@ small, .etikett {
 @media (max-height: 600px) {
   body { overflow: auto; }
   .skarm, .skarm.med-handelse { height: auto; min-height: 100dvh; grid-template-rows: auto; }
+  .spotifyvy { grid-template-columns: 1fr; align-content: start; }
   .panel { overflow: visible; }
   .sl-lista { overflow: visible; }
   .botten { height: 13.4rem; }

@@ -5,8 +5,8 @@ Automatiserade testfall körs av Playwright vid varje commit och är kopplade vi
 
 | | |
 |---|---|
-| **Testfall** | 56 |
-| **Automatiserade** | 52 (körs på iPad/WebKit och Chromium i iPad Airs skärmstorlek) |
+| **Testfall** | 62 |
+| **Automatiserade** | 58 (körs på iPad/WebKit och Chromium i iPad Airs skärmstorlek) |
 | **Manuella** | 4 (kräver riktig iPad och riktig data) |
 | **Senaste testrapport** | [dennishoglund.github.io/hallskarm/rapport/](https://dennishoglund.github.io/hallskarm/rapport/) |
 | **Krav** | [SPEC.md](../SPEC.md) |
@@ -69,6 +69,17 @@ Automatiserade testfall körs av Playwright vid varje commit och är kopplade vi
 | [TC-EL-02](testfall/TC-EL-02.md) | [Elprisvyn visar dygnets priser](testfall/TC-EL-02.md) | Medel | 🤖 |
 | [TC-EL-03](testfall/TC-EL-03.md) | [Elområdet följer platsen och kan väljas](testfall/TC-EL-03.md) | Låg | 🤖 |
 | [TC-EL-04](testfall/TC-EL-04.md) | [Utan elpris fungerar resten](testfall/TC-EL-04.md) | Medel | 🤖 |
+
+## Spotify
+
+| ID | Testfall | Prio | Typ |
+|---|---|---|---|
+| [TC-SPO-01](testfall/TC-SPO-01.md) | [Spelas nu visas under klockan och styr musiken](testfall/TC-SPO-01.md) | Medel | 🤖 |
+| [TC-SPO-02](testfall/TC-SPO-02.md) | [E-bläckssidan visar låten och artisten](testfall/TC-SPO-02.md) | Medel | 🤖 |
+| [TC-SPO-03](testfall/TC-SPO-03.md) | [Styrning utan Premium ger ett tydligt fel](testfall/TC-SPO-03.md) | Låg | 🤖 |
+| [TC-SPO-04](testfall/TC-SPO-04.md) | [Ingen rad när inget spelar eller Spotify är nere](testfall/TC-SPO-04.md) | Medel | 🤖 |
+| [TC-SPO-05](testfall/TC-SPO-05.md) | [Inloggningen syns i inställningarna](testfall/TC-SPO-05.md) | Medel | 🤖 |
+| [TC-SPO-06](testfall/TC-SPO-06.md) | [Inloggningen med Spotify slutförs](testfall/TC-SPO-06.md) | Hög | 🤖 |
 
 ## Felsökning
 

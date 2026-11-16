@@ -33,6 +33,7 @@ av andra (t.ex. Dennis son på Gärdet) med egna hållplatser och egen plats –
 | SL-avgångar | SL Transport-API (Trafiklab, ingen nyckel) | var 30:e sekund, nedräkning var 15:e |
 | SL-störningar | SL Deviations (`deviations.integration.sl.se`, ingen nyckel) | var 2:a minut |
 | Elpris | Elpriset just nu (Nord Pool spot per kvart, SEK/kWh utan moms) | var 15:e minut; i morgon från 13:00 |
+| Spelas nu | Spotify Web API (PKCE, eget Client ID) + Wikipedia REST (artisttext) | var 5:e sekund när inloggad |
 | SMHI-varningar | SMHI öppna data, konsekvensbaserade vädervarningar (`warning.json`) | var 10:e minut |
 | Norrsken | NOAA SWPC Kp-prognos (3-timmarsblock) + molnighet från Open-Meteo | Kp var 30:e minut, bedömning varje minut |
 | Flyg | adsb.lol → adsb.fi → airplanes.live via proxyn (reserv i tur och ordning) | var 10:e sekund |
@@ -111,7 +112,20 @@ av andra (t.ex. Dennis son på Gärdet) med egna hållplatser och egen plats –
 - Elområde räknas ut från platsens latitud (≥ 65,3 SE1, ≥ 61 SE2, ≥ 56,95 SE3, annars SE4) och kan väljas i inställningarna.
 - Om tjänsten inte svarar visas ingen rad. Morgondagen hämtas från 13:00 (404 innan dess).
 
-### 4.8 Robusthet
+### 4.8 Spotify (Spelas nu)
+- Rad under klockan, bara när musik spelar på kontot: "SPELAS NU", omslag, titel · artist, enhet, Paus och Nästa,
+  och en tunn förloppslinje i accentfärg. Raden försvinner när musiken pausas eller inget spelar.
+- Tryck på raden öppnar e-bläckssidan (svartvitt papper, serif): rastrerat omslag (Floyd–Steinberg 240 px), förlopp,
+  enhet, Föregående/Paus/Nästa, titel, artist, album · år · spår X av Y, "Om artisten" från svenska Wikipedia (annars
+  engelska, bara text som handlar om musik), genrer, följare och nästa låt i kön. Stängs med krysset eller efter 5 min.
+- Inloggning i inställningarna: eget Client ID från Spotify Developer (Development Mode, ägaren behöver Premium, max 5
+  användare). Redirect URI = sidans adress, t.ex. `https://dennishoglund.github.io/hallskarm/`. Ingen hemlighet (PKCE).
+  Behörigheter: `user-read-playback-state user-read-currently-playing user-modify-playback-state`.
+- Client ID och nycklar sparas bara på enheten (`hall-spotify`), aldrig i repot.
+- Styrning utan Premium ger "Styrning kräver Spotify Premium.". Genrer/följare kan saknas i utvecklingsläget.
+- Om Spotify inte svarar visas ingen rad; resten av skärmen påverkas inte.
+
+### 4.9 Robusthet
 - Statusrad under väder och SL: "Uppdaterad hh:mm" eller "Kunde inte uppdatera – visar data från hh:mm".
 - Gammal data tonas ned (väder > 1 h, SL > 3 min, flyg > 1 min).
 - Hämtning pausas när sidan inte syns. Skärmlås (Wake Lock) när det stöds.
@@ -125,6 +139,7 @@ av andra (t.ex. Dennis son på Gärdet) med egna hållplatser och egen plats –
 | `hall-sl-sites` | SL:s hållplatslista (id, namn, lat, lon), max en vecka |
 | `hall-dagar` | dagens namnsdag |
 | `hall-flygvy` | karta eller radar |
+| `hall-spotify` | Spotify: Client ID, åtkomst- och förnyelsenyckel (bara på enheten) |
 
 ## 6. Offline och uppdatering
 Service worker `sw.js`: egna filer nätet först, CDN och typsnitt cache först, kartrutor i egen cache (max 800).
@@ -152,7 +167,7 @@ Data-API:er cachas inte. Höj `CACHE` vid ändring; sidan laddas om när ny vers
 - CI loggar varje körning om de externa API:erna tillåter anrop från sidan (CORS) i körningens sammanfattning.
 
 - **Felsökningsläge:** `?utan=del1,del2` stänger av delar vid start, för att ringa in krascher på äldre iPad.
-  Delar: `vader`, `sl`, `storningar`, `varningar`, `norrsken`, `elpris`, `flyg`, `namnsdag`, `sw` (tar bort service worker
+  Delar: `vader`, `sl`, `storningar`, `varningar`, `norrsken`, `elpris`, `spotify`, `flyg`, `namnsdag`, `sw` (tar bort service worker
   och cachar), `allt`. Versionsraden i inställningarna visar vad som är avstängt.
 
 ### Önskelista

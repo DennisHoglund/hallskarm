@@ -5,7 +5,7 @@ window.HALL_CONFIG = {
   standardPlats: { namn: 'Stockholm', lat: 59.3326, lon: 18.0649 },
 
   // Uppdateringsintervall i sekunder
-  intervall: { vader: 900, sl: 30, flyg: 10, namnsdag: 3600, storningar: 120, norrsken: 1800, varningar: 600, elpris: 900 },
+  intervall: { vader: 900, sl: 30, flyg: 10, namnsdag: 3600, storningar: 120, norrsken: 1800, varningar: 600, elpris: 900, spotify: 5 },
 
   // Data äldre än så här markeras som gammal (sekunder)
   gammal: { vader: 3600, sl: 180, flyg: 60 },
@@ -25,6 +25,10 @@ window.HALL_CONFIG = {
     slStorningar: 'https://deviations.integration.sl.se/v1/messages',
     // Spotpris per kvart (Nord Pool) utan moms, i SEK/kWh. 404 tills morgondagen publicerats ca 13:00.
     elpris: 'https://www.elprisetjustnu.se/api/v1/prices/{ar}/{md}_{omrade}.json',
+    // Spotify (PKCE, ingen hemlighet) och Wikipedias korta sammanfattningar
+    spotifyKonto: 'https://accounts.spotify.com',
+    spotify: 'https://api.spotify.com/v1',
+    wiki: 'https://{sprak}.wikipedia.org/api/rest_v1/page/summary/',
     // SMHI:s konsekvensbaserade vädervarningar (öppna data, CORS tillåtet)
     varningar: 'https://opendata-download-warnings.smhi.se/ibww/api/version/1/warning.json',
     // Kp-prognos för norrsken, 3-timmarsblock (NOAA Space Weather Prediction Center)

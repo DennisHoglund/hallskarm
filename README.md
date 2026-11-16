@@ -10,6 +10,7 @@ Klocka, väder, SL-avgångar, flyg ovanför och dagsljus – för en gammal iPad
 - **SL:** avgångar från upp till tre hållplatser. Störningar på dina linjer markeras och visas längst ner.
 - **Luftrummet:** planet närmast ovanför med rutt. Tryck för karta eller radar i helskärm. Kan blinka (och pipa) när ett plan är nära. Räknar dagens plan, närmaste och högsta.
 - **Dagsljus:** dagslängd, förändring per dag och kurva över året.
+- **Spelas nu:** vad som spelas på Spotify under klockan med paus och nästa. Tryck för en e-bläckssida om låten och artisten.
 - **Elpris:** pris just nu, dyrt/billigt och billigaste tiden. Tryck för dygnets priser och morgondagen.
 - **Händelseraden** under klockan, bara när något är aktuellt: SMHI-varningar för där du bor och norrsken när Kp är tillräckligt högt och det är mörkt och klart.
 - Dag- och nattema som byts vid solnedgång.
@@ -22,6 +23,11 @@ Klocka, väder, SL-avgångar, flyg ovanför och dagsljus – för en gammal iPad
 5. Inställningar → Hjälpmedel → **Guidad åtkomst** på. Starta den i appen med tre klick på hemknappen.
 
 Valen sparas bara på den iPaden, så flera personer kan ha var sin skärm med egna hållplatser.
+
+## Spotify (valfritt)
+1. Skapa en app på developer.spotify.com (Web API). Redirect URI: `https://dennishoglund.github.io/hallskarm/` – exakt, med snedstreck sist.
+2. På iPaden: Inställningar (kugghjulet) → **Spotify** → klistra in Client ID → **Logga in med Spotify** och godkänn.
+3. Client ID och inloggningen sparas bara på den iPaden. Kontot som äger Spotify-appen behöver Premium; lägg till andra konton under *User Management* (max 5).
 
 ## Proxy för flygdata (en gång)
 Flygnätverken tillåter inte anrop direkt från en webbsida, så flygdata hämtas via en liten gratis Cloudflare Worker.
@@ -46,6 +52,7 @@ Workern släpper bara igenom adsb.lol, adsb.fi, airplanes.live och adsbdb och ca
 | `handelser.js` | Händelseraden under klockan |
 | `varningar.js` | SMHI-varningar för hemmets område |
 | `elpris.js` | Elpris: rad i dagsljuspanelen och elprisvy |
+| `spotify.js` | Spotify: inloggning (PKCE), raden Spelas nu och e-bläckssidan |
 | `norrsken.js` | Norrsken: Kp-prognos från NOAA + mörker och moln |
 | `flyg.js` | Flygdata, minikarta, helskärmskarta och radar |
 | `app.js` | Start, timers, tema, status |
@@ -62,5 +69,5 @@ npm run rapport
 Testplanen finns i [`testplan/index.md`](testplan/index.md).
 
 ## Datakällor
-Open-Meteo (CC BY 4.0), RainViewer, SMHI (vädervarningar), Elpriset just nu, NOAA SWPC, Trafiklab SL Transport och SL Deviations, Svenska Dagar, adsb.lol, adsb.fi, airplanes.live, adsbdb,
+Open-Meteo (CC BY 4.0), RainViewer, SMHI (vädervarningar), Elpriset just nu, Spotify Web API, Wikipedia, NOAA SWPC, Trafiklab SL Transport och SL Deviations, Svenska Dagar, adsb.lol, adsb.fi, airplanes.live, adsbdb,
 kartor © Esri, HERE, Garmin, © OpenStreetMap.
