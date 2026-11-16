@@ -185,4 +185,33 @@ test.describe('Flyg', () => {
     await expect(page.locator('#radar .mal.vald .ikon-heli > g')).toHaveAttribute('transform', /rotate\(0\)/);
     await bild(page, 'Helikopter och kategorier på radarn');
   });
+
+  test('ikoner i listan och teckenförklaring i flygvyn', { annotation: { type: 'testfall', description: 'TC-FLY-13' } }, async ({ page, api }) => {
+    const { flygplan, runt, GARDET } = require('./mock');
+    api.flygplan = flygplan(GARDET).concat([
+      { hex: '4a9001', flight: 'POLIS42 ', r: 'SE-JPZ', t: 'EC35', category: 'A7', alt_baro: 1200, gs: 90, track: 45, baro_rate: 0, ...runt(GARDET, 0.3, 0.2) }
+    ]);
+    await installningar(page, STANDARD_INST);
+    await page.goto('./');
+    await page.locator('#flyg-oppna').click();
+    const panel = page.locator('#flygvy-panel');
+    await expect(panel.locator('.flyg-anrop .mini-ikon.ikon-heli')).toHaveCount(1);
+    await expect(panel.locator('.planlista li.vald .mini-ikon.ikon-heli')).toHaveCount(1);
+    await expect(panel.locator('.planlista li .mini-ikon.ikon-liten')).toHaveCount(1);
+    await expect(panel.locator('.planlista li .mini-ikon')).toHaveCount(5);
+
+    const knapp = page.locator('#flyg-forklaring-knapp');
+    const ruta = page.locator('#flyg-forklaring');
+    await expect(ruta).toBeHidden();
+    await knapp.click();
+    await expect(ruta).toBeVisible();
+    await expect(knapp).toHaveAttribute('aria-expanded', 'true');
+    await expect(ruta.locator('li')).toHaveCount(10);
+    await expect(ruta).toContainText('Helikopter');
+    await expect(ruta).toContainText('Ring och accentfärg');
+    await bild(page, 'Teckenförklaring för flygikoner');
+    await ruta.click();
+    await expect(ruta).toBeHidden();
+    await expect(knapp).toHaveAttribute('aria-expanded', 'false');
+  });
 });

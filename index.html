@@ -152,11 +152,15 @@
       <button type="button" role="tab" id="flik-radar" aria-selected="false">Radar</button>
     </div>
     <div id="flygvy-rubrik" class="flygvy-rubrik"></div>
+    <button id="flyg-forklaring-knapp" class="ikonknapp" type="button" aria-label="Vad betyder ikonerna?" aria-expanded="false" aria-controls="flyg-forklaring">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.2v.6" stroke-linecap="round"/></svg>
+    </button>
     <button id="flygvy-stang" class="ikonknapp" type="button" aria-label="Stäng flygvyn">
       <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
     </button>
   </div>
   <aside id="flygvy-panel" class="flygvy-panel"></aside>
+  <section id="flyg-forklaring" class="flyg-forklaring" aria-label="Teckenförklaring" hidden></section>
   <div class="radie" role="group" aria-label="Räckvidd">
     <button type="button" data-radie="5">5 km</button>
     <button type="button" data-radie="10">10 km</button>

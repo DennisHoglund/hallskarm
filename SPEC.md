@@ -63,7 +63,8 @@ av andra (t.ex. Dennis son på Gärdet) med egna hållplatser och egen plats –
 - **Ikoner per kategori** (ADS-B `category`): A7 helikopter (även kända helikoptertyper som EC35, H135, AS50 när kategori saknas),
   A5 tungt plan (större), A1 litet propellerplan, B1 segelflyg, B2 ballong, B6 drönare, övriga jetplan. Samma ikoner på kartorna
   och radarn. Plan vrids efter kursen; helikopter, ballong och drönare står upprätt. Valt plan har ring och accentfärg.
-  Faktaraden visar kategorin, t.ex. "EC35 · Helikopter".
+  Faktaraden visar kategorin, t.ex. "EC35 · Helikopter". Panelens anrop och listrader har en liten ikon för typen.
+- **Teckenförklaring:** i-knappen i flygvyn öppnar en ruta med alla ikoner, ringen, spåret och höjdfärgerna. Stängs med ett tryck.
 - **Dagens statistik:** unika plan (hex) inom radien sedan midnatt, närmaste passagen och högsta planet. Rubrikraden visar
   "4 plan inom 25 km · 143 i dag"; flygvyn har rutan I DAG. Sparas i `hall-flygdag` (högst varje minut) och nollställs vid midnatt.
 - I nattläge färgas planen efter höjd: < 2 km orange, 2–7 km ljus, > 7 km blå.

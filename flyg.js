@@ -58,6 +58,37 @@ window.HallFlyg = (function () {
     return `<g transform="rotate(${v})${skala && skala !== 1 ? ' scale(' + skala + ')' : ''}">${IKON[t]}</g>`;
   }
   function kategoriNamn(a) { return NAMN[ikonTyp(a)] || ''; }
+  // Liten upprätt ikon för listor och teckenförklaring
+  function liteIkon(t) { return `<svg class="mini-ikon ikon-${t}" viewBox="-15 -15 30 30" aria-hidden="true">${IKON[t]}</svg>`; }
+
+  // ---------- Teckenförklaring ----------
+  const FORKLARING = [
+    ['jet', 'Jetplan', 'Passagerar- och fraktplan'],
+    ['tung', 'Tungt plan', 'Stora långdistansplan, t.ex. A350 och 777'],
+    ['liten', 'Litet plan', 'Propellerplan, t.ex. Cessna'],
+    ['heli', 'Helikopter', 'Polis, ambulans, taxi – står alltid upprätt'],
+    ['segel', 'Segelflyg', ''],
+    ['ballong', 'Ballong', ''],
+    ['dronare', 'Drönare', 'Bara de som sänder sin position']
+  ];
+  function ritaForklaring() {
+    const rad = (ikon, namn, text) => `<li>${ikon}<div><b>${esc(namn)}</b>${text ? `<span>${esc(text)}</span>` : ''}</div></li>`;
+    $('flyg-forklaring').innerHTML =
+      '<h3>Vad betyder ikonerna?</h3>' +
+      '<ul>' + FORKLARING.map(([t, n, x]) => rad(liteIkon(t), n, x)).join('') + '</ul>' +
+      '<ul class="ovrigt">' +
+      rad('<svg class="mini-ikon vald" viewBox="-15 -15 30 30" aria-hidden="true"><circle class="ring" r="13"/>' + IKON.jet + '</svg>', 'Ring och accentfärg', 'Planet som visas i panelen – det som passerar närmast') +
+      rad('<svg class="mini-ikon" viewBox="-15 -15 30 30" aria-hidden="true"><path class="s spar-ex" d="M-12,12 L-4,4 L4,-4" stroke-width="2"/><circle class="f" cx="9" cy="-9" r="3"/></svg>', 'Spår', 'Var planet har flugit de senaste minuterna') +
+      rad('<div class="hojd-ex"><i class="lag"></i><i class="mellan"></i><i class="hog"></i></div>', 'Höjd (nattläge)', 'Orange under 2 000 m · ljus 2 000–7 000 m · blå över 7 000 m') +
+      '</ul><p class="liten">Tryck var som helst för att stänga.</p>';
+  }
+  function vaxlaForklaring(visa) {
+    const el = $('flyg-forklaring');
+    const ny = visa === undefined ? el.hidden : visa;
+    if (ny) ritaForklaring();
+    el.hidden = !ny;
+    $('flyg-forklaring-knapp').setAttribute('aria-expanded', String(ny));
+  }
 
   let plats = null, radieKm = 25, tema = 'dag';
   let plan = [], vald = null, senastSedd = null, senastOk = 0, kalla = 0;
@@ -408,13 +439,13 @@ window.HallFlyg = (function () {
     if (!vald) { el.innerHTML = '<div class="ingen-flyg">Inga plan i närheten just nu.</div>' + dagHtml(); return; }
     const a = vald, r = rutter.get(a.anrop);
     el.innerHTML = `<small style="color:var(--accent)">${esc(rubrikText(a))}</small>` +
-      `<div class="flyg-anrop">${esc(a.anrop)}</div>` +
+      `<div class="flyg-anrop">${liteIkon(ikonTyp(a))}${esc(a.anrop)}</div>` +
       `<div class="flyg-fakta">${esc([bolagText(a), typText(a)].filter(Boolean).join(' · ') || a.reg)}</div>` +
       (r ? `<div class="rutt"><span>${esc(r.franKod)}<small>${esc(r.fran)}</small></span><i></i><span style="text-align:right">${esc(r.tillKod)}<small>${esc(r.till)}</small></span></div>` : '') +
       `<div class="nyckeltal"><div><small>Höjd</small><b>${esc(hojdText(a) || '–')}</b></div><div><small>Fart</small><b>${a.fart ? Math.round(a.fart) + ' km/h' : '–'}</b></div>` +
       `<div><small>Avstånd</small><b>${esc(kmText(a.km))}</b></div><div><small>Bäring</small><b>${Math.round(a.bar)}°</b></div></div>` +
       dagHtml() +
-      `<ol class="planlista">${plan.slice(0, 6).map((p) => `<li class="${p.hex === a.hex ? 'vald' : ''}"><span>${esc(p.anrop)}</span><span>${esc(kmText(p.km))}</span></li>`).join('')}</ol>`;
+      `<ol class="planlista">${plan.slice(0, 6).map((p) => `<li class="${p.hex === a.hex ? 'vald' : ''}"><span>${liteIkon(ikonTyp(p))}${esc(p.anrop)}</span><span>${esc(kmText(p.km))}</span></li>`).join('')}</ol>`;
   }
 
   function rita() {
@@ -439,7 +470,7 @@ window.HallFlyg = (function () {
     visaFlik(vy);
     vilaTimer();
   }
-  function stangVy() { $('flygvy').hidden = true; clearTimeout(stangTimer); }
+  function stangVy() { $('flygvy').hidden = true; clearTimeout(stangTimer); vaxlaForklaring(false); }
   function visaFlik(v) {
     vy = v;
     try { localStorage.setItem('hall-flygvy', v); } catch (e) { /* ignorera */ }
@@ -461,6 +492,8 @@ window.HallFlyg = (function () {
     try { vy = localStorage.getItem('hall-flygvy') === 'radar' ? 'radar' : 'karta'; } catch (e) { /* ignorera */ }
     $('flyg-oppna').addEventListener('click', oppnaVy);
     $('flygvy-stang').addEventListener('click', stangVy);
+    $('flyg-forklaring-knapp').addEventListener('click', () => vaxlaForklaring());
+    $('flyg-forklaring').addEventListener('click', () => vaxlaForklaring(false));
     $('flik-karta').addEventListener('click', () => visaFlik('karta'));
     $('flik-radar').addEventListener('click', () => visaFlik('radar'));
     $('flygvy').addEventListener('pointerdown', vilaTimer);

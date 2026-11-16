@@ -23,6 +23,9 @@
   --pa-tunnel: #F2EFE8;
   --kart-dimma: none;
   --regn: #2B5FA8;
+  --plan-lag: #FF8A3D;
+  --plan-mellan: #EDE6D6;
+  --plan-hog: #79B4FF;
   --varn-gul: #E8B800;
   --varn-orange: #E06A00;
   --varn-rod: #C81E1E;
@@ -50,6 +53,9 @@
   --pa-tunnel: #0E0F0C;
   --kart-dimma: brightness(0.85);
   --regn: #6FA3E8;
+  --plan-lag: #FF8A3D;
+  --plan-mellan: #EDE6D6;
+  --plan-hog: #79B4FF;
   --varn-gul: #F2C200;
   --varn-orange: #FF7A1A;
   --varn-rod: #FF4A3D;
@@ -334,6 +340,35 @@ small, .etikett {
 .flyg-dag .nyckeltal { grid-template-columns: .7fr 1fr 1.3fr; }
 .flyg-dag .nyckeltal span { display: block; font-size: .8rem; color: var(--ink3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .flygvy .leaflet-top { top: 5.6rem; }
+.flygvy-topp #flyg-forklaring-knapp[aria-expanded="true"] { background: var(--ink); color: var(--bg); }
+
+/* Små upprätta ikoner i listor och teckenförklaring */
+.mini-ikon { display: inline-block; width: 1.15em; height: 1.15em; vertical-align: -0.18em; margin-right: .45em; overflow: visible; flex: none; }
+.mini-ikon .f { fill: var(--ink); }
+.mini-ikon .s { fill: none; stroke: var(--ink); }
+.mini-ikon .ring { fill: none; stroke: var(--accent); stroke-width: 1.5; }
+.mini-ikon.vald .f { fill: var(--accent); }
+.planlista li.vald .mini-ikon .f { fill: var(--accent); }
+.planlista li.vald .mini-ikon .s { stroke: var(--accent); }
+.flyg-anrop .mini-ikon { width: .8em; height: .8em; vertical-align: -0.05em; margin-right: .3em; }
+
+.flyg-forklaring {
+  position: absolute; z-index: 1002; top: 5.4rem; right: 1.8rem; width: 26rem; max-height: calc(100% - 7.2rem); overflow: auto;
+  background: var(--bg); border: var(--kant-tjock); padding: 1.2rem 1.4rem; cursor: pointer;
+}
+.flyg-forklaring h3 { margin: 0 0 .6rem; font-size: 1.3rem; font-weight: 800; font-stretch: 80%; }
+.flyg-forklaring ul { list-style: none; margin: 0; padding: 0; }
+.flyg-forklaring li { display: grid; grid-template-columns: 2.4rem 1fr; gap: .6rem; align-items: center; padding: .45rem 0; border-top: 1px solid var(--linje); }
+.flyg-forklaring li .mini-ikon { width: 2rem; height: 2rem; margin: 0; }
+.flyg-forklaring li b { display: block; font-size: 1rem; }
+.flyg-forklaring li span { display: block; font-size: .85rem; color: var(--ink2); }
+.flyg-forklaring .ovrigt { margin-top: .5rem; border-top: var(--kant-tunn); }
+.flyg-forklaring .liten { margin: .7rem 0 0; }
+.flyg-forklaring .hojd-ex { display: flex; gap: 3px; width: 2rem; }
+.hojd-ex i { flex: 1; height: 1rem; }
+.hojd-ex .lag { background: var(--plan-lag); }
+.hojd-ex .mellan { background: var(--plan-mellan); border: 1px solid var(--linje); }
+.hojd-ex .hog { background: var(--plan-hog); }
 .flygvy .leaflet-right { right: 1rem; }
 .planlista { list-style: none; margin: 0; padding: 0; font-family: 'JetBrains Mono', monospace; font-size: .95rem; }
 .planlista li { display: flex; justify-content: space-between; gap: 1rem; min-height: 1.9rem; align-items: center; border-top: 1px solid var(--linje); }

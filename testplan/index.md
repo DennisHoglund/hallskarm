@@ -5,8 +5,8 @@ Automatiserade testfall körs av Playwright vid varje commit och är kopplade vi
 
 | | |
 |---|---|
-| **Testfall** | 55 |
-| **Automatiserade** | 51 (körs på iPad/WebKit och Chromium i iPad Airs skärmstorlek) |
+| **Testfall** | 56 |
+| **Automatiserade** | 52 (körs på iPad/WebKit och Chromium i iPad Airs skärmstorlek) |
 | **Manuella** | 4 (kräver riktig iPad och riktig data) |
 | **Senaste testrapport** | [dennishoglund.github.io/hallskarm/rapport/](https://dennishoglund.github.io/hallskarm/rapport/) |
 | **Krav** | [SPEC.md](../SPEC.md) |
@@ -92,6 +92,7 @@ Automatiserade testfall körs av Playwright vid varje commit och är kopplade vi
 | [TC-FLY-10](testfall/TC-FLY-10.md) | [Ingen avisering när den är avstängd eller planet är för långt bort](testfall/TC-FLY-10.md) | Medel | 🤖 |
 | [TC-FLY-11](testfall/TC-FLY-11.md) | [Dagens flygstatistik](testfall/TC-FLY-11.md) | Låg | 🤖 |
 | [TC-FLY-12](testfall/TC-FLY-12.md) | [Egna ikoner för helikoptrar och andra kategorier](testfall/TC-FLY-12.md) | Låg | 🤖 |
+| [TC-FLY-13](testfall/TC-FLY-13.md) | [Ikoner i listan och teckenförklaring](testfall/TC-FLY-13.md) | Låg | 🤖 |
 
 ## Layout
 
