@@ -176,6 +176,8 @@ Data-API:er cachas inte. Höj `CACHE` vid ändring; sidan laddas om när ny vers
 - **Kalender (pausad):** händelserad "I dag"/"I morgon" och kalendervy med vecka, lista och detaljer. Endast läsning via
   hemlig/offentlig prenumerationslänk (iCloud eller Google) som sparas på enheten och hämtas via proxyn. Inget Apple-ID
   på iPaden. Lägga till/ändra görs på mobilen; "+" kan visa en QR-kod. Skisser finns.
-- Månfas bredvid sol upp/ned.
+- **Månfas (pausad):** eget block "Måne" mellan namnsdag och sol upp/ned: ikon som fylls efter fasen, upplyst andel i %
+  och nästa fullmåne/nymåne (veckodag inom en vecka, annars datum). Räknas lokalt. Ev. rad i händelseraden på
+  fullmånekvällen med månens uppgångstid. Skiss finns; toppraden behöver tätare mellanrum i dagtemat.
 - ISS-passager som syns i kväll.
 - Möjlighet att stänga av radarsvepet (pausat).
