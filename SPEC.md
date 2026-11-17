@@ -124,6 +124,8 @@ av andra (t.ex. Dennis son på Gärdet) med egna hållplatser och egen plats –
 - Client ID och nycklar sparas bara på enheten (`hall-spotify`), aldrig i repot.
 - Styrning utan Premium ger "Styrning kräver Spotify Premium.". Genrer/följare kan saknas i utvecklingsläget.
 - Om Spotify inte svarar visas ingen rad; resten av skärmen påverkas inte.
+- **Fungerar inte på iPad Air 2 (iPadOS 15):** Spotifys inloggningssida går inte vidare efter e-postadressen. Funktionen
+  ligger kvar vilande (inget visas och inget anropas utan inloggning) och fungerar på nyare iOS, t.ex. iPhone.
 
 ### 4.9 Robusthet
 - Statusrad under väder och SL: "Uppdaterad hh:mm" eller "Kunde inte uppdatera – visar data från hh:mm".

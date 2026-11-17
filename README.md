@@ -27,7 +27,8 @@ Valen sparas bara på den iPaden, så flera personer kan ha var sin skärm med e
 ## Spotify (valfritt)
 1. Skapa en app på developer.spotify.com (Web API). Redirect URI: `https://dennishoglund.github.io/hallskarm/` – exakt, med snedstreck sist.
 2. På iPaden: Inställningar (kugghjulet) → **Spotify** → klistra in Client ID → **Logga in med Spotify** och godkänn.
-3. Client ID och inloggningen sparas bara på den iPaden. Kontot som äger Spotify-appen behöver Premium; lägg till andra konton under *User Management* (max 5).
+3. Fungerar inte på iPadOS 15 (iPad Air 2) – Spotifys inloggningssida stannar efter e-postadressen.
+4. Client ID och inloggningen sparas bara på den iPaden. Kontot som äger Spotify-appen behöver Premium; lägg till andra konton under *User Management* (max 5).
 
 ## Proxy för flygdata (en gång)
 Flygnätverken tillåter inte anrop direkt från en webbsida, så flygdata hämtas via en liten gratis Cloudflare Worker.
