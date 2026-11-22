@@ -87,6 +87,7 @@ Automatiserade testfall körs av Playwright vid varje commit och är kopplade vi
 |---|---|---|---|
 | [TC-FEL-01](testfall/TC-FEL-01.md) | [Felsökningsläge stänger av delar](testfall/TC-FEL-01.md) | Låg | 🤖 |
 | [TC-FEL-02](testfall/TC-FEL-02.md) | [Nätverksdiagnos visar varje tjänst](testfall/TC-FEL-02.md) | Medel | 🤖 |
+| [TC-FEL-03](testfall/TC-FEL-03.md) | [Kartan fungerar utan cdnjs](testfall/TC-FEL-03.md) | Hög | 🤖 |
 
 ## Flyg
 

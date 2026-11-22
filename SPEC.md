@@ -7,7 +7,7 @@ av andra (t.ex. Dennis son på Gärdet) med egna hållplatser och egen plats –
 
 ## 2. Stack
 - Ren HTML/CSS/JS utan byggsteg. Moduler som IIFE på `window`.
-- Leaflet 1.9.4 (cdnjs) för kartorna, typsnitten Archivo och JetBrains Mono (Google Fonts).
+- Leaflet 1.9.4 i `vendor/leaflet/` (egen kopia – iPadOS 15 når inte cdnjs) för kartorna, typsnitten Archivo och JetBrains Mono (Google Fonts).
 - GitHub Pages via Actions. Inga nycklar, ingen Supabase.
 - En liten Cloudflare Worker (`proxy/worker.js`) som proxy för flygdata, eftersom flygnätverken saknar CORS.
 

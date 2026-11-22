@@ -28,4 +28,14 @@ test.describe('Felsökningsläge', () => {
     await expect(ruta).toContainText('Fota och skicka');
     await expect(page.locator('#prognos li')).toHaveCount(5);
   });
+
+  test('kartan fungerar utan cdnjs', { annotation: { type: 'testfall', description: 'TC-FEL-03' } }, async ({ page, api }) => {
+    // iPadOS 15 når inte cdnjs – Leaflet ska komma från appens egen kopia
+    await page.route(/cdnjs\.cloudflare\.com/, (r) => r.abort('failed'));
+    await installningar(page, STANDARD_INST);
+    await page.goto('./');
+    await expect(page.locator('.leaflet-container').first()).toBeVisible();
+    expect(await page.evaluate(() => typeof window.L)).toBe('object');
+    await expect(page.locator('#felruta')).toHaveCount(0);
+  });
 });

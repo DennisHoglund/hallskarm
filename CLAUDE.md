@@ -4,7 +4,7 @@ Läs `SPEC.md` för hela specifikationen. Det här är reglerna som gäller vid 
 
 ## Projektet
 - PWA för en gammal iPad i hallen: klocka, väder, SL-avgångar, flyg ovanför och dagsljus.
-- Ren HTML/CSS/JS **utan byggsteg**. Inga ramverk. Leaflet via CDN med låst version (1.9.4).
+- Ren HTML/CSS/JS **utan byggsteg**. Inga ramverk. Leaflet 1.9.4 som egen kopia i `vendor/leaflet/` (iPadOS 15 når inte cdnjs).
 - Ingen backend och inga API-nycklar. GitHub Pages via Actions.
 
 ## Språk och ton

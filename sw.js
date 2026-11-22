@@ -1,10 +1,12 @@
 // Höj versionen vid varje ändring av appfilerna så att iPaden hämtar nya filer.
-const CACHE = 'hallskarm-v20';
+const CACHE = 'hallskarm-v21';
 
 const SHELL = [
   './',
   './index.html',
   './styles.css',
+  './vendor/leaflet/leaflet.css',
+  './vendor/leaflet/leaflet.js',
   './config.js',
   './installningar.js',
   './tid.js',
@@ -27,8 +29,8 @@ const SHELL = [
   './icons/apple-touch-icon.png'
 ];
 
-// Bibliotek och typsnitt: cache först
-const CDN_HOSTS = ['cdnjs.cloudflare.com', 'fonts.googleapis.com', 'fonts.gstatic.com'];
+// Typsnitt: cache först
+const CDN_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com'];
 
 // Kartrutor i egen cache så att kartan syns även vid kort avbrott
 const TILE_CACHE = 'hallskarm-tiles';
