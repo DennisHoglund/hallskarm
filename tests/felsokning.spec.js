@@ -16,4 +16,16 @@ test.describe('Felsökningsläge', () => {
     await expect(page.locator('#el-rad')).toBeHidden();
     await expect(page.locator('#version')).toHaveText(/^Version v\d+ · felsökning utan elpris, flyg, varningar$/);
   });
+
+  test('?diagnos visar svaret från varje tjänst', { annotation: { type: 'testfall', description: 'TC-FEL-02' } }, async ({ page, api }) => {
+    await installningar(page, STANDARD_INST);
+    // Namnsdags-API:t ligger nere – raden ska visa felet i stället för att stoppa resten
+    await page.route('https://sholiday.faboul.se/**', (r) => r.abort('failed'));
+    await page.goto('./?diagnos');
+    const ruta = page.locator('#diagnos');
+    await expect(ruta).toContainText('Väder (Open-Meteo): OK 200');
+    await expect(ruta).toContainText(/Namnsdag: FEL /);
+    await expect(ruta).toContainText('Fota och skicka');
+    await expect(page.locator('#prognos li')).toHaveCount(5);
+  });
 });

@@ -86,6 +86,7 @@ Automatiserade testfall körs av Playwright vid varje commit och är kopplade vi
 | ID | Testfall | Prio | Typ |
 |---|---|---|---|
 | [TC-FEL-01](testfall/TC-FEL-01.md) | [Felsökningsläge stänger av delar](testfall/TC-FEL-01.md) | Låg | 🤖 |
+| [TC-FEL-02](testfall/TC-FEL-02.md) | [Nätverksdiagnos visar varje tjänst](testfall/TC-FEL-02.md) | Medel | 🤖 |
 
 ## Flyg
 

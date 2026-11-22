@@ -1,5 +1,5 @@
 // Höj versionen vid varje ändring av appfilerna så att iPaden hämtar nya filer.
-const CACHE = 'hallskarm-v19';
+const CACHE = 'hallskarm-v20';
 
 const SHELL = [
   './',
@@ -18,6 +18,7 @@ const SHELL = [
   './spotify.js',
   './ljud.js',
   './flyg.js',
+  './diagnos.js',
   './app.js',
   './manifest.webmanifest',
   './icons/icon.svg',

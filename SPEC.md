@@ -171,6 +171,8 @@ Data-API:er cachas inte. Höj `CACHE` vid ändring; sidan laddas om när ny vers
 - **Felsökningsläge:** `?utan=del1,del2` stänger av delar vid start, för att ringa in krascher på äldre iPad.
   Delar: `vader`, `sl`, `storningar`, `varningar`, `norrsken`, `elpris`, `spotify`, `flyg`, `namnsdag`, `sw` (tar bort service worker
   och cachar), `allt`. Versionsraden i inställningarna visar vad som är avstängt.
+- **Nätverksdiagnos:** `?diagnos` provar varje extern tjänst och visar OK, statuskod eller webbläsarens fel i en ruta
+  med tid, `navigator.onLine` och webbläsarversion. Rutan kan fotas och skickas (`diagnos.js`, `HallDiagnos`).
 
 ### Önskelista
 - **Kalender (pausad):** händelserad "I dag"/"I morgon" och kalendervy med vecka, lista och detaljer. Endast läsning via
